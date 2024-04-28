@@ -1,6 +1,7 @@
 # Running the project locally
 
 For the first timers:
+
 1. Install NodeJS if you do not have it installed.
 2. Then open project root `yurt`
 3. Run `cd frontend`
