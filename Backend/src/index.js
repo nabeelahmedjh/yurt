@@ -13,7 +13,6 @@ import { Server } from "socket.io";
 import passport from "passport";
 import "./strategy/jwt-strategy.js";
 import "./strategy/local-strategy.js";
-
 import routes from "./routes/index.js";
 
 dbConnection();
@@ -51,13 +50,13 @@ app.post(
 
 app.use("/", routes);
 
-app.get("/", (req, res) => {
-  if (req.session.authenticated) {
-    res.sendFile(path.join(__dirname, "/public/index.html"));
-  } else {
-    res.sendFile(path.join(__dirname, "/public/login.html"));
-  }
-});
+// app.get("/", (req, res) => {
+//   if (req.session.authenticated) {
+//     res.sendFile(path.join(__dirname, "/public/index.html"));
+//   } else {
+//     res.sendFile(path.join(__dirname, "/public/login.html"));
+//   }
+// });
 
 const server = http.createServer(app);
 global.io = socketio.listen(server);

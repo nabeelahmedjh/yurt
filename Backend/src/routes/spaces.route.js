@@ -8,6 +8,6 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", spacesController.createSpace);
-router.post("/:spaceId/messages", spacesController.createMessage);
+router.post("/:spaceId/messages", spacesController.sendMessageInSpace);
 
 export default router;
