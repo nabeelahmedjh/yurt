@@ -10,15 +10,13 @@ const login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (!user) {
-        res.status(404).json({
-          message: "Provided Credentials are wrong",
+        return res.status(400).json({
+          message: "username or password is incorrect",
         });
       }
 
       if (err) {
-        res.status(400).json({
-          message: err,
-        });
+        throw new Error(err);
       }
 
       req.login(user, { session: false }, async (error) => {
@@ -30,13 +28,17 @@ const login = async (req, res, next) => {
         return res.json({ token });
       });
     } catch (error) {
-      return next(error);
+      return res.status(400).json({
+        message: error.message,
+      });
     }
   })(req, res, next);
 };
 
 const signUp = async (req, res) => {
   const { username, email, password } = req.body;
+
+  
   try {
     const user = await User.create({
       username,
