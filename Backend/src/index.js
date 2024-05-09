@@ -15,6 +15,14 @@ import "./strategy/jwt-strategy.js";
 import "./strategy/local-strategy.js";
 import routes from "./routes/index.js";
 
+let corsOptions = {
+  origin: [
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "http://inspiron.lan:3001",
+  ],
+};
+
 dbConnection();
 const app = express();
 const socketio = new Server();
@@ -37,6 +45,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors(corsOptions));
 
 app.post(
   "/profile",

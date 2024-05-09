@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+// import { Rubik } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
-const rubik = Rubik({ subsets: ["latin"] });
+import { Toaster } from "@/components/ui/sonner";
+
+// const rubik = Rubik({ subsets: ["latin"] });
+const rubik = localFont({
+  src: "./Rubik.ttf",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Yurt",
@@ -26,6 +33,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>
