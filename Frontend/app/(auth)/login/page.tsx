@@ -24,12 +24,16 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
-import { toast } from "sonner";
+import { useState } from "react";
+import { LoaderCircleIcon } from "lucide-react";
 
 import { loginSchema } from "./schema";
 
+import { postLogin } from "./post-login";
+
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,9 +42,12 @@ export default function Login() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
-    toast.success("Submitted");
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    setIsLoading(true);
+    const { data } = await postLogin(values);
+    console.log(data);
+    setIsLoading(false);
+    form.reset();
   }
 
   return (
@@ -83,8 +90,9 @@ export default function Login() {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                <span className="mr-2">Login</span>
+                {isLoading && <LoaderCircleIcon className="animate-spin" />}
               </Button>
             </form>
           </Form>

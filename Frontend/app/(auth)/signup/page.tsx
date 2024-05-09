@@ -25,13 +25,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { toast } from "sonner";
-
 import { signupSchema } from "./schema";
 
 import { postSignup } from "./post-signup";
+import { useState } from "react";
+import { LoaderCircleIcon } from "lucide-react";
 
 export default function Signup() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -42,9 +44,11 @@ export default function Signup() {
   });
 
   async function onSubmit(values: z.infer<typeof signupSchema>) {
-    const response = await postSignup(values);
-    console.log(response);
-    response?.statusText === "OK" && toast.success("Submitted");
+    setIsLoading(true);
+    const { data } = await postSignup(values);
+    console.log(data);
+    setIsLoading(false);
+    form.reset();
   }
 
   return (
@@ -100,8 +104,9 @@ export default function Signup() {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Create an account
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                <span className="mr-2">Create an account</span>
+                {isLoading && <LoaderCircleIcon className="animate-spin" />}
               </Button>
             </form>
           </Form>
