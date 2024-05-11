@@ -27,13 +27,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={rubik.className}>
+        <Toaster richColors />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           disableTransitionOnChange
         >
           {children}
-          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

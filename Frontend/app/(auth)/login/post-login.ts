@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import { setCookie } from "cookies-next";
 import { toast } from "sonner";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -13,7 +14,11 @@ export async function postLogin(loginData: object) {
         "Content-Type": "application/json",
       },
     });
-    response?.statusText === "OK" && toast.success("Login Successfully");
+    // response?.statusText === "OK" && toast.success("Login Successfully");
+
+    if (response?.statusText === "OK") {
+      setCookie("authToken", response?.data?.token);
+    }
   } catch (error) {
     console.error("Error:", error);
     toast.error("Something went wrong, try again.");
@@ -21,5 +26,9 @@ export async function postLogin(loginData: object) {
 
   return {
     data: response?.data,
+    status: {
+      code: response?.status,
+      text: response?.statusText,
+    },
   };
 }
