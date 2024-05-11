@@ -31,8 +31,11 @@ import { loginSchema } from "./schema";
 
 import { postLogin } from "./post-login";
 
+import { useRouter } from "next/navigation";
+
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -44,9 +47,10 @@ export default function Login() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
-    const { data } = await postLogin(values);
+    const { data, status } = await postLogin(values);
     console.log(data);
     setIsLoading(false);
+    status?.text === "OK" && router.push("/");
     form.reset();
   }
 
