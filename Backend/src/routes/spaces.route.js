@@ -9,5 +9,5 @@ router.get("/", (req, res) => {
 
 router.post("/", spacesController.createSpace);
 router.post("/:spaceId/messages", spacesController.sendMessageInSpace);
-
+router.get("/:spaceId/messages", spacesController.getMessagesInSpace);
 export default router;

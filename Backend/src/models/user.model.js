@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    serversJoined: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Server",
+        default: [],
+      },
+    ],
   },
   {
     timestamps: true,

@@ -14,36 +14,59 @@ const createSpace = async (req, res) => {
 
 const sendMessageInSpace = async (req, res) => {
   try {
-    const { message, messageType } = req.body;
+    const { content } = req.body;
     const { spaceId } = req.params;
     const sentBy = req.user.user._id;
-
 
     // console.log(req)
     // const sentBy = req.user._id;
     const newMessage = await Message.create({
-      message,
-      messageType,
+      content,
       sentBy,
       spaceId,
     });
-    global.io.sockets.emit('new message', { message: newMessage });
+    global.io.sockets.emit("new message", { message: newMessage });
     res.status(201).json(newMessage);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 
-
   try {
-
-  } catch(err) {
+  } catch (err) {
     res.status(500).json({
-      message: err
-    })
+      message: err,
+    });
+  }
+};
+
+const getMessagesInSpace = async (req, res) => {
+  try {
+    const { spaceId } = req.params;
+    const messages = await Message.aggregate([
+      // {
+      //   $match: {
+      //     spaceId,
+      //   },
+      // },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sentBy",
+          foreignField: "_id",
+          as: "sentBy",
+        },
+      },
+    ]);
+
+    // const messages = await Message.find({ spaceId });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 export default {
   createSpace,
   sendMessageInSpace,
+  getMessagesInSpace,
 };

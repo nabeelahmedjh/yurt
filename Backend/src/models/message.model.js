@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    message: {
+    attachments: {
       type: Object,
-      required: true,
+      required: false,
     },
-    messageType: {
+    content: {
       type: String,
-      default: "text",
+      required: true,
     },
     sentBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +30,11 @@ const messageSchema = new mongoose.Schema(
         },
       },
     ],
+    referencedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+    
   },
   { timestamps: true }
 );
