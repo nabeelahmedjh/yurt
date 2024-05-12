@@ -1,5 +1,6 @@
 import Space from "../models/space.model.js";
 import Message from "../models/message.model.js";
+import mongoose from "mongoose";
 
 const createSpace = async (req, res) => {
   try {
@@ -42,10 +43,11 @@ const sendMessageInSpace = async (req, res) => {
 const getMessagesInSpace = async (req, res) => {
   try {
     const { spaceId } = req.params;
+    console.log(spaceId);
     const messages = await Message.aggregate([
       {
         $match: {
-          spaceId: spaceId,
+          spaceId: new mongoose.Types.ObjectId(spaceId),
         },
       },
       {
