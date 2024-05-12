@@ -43,11 +43,11 @@ const getMessagesInSpace = async (req, res) => {
   try {
     const { spaceId } = req.params;
     const messages = await Message.aggregate([
-      // {
-      //   $match: {
-      //     spaceId,
-      //   },
-      // },
+      {
+        $match: {
+          spaceId: spaceId,
+        },
+      },
       {
         $lookup: {
           from: "users",
