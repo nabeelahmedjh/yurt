@@ -50,7 +50,7 @@ export default function Login() {
     const { data, status } = await postLogin(values);
     console.log(data);
     setIsLoading(false);
-    status?.text === "OK" && router.push("/");
+    status?.text === "OK" && router.push("/servers");
     form.reset();
   }
 

@@ -10,11 +10,7 @@ export const viewport = {
   userScalable: 1,
 };
 
-export default function HomeLayout({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+export default function Layout({ children }: { children?: React.ReactNode }) {
   if (!hasCookie("authToken", { cookies })) {
     redirect("/login");
   }

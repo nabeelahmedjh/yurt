@@ -21,9 +21,9 @@ export default async function Page() {
     throw error;
   }
 
-  const serverID: string = response?.data[0].serverID;
+  const serverID: string = response?.data[0]._id;
 
-  const spaceID: string = response?.data[0].spaces[0].spaceID;
+  const spaceID: string = response?.data[0].spaces[0]._id;
 
   const url: string = `/servers/${serverID}/${spaceID}`;
 

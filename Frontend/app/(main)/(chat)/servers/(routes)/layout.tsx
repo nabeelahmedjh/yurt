@@ -25,15 +25,13 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
               <div
                 onClick={() =>
                   router.replace(
-                    `/servers/${server.serverID}/${server.spaces[0].spaceID}`
+                    `/servers/${server._id}/${server.spaces[0]._id}`
                   )
                 }
-                key={server.serverID}
-                className={
-                  params.serverID === server.serverID ? "bg-cyan-600" : ""
-                }
+                key={server._id}
+                className={params.serverID === server._id ? "bg-cyan-600" : ""}
               >
-                {server.serverID}
+                {server.name}
               </div>
             ))}
           </div>
@@ -41,22 +39,22 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
         {params.serverID && params.spaceID && (
           <div className="space-y-4">
             {data
-              ?.filter((server: any) => server.serverID === params.serverID)
+              ?.filter((server: any) => server._id === params.serverID)
               .map((server: any) => (
-                <div key={server.serverID}>
+                <div key={server._id}>
                   {server.spaces.map((space: any) => (
                     <div
                       onClick={() =>
                         router.replace(
-                          `/servers/${params.serverID}/${space.spaceID}`
+                          `/servers/${params.serverID}/${space._id}`
                         )
                       }
-                      key={space.spaceID}
+                      key={space._id}
                       className={
-                        params.spaceID === space.spaceID ? "bg-purple-600" : ""
+                        params.spaceID === space._id ? "bg-purple-600" : ""
                       }
                     >
-                      {space.spaceID}
+                      {space.name}
                     </div>
                   ))}
                 </div>
@@ -65,7 +63,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
         )}
         {params.serverID && params.spaceID && (
           <div className="space-y-4">
-            <Messages params={params} />
+            {data && <Messages params={params} />}
           </div>
         )}
       </div>

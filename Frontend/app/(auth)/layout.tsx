@@ -8,7 +8,7 @@ export default function AuthLayout({
   children?: React.ReactNode;
 }) {
   if (hasCookie("authToken", { cookies })) {
-    redirect("/");
+    redirect("/servers");
   }
 
   return (

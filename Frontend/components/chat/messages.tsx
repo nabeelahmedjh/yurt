@@ -12,7 +12,7 @@ export function Messages({ params }: { params: any }) {
       <div>
         <p>Messages</p>
         {data?.map((message: any) => (
-          <li key={message.msgID}>{message.content}</li>
+          <li key={message._id}>{message.content}</li>
         ))}
       </div>
     </>
