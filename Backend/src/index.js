@@ -25,7 +25,11 @@ let corsOptions = {
 
 dbConnection();
 const app = express();
-const socketio = new Server();
+const socketio = new Server({
+  cors: {
+    origin: "http://localhost:3001",
+  },
+});
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
