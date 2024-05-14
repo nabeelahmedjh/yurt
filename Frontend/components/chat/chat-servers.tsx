@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
@@ -13,23 +14,32 @@ import { Separator } from "@/components/ui/separator";
 
 import { Plus, User2 } from "lucide-react";
 
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 import { useParams, useRouter } from "next/navigation";
 
 import { getData } from "@/lib/get-data";
 
+import CreateServerModal from "@/components/modals/create-server-modal";
+import LogoutButton from "@/components/logout-button";
+
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
+  const { mutate } = useSWRConfig();
   const { data, error, isLoading } = useSWR("/servers", getData);
+
   const profileResponse = useSWR("/auth/profile", getData);
 
   const profile = {
     name: profileResponse?.data?.user?.username ?? "Unknown",
     img: "",
   };
+
+  useEffect(() => {
+    mutate("/servers");
+  }, [params]);
 
   return (
     <div className="bg-[#eee] h-dvh p-2 flex flex-col items-center">
@@ -95,19 +105,24 @@ export default function ChatServers() {
             </div>
           ))}
       </div>
-      <div className="flex justify-center mt-2">
-        <TooltipProvider delayDuration={50}>
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="hover:bg-gray-300 p-2 rounded-[8px]">
-                <Plus />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={10}>
-              <p>Create Server</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <CreateServerModal>
+        <div className="flex justify-center mt-2">
+          <TooltipProvider delayDuration={50}>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="hover:bg-gray-300 p-2 rounded-[8px]">
+                  <Plus />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                <p>Create Server</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </CreateServerModal>
+      <div className="absolute bottom-8">
+        <LogoutButton />
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React from "react";
+import { useEffect } from "react";
 
 import {
   Tooltip,
@@ -13,17 +14,24 @@ import { Separator } from "@/components/ui/separator";
 
 import { ChevronDown, Plus, TentIcon } from "lucide-react";
 
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 import { useParams, useRouter } from "next/navigation";
 
 import { getData } from "@/lib/get-data";
+import CreateSpaceModal from "@/components/modals/create-space-modal";
 
 export default function ChatSpaces() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
+  const { mutate } = useSWRConfig();
+
   const { data, error, isLoading } = useSWR("/servers", getData);
+
+  useEffect(() => {
+    mutate("/servers");
+  }, [params]);
 
   return (
     <div className="bg-[#F4F4F4] h-dvh p-2 pt-16 w-full">
@@ -60,20 +68,22 @@ export default function ChatSpaces() {
               </Tooltip>
             </TooltipProvider>
 
-            <div className="flex justify-center mt-2">
-              <TooltipProvider delayDuration={50}>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="hover:bg-gray-300 p-2 rounded-[8px]">
-                      <Plus />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={10}>
-                    <p>Create Space</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            <CreateSpaceModal>
+              <div className="flex justify-center mt-2">
+                <TooltipProvider delayDuration={50}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className="hover:bg-gray-300 p-2 rounded-[8px]">
+                        <Plus />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" sideOffset={10}>
+                      <p>Create Space</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </CreateSpaceModal>
           </div>
         )}
       </div>
