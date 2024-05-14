@@ -26,8 +26,12 @@ const sendMessageInSpace = async (req, res) => {
       sentBy,
       spaceId,
     });
-    global.io.sockets.emit("new message", { message: newMessage });
-    res.status(201).json(newMessage);
+
+    const newMessageObj = newMessage.toObject();
+    newMessageObj.sentBy = req.user.user;
+
+    global.io.sockets.emit("new message", { message: newMessageObj });
+    res.status(201).json(newMessageObj);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -58,6 +62,7 @@ const getMessagesInSpace = async (req, res) => {
           as: "sentBy",
         },
       },
+      { $unwind: "$sentBy" },
     ]);
 
     // const messages = await Message.find({ spaceId });

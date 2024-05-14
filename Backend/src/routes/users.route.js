@@ -13,4 +13,9 @@ router.post("/signup", authController.signUp);
 
 router.post("/login", authController.login);
 
+router.get(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  authController.getProfile
+);
 export default router;

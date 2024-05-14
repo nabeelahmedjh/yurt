@@ -22,7 +22,12 @@ const login = async (req, res, next) => {
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
 
-        const body = { _id: user._id, email: user.email };
+        const body = {
+          _id: user._id,
+          email: user.email,
+          username: user.username,
+          serversJoined: user.serversJoined,
+        };
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 
         return res.json({ token });
@@ -38,7 +43,6 @@ const login = async (req, res, next) => {
 const signUp = async (req, res) => {
   const { username, email, password } = req.body;
 
-  
   try {
     const user = await User.create({
       username,
@@ -51,7 +55,12 @@ const signUp = async (req, res) => {
   }
 };
 
+const getProfile = async (req, res) => {
+  res.json(req.user);
+};
+
 export default {
   login,
   signUp,
+  getProfile,
 };
