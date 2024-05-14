@@ -27,7 +27,7 @@ export default function ChatInput() {
   }
 
   return (
-    <div className="border-gray-200 bg-white px-4 py-2 shadow-sm dark:border-gray-800 dark:bg-gray-950">
+    <div className="border-gray-200 bg-white px-4 py-2 shadow-2xl shadow-gray-600 dark:border-gray-800 dark:bg-gray-950">
       {params.serverID && params.spaceID && (
         <form onSubmit={onSubmit} className="flex justify-between">
           <Input

@@ -24,9 +24,10 @@ export default function ChatServers() {
   const router = useRouter();
 
   const { data, error, isLoading } = useSWR("/servers", getData);
+  const profileResponse = useSWR("/auth/profile", getData);
 
   const profile = {
-    name: "Nabeel Ahmad",
+    name: profileResponse?.data?.user?.username ?? "Unknown",
     img: "",
   };
 
@@ -38,11 +39,11 @@ export default function ChatServers() {
             <TooltipTrigger>
               <Avatar>
                 <AvatarImage src={profile.img ?? ""} />
-                <AvatarFallback className="bg-green-200 text-green-950 font-medium">
+                <AvatarFallback className="bg-green-200 text-green-950 font-medium capitalize">
                   {profile.name
                     .split(" ")
                     .slice(0, 2)
-                    .map((word) => word.charAt(0))
+                    .map((word: any) => word.charAt(0))
                     .join("")}
                 </AvatarFallback>
               </Avatar>
@@ -54,7 +55,7 @@ export default function ChatServers() {
             >
               <span className="flex items-center">
                 <User2 className="size-6" />{" "}
-                <p className="self-end ms-1">{profile.name}</p>
+                <p className="self-end ms-1 capitalize">{profile.name}</p>
               </span>
             </TooltipContent>
           </Tooltip>

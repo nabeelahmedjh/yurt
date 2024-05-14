@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 
@@ -13,14 +14,22 @@ import { getCookie } from "cookies-next";
 import useSWR from "swr";
 import { getData } from "@/lib/get-data";
 
-// import { socket } from "@/app/socket-client";
+import { socket } from "@/app/socket-client";
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-export default function ChatMessages() {
+export default function ChatMessages({
+  messages,
+  setMessages,
+  messageContainerRef,
+}: {
+  messages?: any;
+  setMessages?: any;
+  messageContainerRef?: any;
+}) {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
   // const { data, error, isLoading } = useSWR(
@@ -31,60 +40,66 @@ export default function ChatMessages() {
   const [isConnected, setIsConnected] = useState(false);
   const [transport, setTransport] = useState("N/A");
 
-  const [messages, setMessages] = useState([]);
-
   useEffect(() => {
     async function getData() {
-      const { data, status } = await getMessages(params);
-      setMessages(data);
+      if (params?.serverID && params?.spaceID) {
+        const { data, status } = await getMessages(params);
+        setMessages(data);
+      }
     }
 
     getData();
   }, [params]);
 
-  // useEffect(() => {
-  //   if (socket.connected) {
-  //     onConnect();
-  //   }
-  //   function onConnect() {
-  //     setIsConnected(true);
-  //     setTransport(socket.io.engine.transport.name);
-  //     socket.io.engine.on("upgrade", (transport) => {
-  //       setTransport(transport.name);
-  //     });
-  //   }
-  //   function onDisconnect() {
-  //     setIsConnected(false);
-  //     setTransport("N/A");
-  //   }
-  //   socket.on("connect", onConnect);
-  //   socket.on("disconnect", onDisconnect);
-  //   socket.on("new message", (value) => {
-  //     console.log(value);
-  //   });
-  //   console.log(isConnected ? "connected" : "disconnected");
-  //   console.log(transport);
-  //   return () => {
-  //     socket.off("connect", onConnect);
-  //     socket.off("disconnect", onDisconnect);
-  //   };
-  // }, []);
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+    function onConnect() {
+      setIsConnected(true);
+      setTransport(socket.io.engine.transport.name);
+      socket.io.engine.on("upgrade", (transport) => {
+        setTransport(transport.name);
+      });
+    }
+    function onDisconnect() {
+      setIsConnected(false);
+      setTransport("N/A");
+    }
+
+    function onNewMessage(value: any) {
+      console.log(value.message);
+      setMessages((prevMessages: any) => [...prevMessages, value.message]);
+    }
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("new message", onNewMessage);
+    // console.log(isConnected ? "connected" : "disconnected");
+    // console.log(transport);
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("new message", onNewMessage);
+    };
+  }, []);
+
+  if (!params?.serverID || !params?.spaceID) {
+    return "";
+  }
 
   return (
-    <>
-      <div className="py-2">
-        {messages?.map((message: any) => (
-          <li className="list-none" key={message._id}>
-            <MessageItem
-              img={message.img}
-              content={message.content}
-              name={message.sentBy[0].username}
-            />
-          </li>
-        ))}
-      </div>
-      <div></div>
-    </>
+    <div className="p-4">
+      {messages?.map((message: any) => (
+        <li className="list-none" key={message._id}>
+          <MessageItem
+            img={message.img}
+            content={message.content}
+            name={message?.sentBy?.username ?? "Unknown"}
+          />
+        </li>
+      ))}
+      <div className="pb-4" ref={messageContainerRef}></div>
+    </div>
   );
 }
 
