@@ -1,7 +1,15 @@
+import { redirect } from "next/navigation";
+
 export default function HomeLayout({
   children,
 }: {
   children?: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  redirect("/servers");
+
+  return (
+    <>
+      <div>{children}</div>
+    </>
+  );
 }

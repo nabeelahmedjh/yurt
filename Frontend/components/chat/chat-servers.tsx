@@ -121,9 +121,11 @@ export default function ChatServers() {
           </TooltipProvider>
         </div>
       </CreateServerModal>
-      <div className="absolute bottom-8">
-        <LogoutButton />
-      </div>
+      {!isLoading && (
+        <div className="absolute bottom-8">
+          <LogoutButton />
+        </div>
+      )}
     </div>
   );
 }
