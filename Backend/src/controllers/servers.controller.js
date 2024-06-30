@@ -28,6 +28,7 @@ const createSpace = async (req, res) => {
   try {
     const newSpace = await serversService.createSpace(req, res);
     return res.status(201).json(newSpace);
+    console.log("hello");
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
