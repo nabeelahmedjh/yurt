@@ -1,17 +1,17 @@
 import express from "express";
-// import authService from '../services/auth.service.js';
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { generatePassword } from "../utils/generate-pass.utils.js";
 
 const login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (!user) {
         return res.status(400).json({
-          message: "username or password is incorrect",
+          message: info.message,
         });
       }
 
@@ -42,16 +42,19 @@ const login = async (req, res, next) => {
 
 const signUp = async (req, res) => {
   const { username, email, password } = req.body;
-
+  console.log("hhehehehs")
   try {
+    const passwordHash = await generatePassword(password);
     const user = await User.create({
       username,
       email,
-      password,
+      password: passwordHash,
     });
-    res.status(200).json(user);
+
+
+    res.status(200).json(user.toJSON());
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

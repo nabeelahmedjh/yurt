@@ -2,10 +2,14 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: {
+      type: String,
+      required: false,
+    },
     username: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     email: {
       type: String,
@@ -15,6 +19,16 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      minlength: 8,
+      Select: false,
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    verified: {
+      type: Boolean,
+      default: false,
     },
     serversJoined: [
       {
@@ -23,6 +37,20 @@ const userSchema = new mongoose.Schema(
         default: [],
       },
     ],
+  },
+  {
+    toJSON: {
+      transform: function (doc, ret, options) {
+        delete ret.password;
+        return ret;
+      }
+    },
+    // toObject: {
+    //   transform: function (doc, ret, options) {
+    //     delete ret.password;
+    //     return ret;
+    //   }
+    // }
   },
   {
     timestamps: true,

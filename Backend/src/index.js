@@ -20,6 +20,7 @@ let corsOptions = {
     "http://localhost:3001",
     "http://127.0.0.1:3001",
     "http://inspiron.lan:3001",
+    "*"
   ],
 };
 
@@ -51,25 +52,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors(corsOptions));
 
-app.post(
-  "/profile",
-  passport.authenticate("jwt", { session: false }),
-  function (req, res) {
-    res.json({
-      message: "Valid token",
-    });
-  }
-);
-
 app.use("/", routes);
-
-// app.get("/", (req, res) => {
-//   if (req.session.authenticated) {
-//     res.sendFile(path.join(__dirname, "/public/index.html"));
-//   } else {
-//     res.sendFile(path.join(__dirname, "/public/login.html"));
-//   }
-// });
 
 const server = http.createServer(app);
 global.io = socketio.listen(server);

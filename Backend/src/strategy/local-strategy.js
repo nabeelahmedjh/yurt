@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
 import UserModel from "../models/user.model.js";
+import bcrypt from "bcrypt";
 
 // export default passport.use(
 //   "signup",
@@ -51,20 +52,23 @@ passport.use(
   "login",
   new Strategy(
     {
-      usernameField: "username",
+      usernameField: "email",
       passwordField: "password",
     },
     async (username, password, done) => {
+
+      console.log("username", username);
       try {
         const user = await UserModel.findOne({ username });
-
+        console.log(user)
         if (!user) {
           return done(null, false, { message: "User not found" });
         }
+        console.log("USER FOUND");
 
         // const validate = await user.isValidPassword(password);
 
-        if (user.password !== password) {
+        if (!bcrypt.compareSync(password, user.password)) {
           return done(null, false, { message: "Wrong Password" });
         }
 
