@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { hasCookie } from "cookies-next";
+import Image from "next/image";
+
+import loginIllustration from "@/public/auth-bg.svg";
 
 export default function AuthLayout({
   children,
@@ -12,8 +15,14 @@ export default function AuthLayout({
   }
 
   return (
-    <div className="flex justify-center items-center w-full min-h-dvh bg-gradient-to-bl from-emerald-300 to-teal-500">
-      {children}
+    <div className="flex items-center justify-around min-h-dvh gap-3 mx-4 lg:mx-16">
+      <div className="">{children}</div>
+      <Image
+        draggable={false}
+        className="h-[90vh] hidden lg:block"
+        alt=""
+        src={loginIllustration}
+      />
     </div>
   );
 }
