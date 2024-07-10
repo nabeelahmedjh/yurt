@@ -59,13 +59,12 @@ passport.use(
 
       console.log("username", username);
       try {
-        const user = await UserModel.findOne({ username });
+        const user = await UserModel.findOne({ email: username });
+        console.log("herererere")
         console.log(user)
         if (!user) {
           return done(null, false, { message: "User not found" });
         }
-        console.log("USER FOUND");
-
         // const validate = await user.isValidPassword(password);
 
         if (!bcrypt.compareSync(password, user.password)) {
