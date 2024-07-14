@@ -41,12 +41,16 @@ const login = async (req, res, next) => {
 };
 
 const signUp = async (req, res) => {
-  const { username, email, password } = req.body;
-  console.log("hhehehehs")
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "email and password are required",
+    });
+  }
   try {
     const passwordHash = await generatePassword(password);
     const user = await User.create({
-      username,
       email,
       password: passwordHash,
     });
