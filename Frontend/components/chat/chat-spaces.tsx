@@ -34,7 +34,7 @@ export default function ChatSpaces() {
   }, [params]);
 
   return (
-    <div className="bg-[#F4F4F4] h-dvh p-2 pt-16 w-full">
+    <div className="bg-white h-dvh p-2 pt-16 w-full">
       <div className="flex flex-col items-center">
         <Separator className="w-[95%] my-2 bg-gray-300" />
         {params.serverID && data?.length > 0 && (

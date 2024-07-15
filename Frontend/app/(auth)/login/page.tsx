@@ -57,8 +57,17 @@ export default function Login() {
     const { data, status } = await postLogin(values);
     console.log(data);
     setIsLoading(false);
-    status?.text === "OK" && router.push("/servers");
     form.reset();
+
+    if (status?.text === "OK") {
+      router.refresh();
+
+      /* Below solution does not work for some reason.
+         current workaround is to have the route push in layout
+         and then refresh the page in here */
+
+      // router.push("/servers");
+    }
   }
 
   return (

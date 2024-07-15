@@ -42,7 +42,7 @@ export default function ChatServers() {
   }, [params]);
 
   return (
-    <div className="bg-[#eee] h-dvh p-2 flex flex-col items-center">
+    <div className="bg-secondary border-r-2 h-dvh p-2 flex flex-col items-center">
       <div className="p-2">
         <TooltipProvider delayDuration={50}>
           <Tooltip>

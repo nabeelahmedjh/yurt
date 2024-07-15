@@ -18,7 +18,7 @@ export default function ChatHeader() {
 
   return (
     <div>
-      <div className="h-[72px] border-b border-gray-300 flex flex-col items-start justify-center pl-4 gap-2">
+      <div className="bg-white h-[72px] flex flex-col items-start justify-center pl-4 gap-2 shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]">
         {params.serverID && params.spaceID && (
           <div className="flex gap-4">
             <span className="self-center">

@@ -37,11 +37,11 @@ export default function ChatLayout() {
         <ResizablePanel ref={ref} maxSize={newSize} minSize={1}>
           <ChatSidebar />
         </ResizablePanel>
-        <ResizableHandle className="bg-gray-200 hover:bg-gray-400 w-[2px]" />
+        <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
         <ResizablePanel defaultSize={60}>
           <ChatContent />
         </ResizablePanel>
-        <ResizableHandle className="bg-gray-200 hover:bg-gray-400 w-[2px]" />
+        <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
         <ResizablePanel defaultSize={25}>
           <ChatRightbar />
         </ResizablePanel>

@@ -129,7 +129,7 @@ function MessageItem({
           </p>
         </div>
         <div className="ml-12">
-          <p className="bg-orange-50 text-orange-900 rounded-[8px] inline-block px-2 py-1 break-words max-w-[70vw] sm:max-w-[30vw]">
+          <p className=" whitespace-pre-wrap bg-orange-50 text-orange-900 rounded-[8px] inline-block px-2 py-1 break-words max-w-[70vw] sm:max-w-[30vw]">
             {content}
           </p>
         </div>
