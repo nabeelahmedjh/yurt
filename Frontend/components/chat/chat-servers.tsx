@@ -33,7 +33,7 @@ export default function ChatServers() {
   const profileResponse = useSWR("/auth/profile", getData);
 
   const profile = {
-    name: profileResponse?.data?.user?.username ?? "Unknown",
+    name: profileResponse?.data?.user?.email ?? "Unknown",
     img: "",
   };
 
@@ -65,7 +65,7 @@ export default function ChatServers() {
             >
               <span className="flex items-center">
                 <User2 className="size-6" />{" "}
-                <p className="self-end ms-1 capitalize">{profile.name}</p>
+                <p className="self-end ms-1">{profile.name}</p>
               </span>
             </TooltipContent>
           </Tooltip>

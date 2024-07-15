@@ -30,7 +30,7 @@ import {
   EyeOffIcon,
   LoaderCircleIcon,
   LockKeyholeIcon,
-  UserRound,
+  Mail,
 } from "lucide-react";
 
 import { loginSchema } from "./schema";
@@ -47,7 +47,7 @@ export default function Login() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -93,14 +93,14 @@ export default function Login() {
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="Username or Email"
+                          placeholder="Email"
                           {...field}
-                          leftIcon={<UserRound strokeWidth={1.5} />}
+                          leftIcon={<Mail strokeWidth={1.5} />}
                         />
                       </FormControl>
                       <FormMessage />
@@ -150,6 +150,33 @@ export default function Login() {
               </Button>
             </form>
           </Form>
+        </div>
+        <div className="flex flex-col items-center space-y-2 mt-4">
+          <p>or</p>
+          <Button
+            variant="link"
+            onClick={() => {
+              const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+              const width = 500;
+              const height = 550;
+              const left = window.innerWidth / 2 - width / 2;
+              const top = window.innerHeight / 2 - height / 2;
+              const options = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`;
+              window.open(`${apiUrl}/auth/google`, "_blank", options);
+
+              window.addEventListener("message", (event) => {
+                if (event.origin !== apiUrl) {
+                  return;
+                }
+                const { data } = event;
+                console.log(data.token);
+                document.cookie = "authToken=" + data.token;
+                router.refresh();
+              });
+            }}
+          >
+            <p>Sign In with Google</p>
+          </Button>
         </div>
       </CardContent>
     </Card>

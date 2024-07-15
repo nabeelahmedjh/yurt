@@ -30,8 +30,9 @@ export default function ChatInput() {
   }
 
   return (
-    <div className="bg-white px-1 border-2 m-4 rounded-3xl">
-      {params.serverID && params.spaceID && (
+    params.serverID &&
+    params.spaceID && (
+      <div className="bg-white px-1 border-2 m-4 rounded-3xl">
         <form onSubmit={onSubmit} className="flex justify-between items-center">
           <AutosizeTextarea
             className="bg-transparent"
@@ -56,8 +57,8 @@ export default function ChatInput() {
             <ArrowUp className="size-9 p-1 rounded-full bg-secondary border-2" />
           </Button>
         </form>
-      )}
-    </div>
+      </div>
+    )
   );
 }
 
