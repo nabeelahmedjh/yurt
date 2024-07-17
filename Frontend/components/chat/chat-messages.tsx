@@ -94,7 +94,11 @@ export default function ChatMessages({
           <MessageItem
             img={message.img}
             content={message.content}
-            name={message?.sentBy?.username ?? "Unknown"}
+            name={
+              message?.sentBy?.username
+                ? message?.sentBy?.username
+                : message?.sentBy?.email ?? "Unknown"
+            }
           />
         </li>
       ))}
