@@ -1,85 +1,150 @@
-import { Server, Space } from "../models/index.js";
+import mongoose from "mongoose";
+import { Server, Space, User } from "../models/index.js";
 
 const createServer = async (req, res) => {
   const user = req.user.user;
   console.log(user);
+  const { name, description } = req.body;
 
+  if (!name) {
+    return res.json({
+      status: 400,
+      error: { message: "Name is required" },
+    });
+  }
+
+  if (!description) {
+    return res.json({
+      status: 400,
+      error: { message: "Description is required" },
+    });
+  }
+
+  let newServer;
   try {
-    const { name, description } = req.body;
-    const newServer = await Server.create({
+    newServer = await Server.create({
       name,
       description,
       admins: [user._id],
+      members: [user._id],
     });
-    return {
-      status: 201,
-      data: newServer,
-    };
   } catch (error) {
-    return {
-      status: 400,
+    return res.json({
+      status: 500,
       error: { message: error.message },
-    };
+    })
   }
+
+  try {
+    const logedInUser = await User.findOne({ _id: user._id });
+    console.log("model")
+    logedInUser.serversJoined.push(newServer._id);
+    await logedInUser.save();
+
+  } catch (error) {
+    return res.json({
+      status: 500,
+      error: { message: error.message },
+    });
+  }
+
+  return res.json({
+    status: 201,
+    data: newServer,
+  });
 };
 
 const getServers = async (req, res) => {
   const user = req.user;
-  const { serversJoined } = user;
-
-  //   if (serversJoined.length === 0) {
-  //     return res.status(200).json([]);
-  //   }
+  const userId = user.user._id;
 
   try {
     const servers = await Server.aggregate([
-      //   {
-      //     $match: {
-      //       _id: { $in: serversJoined },
-      //     },
-      //   },
+      {
+        $match:
+          { members: new mongoose.Types.ObjectId(userId) },
+      },
       {
         $lookup: {
           from: "spaces",
           localField: "spaces",
           foreignField: "_id",
           as: "spaces",
-        },
-      },
-    ]); // Add the aggregation pipeline to get the servers the user has joined and its spaces
-    return {
+        }
+      }
+    ])
+    return res.json({
       status: 200,
       data: servers,
-    };
+    });
+
+
   } catch (error) {
-    return {
-      status: 400,
+    return res.json({
+      status: 500,
       message: error.message,
-    };
+    });
   }
+
+
 };
 
 const createSpace = async (req, res) => {
+  const { serverId } = req.params;
+  const { name, description } = req.body;
+
+  if (!serverId) {
+    return res.json({
+      status: 400,
+      error: { message: "ServerId is required" },
+    });
+  }
+
+  if (!name) {
+    return res.json({
+      status: 400,
+      error: { message: "Name is required" },
+    });
+  }
+
+  if (!description) {
+    return res.json({
+      status: 400,
+      error: { message: "Description is required" },
+    });
+  }
+
+  let newSpace;
   try {
-    const { serverId } = req.params;
-    const { name, description } = req.body;
-    const newSpace = await Space.create({
+    newSpace = await Space.create({
       name,
       description,
       server: serverId,
     });
 
+  } catch (error) {
+    return res.json({
+      status: 500,
+      error: { message: error.message },
+    });
+  }
+
+  try {
     const server = await Server.findById(serverId);
     server.spaces.push(newSpace._id);
     await server.save();
-
-    return {
-      status: 201,
-      data: newSpace,
-    };
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.json({
+      status: 500,
+      error: { message: error.message },
+    });
   }
+
+  return {
+    status: 201,
+    data: newSpace,
+  };
+
 };
 
 export default {

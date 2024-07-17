@@ -5,6 +5,21 @@ import mongoose from "mongoose";
 const createSpace = async (req, res) => {
   try {
     const { name, description } = req.body;
+
+    if (!name) {
+      return res.json({
+        status: 400,
+        error: { message: "Name is required" },
+      });
+    }
+
+    if (!description) {
+      return res.json({
+        status: 400,
+        error: { message: "Description is required" },
+      });
+    }
+
     const newSpace = await Space.create({ name, description });
 
     res.status(201).json(newSpace);
