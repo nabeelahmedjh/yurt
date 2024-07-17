@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   Form,
@@ -89,7 +90,11 @@ export default function CreateServerModal({
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Server name" {...field} />
+                      <Input
+                        className="placeholder:text-gray-400"
+                        placeholder="Wizards"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,7 +107,10 @@ export default function CreateServerModal({
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Server description" {...field} />
+                      <Textarea
+                        placeholder="A cool place for wizards..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

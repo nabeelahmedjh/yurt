@@ -31,7 +31,12 @@ router.get('/google/callback',
     };
     const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 
-    res.json({ token });
+    res.send(`
+      <script>
+      window.opener.postMessage({ token: '${token}' }, '*');
+      window.close();
+      </script>
+    `);
   });
 
 export default router;

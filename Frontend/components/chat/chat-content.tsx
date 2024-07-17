@@ -17,14 +17,14 @@ export default function ChatContent() {
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({
-        behavior: "smooth",
+        behavior: "instant",
         block: "end",
       });
     }
   };
 
   return (
-    <div className="flex flex-col h-dvh">
+    <div className="bg-white flex flex-col h-dvh">
       <ChatHeader />
       <ScrollArea className="flex-1 overflow-y-auto">
         <ChatMessages
