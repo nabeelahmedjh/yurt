@@ -18,9 +18,15 @@ const createServer = async (req, res) => {
 const getServers = async (req, res) => {
   try {
     const servers = await serversService.getServers(req, res);
-    return res.status(servers.status).json(servers.data);
+    return res.json({
+      status: 200,
+      data: servers
+    })
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.json({
+      status: 500,
+      error: { message: error.message },
+    })
   }
 };
 

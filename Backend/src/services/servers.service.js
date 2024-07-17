@@ -58,35 +58,21 @@ const getServers = async (req, res) => {
   const user = req.user;
   const userId = user.user._id;
 
-  try {
-    const servers = await Server.aggregate([
-      {
-        $match:
-          { members: new mongoose.Types.ObjectId(userId) },
-      },
-      {
-        $lookup: {
-          from: "spaces",
-          localField: "spaces",
-          foreignField: "_id",
-          as: "spaces",
-        }
+  const servers = await Server.aggregate([
+    {
+      $match:
+        { members: new mongoose.Types.ObjectId(userId) },
+    },
+    {
+      $lookup: {
+        from: "spaces",
+        localField: "spaces",
+        foreignField: "_id",
+        as: "spaces",
       }
-    ])
-    return res.json({
-      status: 200,
-      data: servers,
-    });
-
-
-  } catch (error) {
-    return res.json({
-      status: 500,
-      message: error.message,
-    });
-  }
-
-
+    }
+  ])
+  return servers;
 };
 
 const createSpace = async (req, res) => {
