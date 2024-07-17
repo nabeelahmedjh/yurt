@@ -3,39 +3,47 @@ import Message from "../models/message.model.js";
 import mongoose from "mongoose";
 
 const createSpace = async (req, res) => {
+  const { name, description } = req.body;
+
+  if (!name) {
+    return res.status(400).json({
+      error: { message: "Name is required" },
+    });
+  }
+
+  if (!description) {
+    return res.status(400).json({
+      error: { message: "Description is required" },
+    });
+  }
+
   try {
-    const { name, description } = req.body;
-
-    if (!name) {
-      return res.json({
-        status: 400,
-        error: { message: "Name is required" },
-      });
-    }
-
-    if (!description) {
-      return res.json({
-        status: 400,
-        error: { message: "Description is required" },
-      });
-    }
 
     const newSpace = await Space.create({ name, description });
 
-    res.status(201).json(newSpace);
+    res.status(201).json({
+      data: newSpace
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      error: { message: error.message }
+    });
   }
 };
 
 const sendMessageInSpace = async (req, res) => {
-  try {
-    const { content } = req.body;
-    const { spaceId } = req.params;
-    const sentBy = req.user.user._id;
 
-    // console.log(req)
-    // const sentBy = req.user._id;
+  const { content } = req.body;
+  const { spaceId } = req.params;
+  const sentBy = req.user.user._id;
+
+  if (!content) {
+    return res.status(400).json({
+      error: { message: "Content is required" },
+    });
+  }
+
+  try {
     const newMessage = await Message.create({
       content,
       sentBy,
@@ -46,23 +54,21 @@ const sendMessageInSpace = async (req, res) => {
     newMessageObj.sentBy = req.user.user;
 
     global.io.sockets.emit("new message", { message: newMessageObj });
-    res.status(201).json(newMessageObj);
+    res.status(201).json({
+      data: newMessageObj
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-
-  try {
-  } catch (err) {
-    res.status(500).json({
-      message: err,
+    res.status(400).json({
+      error: { message: error.message }
     });
   }
+
 };
 
 const getMessagesInSpace = async (req, res) => {
+  const { spaceId } = req.params;
+
   try {
-    const { spaceId } = req.params;
-    console.log(spaceId);
     const messages = await Message.aggregate([
       {
         $match: {
@@ -79,11 +85,15 @@ const getMessagesInSpace = async (req, res) => {
       },
       { $unwind: "$sentBy" },
     ]);
-
-    // const messages = await Message.find({ spaceId });
-    res.status(200).json(messages);
+    res.status(200).json({
+      data: messages
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({
+      error: {
+        message: error.message
+      }
+    });
   }
 };
 

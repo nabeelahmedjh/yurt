@@ -1,44 +1,81 @@
 import { Server, User } from "../models/index.js";
 import { serversService } from "../services/index.js";
 const createServer = async (req, res) => {
+  const { name, description } = req.body;
+
+  if (!name) {
+    return res.status(400).json({
+      error: { message: "Name is required" },
+    });
+  }
+
+  if (!description) {
+    return res.status(400).json({
+      error: { message: "Description is required" },
+    });
+  }
+
   try {
-    const { name, description } = req.body;
+
     const newServer = await serversService.createServer(req, res);
 
-    if (newServer.error) {
-      throw new Error(newServer.error.message);
-    }
-
-    return res.status(newServer.status).json(newServer.data);
+    return res.status(201).json({
+      data: newServer
+    });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(500).json({
+      error: {
+        message: error.message
+      }
+    });
   }
 };
 
 const getServers = async (req, res) => {
   try {
     const servers = await serversService.getServers(req, res);
-    return res.json({
-      status: 200,
+    return res.status(200).json({
       data: servers
     })
   } catch (error) {
-    return res.json({
-      status: 500,
+    return res.status(200).json({
       error: { message: error.message },
     })
   }
 };
 
 const createSpace = async (req, res) => {
+
+  const { serverId } = req.params;
+  const { name, description } = req.body;
+
+  if (!serverId) {
+    return res.status(400).json({
+      error: { message: "ServerId is required" },
+    });
+  }
+
+  if (!name) {
+    return res.status(400).json({
+      error: { message: "Name is required" },
+    });
+  }
+
+  if (!description) {
+    return res.status(400).json({
+      error: { message: "Description is required" },
+    });
+  }
+
   try {
     const newSpace = await serversService.createSpace(req, res);
-    return res.json({
-      status: 201,
+    return res.status(201).json({
       data: newSpace,
     });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({
+      error: { message: error.message }
+    });
   }
 };
 
@@ -52,14 +89,14 @@ const joinServer = async (req, res) => {
 
     if (!server || server.length === 0) {
       return res.status(404).json({
-        message: "Server not found",
+        error: { message: "Server not found" },
       });
     }
 
     if (server.members.includes(user._id)) {
       return res.status(400).json({
-        message: "User already in server",
-      });
+        error: { message: "User already in server" },
+      })
     }
 
     server.members.push(user._id);
@@ -71,19 +108,19 @@ const joinServer = async (req, res) => {
       await currentUser.save();
 
     } catch (error) {
-      return res.json({
-        status: 500,
+      return res.status(500).json({
         error: { message: error.message },
       });
     }
 
-    return res.json({
-      status: 201,
+    return res.status(201).json({
       data: server,
     });
 
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(500).json({
+      error: { message: error.message },
+    })
   }
 }
 export default {
