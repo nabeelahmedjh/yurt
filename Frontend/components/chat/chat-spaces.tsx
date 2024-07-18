@@ -29,6 +29,10 @@ export default function ChatSpaces() {
 
   const { data, error, isLoading } = useSWR("/servers", getData);
 
+  // useEffect(() => {
+  //   console.log("SpacesData: ", data);
+  // }, [data]);
+
   useEffect(() => {
     mutate("/servers");
   }, [params]);
@@ -87,46 +91,48 @@ export default function ChatSpaces() {
           </div>
         )}
       </div>
-      {params.serverID && data?.[0]?.spaces?.length > 0 && (
-        <div>
-          <div className="flex mt-4">
-            <ChevronDown className="size-4 self-center me-1" />
-            <p className="text-[14px] text-gray-500">Spaces</p>
-          </div>
-          <div className="mt-2">
-            <div>
-              {data
-                ?.filter((server: any) => server._id === params.serverID)
-                .map((server: any) => (
-                  <div key={server._id} className="space-y-4">
-                    {server.spaces.map((space: any) => (
-                      <div
-                        onClick={() =>
-                          router.replace(
-                            `/servers/${params.serverID}/${space._id}`
-                          )
-                        }
-                        key={space._id}
-                        className={`${
-                          params.spaceID === space._id
-                            ? "bg-[#E6E8EB]"
-                            : "hover:bg-[#E6E8EB]"
-                        } p-2 rounded-[8px] flex gap-2 cursor-pointer`}
-                      >
-                        <span>
-                          <TentIcon />
-                        </span>
-                        <span className="font-normal text-gray-700">
-                          {space.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+      {params.serverID &&
+        data?.filter((server: any) => server._id === params.serverID)[0]?.spaces
+          ?.length > 0 && (
+          <div>
+            <div className="flex mt-4">
+              <ChevronDown className="size-4 self-center me-1" />
+              <p className="text-[14px] text-gray-500">Spaces</p>
+            </div>
+            <div className="mt-2">
+              <div>
+                {data
+                  ?.filter((server: any) => server._id === params.serverID)
+                  .map((server: any) => (
+                    <div key={server._id} className="space-y-4">
+                      {server.spaces.map((space: any) => (
+                        <div
+                          onClick={() =>
+                            router.replace(
+                              `/servers/${params.serverID}/${space._id}`
+                            )
+                          }
+                          key={space._id}
+                          className={`${
+                            params.spaceID === space._id
+                              ? "bg-[#E6E8EB]"
+                              : "hover:bg-[#E6E8EB]"
+                          } p-2 rounded-[8px] flex gap-2 cursor-pointer`}
+                        >
+                          <span>
+                            <TentIcon />
+                          </span>
+                          <span className="font-normal text-gray-700">
+                            {space.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

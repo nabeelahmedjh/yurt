@@ -57,8 +57,11 @@ export default function CreateSpaceModal({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { data, status } = await postSpace(values, params);
 
+    // console.log("data", data);
+
     if (status?.code === 201) {
-      router.push(`/servers/${params?.serverID}/${data?.data?._id}`);
+      // router.push(`/servers/${params?.serverID}/${data?.data?._id}`);
+      router.refresh();
       toast.success("Space Created Successfully");
       form.reset();
       setOpen(false);
@@ -140,7 +143,7 @@ async function postSpace(
   }
 
   return {
-    data: response?.data,
+    data: response?.data?.data,
     status: {
       code: response?.status,
       text: response?.statusText,

@@ -18,7 +18,7 @@ export default function ChatInput() {
 
   async function onSubmit(e: any) {
     e.preventDefault();
-    console.log(text);
+    // console.log(text);
     const formData = new FormData();
 
     formData.append("content", text);

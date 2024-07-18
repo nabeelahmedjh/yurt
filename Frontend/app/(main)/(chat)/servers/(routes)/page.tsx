@@ -21,13 +21,16 @@ export default async function Page() {
     throw error;
   }
 
-  const isAnyServerJoined = response?.data?.length > 0;
-  const isAnySpaceAvailable = response?.data?.[0]?.spaces?.length > 0;
+  const isAnyServerJoined = response.data.data?.length > 0;
+  const isAnySpaceAvailable = response.data.data?.[0]?.spaces?.length > 0;
+
+  // console.log("isAnyServerJoined", isAnyServerJoined);
+  // console.log("isAnySpaceAvailable", isAnySpaceAvailable);
 
   if (isAnyServerJoined && isAnySpaceAvailable) {
-    const serverID: string = response?.data[0]._id;
+    const serverID: string = response.data.data[0]._id;
 
-    const spaceID: string = response?.data[0].spaces[0]._id;
+    const spaceID: string = response.data.data[0].spaces[0]._id;
 
     const url: string = `/servers/${serverID}/${spaceID}`;
 
@@ -37,7 +40,7 @@ export default async function Page() {
   }
 
   if (isAnyServerJoined) {
-    const serverID: string = response?.data[0]._id;
+    const serverID: string = response.data.data[0]._id;
 
     const url: string = `/servers/${serverID}`;
 
@@ -46,7 +49,7 @@ export default async function Page() {
     redirect(url);
   }
 
-  console.log("Nothing Selected");
+  // console.log("Nothing Selected");
 
   return <></>;
 }

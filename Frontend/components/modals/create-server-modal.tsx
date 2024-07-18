@@ -59,7 +59,8 @@ export default function CreateServerModal({
     const { data, status } = await postServer(values);
 
     if (status?.code === 201) {
-      router.push(`/servers/${data?._id}`);
+      // router.push(`/servers/${data?._id}`);
+      router.refresh();
       toast.success("Server Created Successfully");
       form.reset();
       setOpen(false);
