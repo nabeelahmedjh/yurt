@@ -11,7 +11,7 @@ const login = async (req, res, next) => {
     try {
       if (!user) {
         return res.status(400).json({
-          message: info.message,
+          error: { message: info.message },
         });
       }
 
@@ -30,11 +30,13 @@ const login = async (req, res, next) => {
         };
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 
-        return res.json({ token });
+        return res.status(200).json({ token });
       });
     } catch (error) {
       return res.status(400).json({
-        message: error.message,
+        error: {
+          message: error.message,
+        }
       });
     }
   })(req, res, next);
@@ -45,7 +47,9 @@ const signUp = async (req, res) => {
 
   if (!email || !password) {
     return res.status(400).json({
-      message: "email and password are required",
+      error: {
+        message: "email and password are required"
+      },
     });
   }
   try {
@@ -56,14 +60,18 @@ const signUp = async (req, res) => {
     });
 
 
-    res.status(200).json(user.toJSON());
+    res.status(200).json({
+      data: user.toJSON()
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
 const getProfile = async (req, res) => {
-  res.json(req.user);
+  res.status(200).json({
+    data: req.user
+  });
 };
 
 export default {

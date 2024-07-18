@@ -26,6 +26,12 @@ const serverSchema = new moongose.Schema(
         ref: "User",
       },
     ],
+    members: [
+      {
+        type: moongose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

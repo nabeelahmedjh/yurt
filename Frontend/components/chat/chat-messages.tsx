@@ -44,6 +44,9 @@ export default function ChatMessages({
     async function getData() {
       if (params?.serverID && params?.spaceID) {
         const { data, status } = await getMessages(params);
+
+        // console.log("zero index of Message array REST API: ", data?.[0]);
+
         setMessages(data);
       }
     }
@@ -68,7 +71,8 @@ export default function ChatMessages({
     }
 
     function onNewMessage(value: any) {
-      console.log(value.message);
+      // console.log("Socket Message: ", value.message);
+
       setMessages((prevMessages: any) => [...prevMessages, value.message]);
     }
     socket.on("connect", onConnect);
@@ -159,7 +163,7 @@ async function getMessages(params: { serverID: string; spaceID: string }) {
   }
 
   return {
-    data: response?.data,
+    data: response?.data?.data,
     status: {
       code: response?.status,
       text: response?.statusText,

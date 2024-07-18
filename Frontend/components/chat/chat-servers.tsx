@@ -30,12 +30,17 @@ export default function ChatServers() {
   const { mutate } = useSWRConfig();
   const { data, error, isLoading } = useSWR("/servers", getData);
 
-  const profileResponse = useSWR("/auth/profile", getData);
+  const { data: profileData } = useSWR("/auth/profile", getData);
 
   const profile = {
-    name: profileResponse?.data?.user?.email ?? "Unknown",
+    name: profileData?.user?.email ?? "Unknown",
     img: "",
   };
+
+  // useEffect(() => {
+  //   console.log("profile", profileData);
+  //   console.log("data", data);
+  // }, [profileData, data]);
 
   useEffect(() => {
     mutate("/servers");

@@ -14,7 +14,7 @@ export async function getData(url: string) {
       },
     });
 
-    return response?.data;
+    return response?.data?.data;
   } catch (error) {
     console.error("Error:", error);
     throw error;
