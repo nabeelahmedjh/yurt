@@ -12,7 +12,7 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 
-import { Plus, User2 } from "lucide-react";
+import { CompassIcon, Plus, User2 } from "lucide-react";
 
 import useSWR, { useSWRConfig } from "swr";
 
@@ -22,6 +22,9 @@ import { getData } from "@/lib/get-data";
 
 import CreateServerModal from "@/components/modals/create-server-modal";
 import LogoutButton from "@/components/logout-button";
+import { Button } from "../ui/button";
+
+import { socket } from "@/app/socket-client";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
@@ -36,6 +39,11 @@ export default function ChatServers() {
     name: profileData?.user?.email ?? "Unknown",
     img: "",
   };
+
+  useEffect(() => {
+    socket.emit("identity", profileData?.user?._id);
+    console.log("profileData", profileData?.user?._id);
+  }, []);
 
   // useEffect(() => {
   //   console.log("profile", profileData);
@@ -79,13 +87,12 @@ export default function ChatServers() {
       <Separator className="w-[70%] my-2 bg-gray-300" />
       <div>
         {data?.length > 0 &&
-          params.serverID &&
           data?.map((server: any) => (
             <div className="p-2" key={server._id}>
               <TooltipProvider delayDuration={50}>
                 <Tooltip>
                   <TooltipTrigger
-                    onClick={() => router.replace(`/servers/${server._id}`)}
+                    onClick={() => router.push(`/servers/${server._id}`)}
                   >
                     <Avatar
                       className={`rounded-[8px] ring-slate-900 ${
@@ -126,6 +133,19 @@ export default function ChatServers() {
           </TooltipProvider>
         </div>
       </CreateServerModal>
+
+      <TooltipProvider delayDuration={150}>
+        <Tooltip>
+          <TooltipTrigger onClick={() => router.push("/explore-servers")}>
+            <div className="hover:bg-gray-300 p-2 rounded-[8px]">
+              <CompassIcon className="size-6" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="right" sideOffset={10}>
+            <p>Explore Servers</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       {!isLoading && (
         <div className="absolute bottom-8">
           <LogoutButton />

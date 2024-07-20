@@ -21,7 +21,11 @@ import { useParams, useRouter } from "next/navigation";
 import { getData } from "@/lib/get-data";
 import CreateSpaceModal from "@/components/modals/create-space-modal";
 
-export default function ChatSpaces() {
+export default function ChatSpaces({
+  isWhiteboardOpen,
+}: {
+  isWhiteboardOpen: any;
+}) {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
@@ -36,6 +40,8 @@ export default function ChatSpaces() {
   useEffect(() => {
     mutate("/servers");
   }, [params]);
+
+  if (isWhiteboardOpen) return null;
 
   return (
     <div className="bg-white h-dvh p-2 pt-16 w-full">

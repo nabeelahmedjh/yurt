@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   ResizableHandle,
@@ -13,13 +13,21 @@ import ChatSidebar from "@/components/chat/chat-sidebar";
 import ChatContent from "@/components/chat/chat-content";
 import ChatRightbar from "@/components/chat/chat-rightbar";
 
+import Explore from "@/components/explore-servers/explore";
+import Whiteboard from "../whiteboard";
+
 import { useViewportWidth } from "@/lib/viewport-width";
 
 export default function ChatLayout() {
+  const [isWhiteboardOpen, setIsWhiteboardOpen] = useState(false);
+
   const viewportWidth = useViewportWidth();
 
-  // if viewport width > 350px, how much in percent is 300 px of viewport width
-  const newSize = viewportWidth > 400 ? (350 / viewportWidth) * 100 : 60;
+  // if viewport width > 400 px, how much in percent is 350 px of viewport width
+  const newSize =
+    viewportWidth > 400
+      ? ((isWhiteboardOpen ? 75 : 350) / viewportWidth) * 100
+      : 60;
 
   const ref = useRef<ImperativePanelHandle>(null);
 
@@ -35,15 +43,17 @@ export default function ChatLayout() {
     <>
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel ref={ref} maxSize={newSize} minSize={1}>
-          <ChatSidebar />
+          <ChatSidebar isWhiteboardOpen={isWhiteboardOpen} />
+        </ResizablePanel>
+        {!isWhiteboardOpen && (
+          <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
+        )}
+        <ResizablePanel defaultSize={65}>
+          {isWhiteboardOpen ? <Whiteboard /> : <ChatContent />}
         </ResizablePanel>
         <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
-        <ResizablePanel defaultSize={60}>
-          <ChatContent />
-        </ResizablePanel>
-        <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
-        <ResizablePanel defaultSize={25}>
-          <ChatRightbar />
+        <ResizablePanel defaultSize={20}>
+          <ChatRightbar setIsWhiteboardOpen={setIsWhiteboardOpen} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </>
