@@ -1,3 +1,3 @@
 import serversService from "./servers.service.js";
-
-export { serversService };
+import spacesService from "./spaces.service.js";
+export { serversService, spacesService };

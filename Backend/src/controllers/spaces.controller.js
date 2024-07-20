@@ -1,6 +1,7 @@
 import Space from "../models/space.model.js";
 import Message from "../models/message.model.js";
-import mongoose from "mongoose";
+import mongoose, { get } from "mongoose";
+import spacesService from "../services/spaces.service.js";
 
 const createSpace = async (req, res) => {
   const { name, description } = req.body;
@@ -42,23 +43,20 @@ const sendMessageInSpace = async (req, res) => {
       error: { message: "Content is required" },
     });
   }
-
+  const message = {
+    content: content,
+    sentBy: sentBy,
+    spaceId: spaceId,
+  }
+  console.log(message);
   try {
-    const newMessage = await Message.create({
-      content,
-      sentBy,
-      spaceId,
-    });
-
-    const newMessageObj = newMessage.toObject();
-    newMessageObj.sentBy = req.user.user;
-
-    global.io.sockets.emit("new message", { message: newMessageObj });
-    res.status(201).json({
-      data: newMessageObj
+    const sentMessage = await spacesService.sendMessageInSpace(content, spaceId, sentBy);
+    sentMessage.sentBy = req.user.user;
+    return res.status(201).json({
+      data: sentMessage
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       error: { message: error.message }
     });
   }
@@ -69,22 +67,7 @@ const getMessagesInSpace = async (req, res) => {
   const { spaceId } = req.params;
 
   try {
-    const messages = await Message.aggregate([
-      {
-        $match: {
-          spaceId: new mongoose.Types.ObjectId(spaceId),
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "sentBy",
-          foreignField: "_id",
-          as: "sentBy",
-        },
-      },
-      { $unwind: "$sentBy" },
-    ]);
+    const messages = await spacesService.getAllMessageInSpace(spaceId);
     res.status(200).json({
       data: messages
     });
