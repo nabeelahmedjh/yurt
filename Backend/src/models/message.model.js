@@ -2,13 +2,14 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    attachments: {
+    attachment: {
       type: Object,
       required: false,
+      default: null,
     },
     content: {
       type: String,
-      required: true,
+      default: "",
     },
     sentBy: {
       type: mongoose.Schema.Types.ObjectId,

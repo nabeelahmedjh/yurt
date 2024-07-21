@@ -14,12 +14,13 @@ const getJoinedSpacesIds = async (userId) => {
 
 };
 
-const sendMessageInSpace = async (content, spaceId, sentBy) => {
+const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
     console.log("spaceId", spaceId)
     const newMessage = await Message.create({
         content: content,
         sentBy: sentBy,
         spaceId: spaceId,
+        attachment: attachment,
 
     });
 

@@ -13,7 +13,7 @@ class WebSockets {
         socketId: socket.id,
         userId: userId,
       });
-      console.log(this.users);
+      console.log(this.users, "From the identity event");
       this.subscribeToSpacesOfJoinedServers(userId);
       // socket.emit("subscribeToSpacesOfJoinedServers", userId);
     });
@@ -72,8 +72,6 @@ class WebSockets {
       }
     });
   }
-
-
 
 
   // subscribeOtherUser(room, otherUserId) {

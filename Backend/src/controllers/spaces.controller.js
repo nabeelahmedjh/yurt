@@ -36,7 +36,13 @@ const sendMessageInSpace = async (req, res) => {
 
   const { content } = req.body;
   const { spaceId } = req.params;
+  const attachment = req.file
+    ? { type: req.file.mimetype, source: req.file.path }
+    : null;
   const sentBy = req.user.user._id;
+
+
+
 
   if (!content) {
     return res.status(400).json({
@@ -47,10 +53,11 @@ const sendMessageInSpace = async (req, res) => {
     content: content,
     sentBy: sentBy,
     spaceId: spaceId,
+    attachment: attachment,
   }
   console.log(message);
   try {
-    const sentMessage = await spacesService.sendMessageInSpace(content, spaceId, sentBy);
+    const sentMessage = await spacesService.sendMessageInSpace(content, spaceId, sentBy, attachment);
     sentMessage.sentBy = req.user.user;
     return res.status(201).json({
       data: sentMessage
