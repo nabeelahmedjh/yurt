@@ -47,6 +47,10 @@ class WebSockets {
     socket.on("unsubscribe", (room) => {
       socket.leave(room);
     });
+
+    socket.on("logout", (userId) => {
+      this.users = this.users.filter((user) => user.userId !== userId);
+    });
   }
 
   subscribeToSpacesOfJoinedServers = async (userId) => {
