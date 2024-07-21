@@ -5,10 +5,42 @@ import ChatMessages from "@/components/chat/chat-messages";
 import ChatInput from "@/components/chat/chat-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { socket } from "@/app/socket-client";
+
 export default function ChatContent() {
   const [messages, setMessages] = useState<object[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      console.log("Socket id: ", socket.id);
+    }
+
+    function onDisconnect() {
+      console.log("Socket disconnected");
+    }
+
+    function onNewMessage(value: any) {
+      console.log("Socket Message: ", value.message);
+
+      setMessages((prevMessages: any) => [...prevMessages, value.message]);
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("new message", onNewMessage);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("new message", onNewMessage);
+    };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -24,7 +56,7 @@ export default function ChatContent() {
   };
 
   return (
-    <div className="bg-white flex flex-col h-dvh">
+    <div className="bg-red-300 flex flex-col h-dvh">
       <ChatHeader />
       <ScrollArea className="flex-1 overflow-y-auto">
         <ChatMessages

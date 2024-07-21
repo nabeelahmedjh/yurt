@@ -8,13 +8,14 @@ const getJoinedSpacesIds = async (userId) => {
     const servers = await Server.find({ members: userId });
     let spacesIds = [];
     servers.map((server) => {
-        spaces = [...spaces, ...server.spaces];
+        spacesIds = [...spacesIds, ...server.spaces];
     });
     return spacesIds;
 
 };
 
 const sendMessageInSpace = async (content, spaceId, sentBy) => {
+    console.log("spaceId", spaceId)
     const newMessage = await Message.create({
         content: content,
         sentBy: sentBy,

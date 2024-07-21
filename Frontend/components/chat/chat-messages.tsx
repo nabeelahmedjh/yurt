@@ -11,11 +11,6 @@ import axios from "axios";
 
 import { getCookie } from "cookies-next";
 
-import useSWR from "swr";
-import { getData } from "@/lib/get-data";
-
-import { socket } from "@/app/socket-client";
-
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -32,20 +27,10 @@ export default function ChatMessages({
 }) {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
-  // const { data, error, isLoading } = useSWR(
-  //   `/spaces/${params?.spaceID}/messages`,
-  //   getData
-  // );
-
-  const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState("N/A");
-
   useEffect(() => {
     async function getData() {
       if (params?.serverID && params?.spaceID) {
-        const { data, status } = await getMessages(params);
-
-        // console.log("zero index of Message array REST API: ", data?.[0]);
+        const { data } = await getMessages(params);
 
         setMessages(data);
       }
@@ -53,39 +38,6 @@ export default function ChatMessages({
 
     getData();
   }, [params]);
-
-  useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
-    function onConnect() {
-      setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-      socket.io.engine.on("upgrade", (transport) => {
-        setTransport(transport.name);
-      });
-    }
-    function onDisconnect() {
-      setIsConnected(false);
-      setTransport("N/A");
-    }
-
-    function onNewMessage(value: any) {
-      // console.log("Socket Message: ", value.message);
-
-      setMessages((prevMessages: any) => [...prevMessages, value.message]);
-    }
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("new message", onNewMessage);
-    // console.log(isConnected ? "connected" : "disconnected");
-    // console.log(transport);
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("new message", onNewMessage);
-    };
-  }, []);
 
   if (!params?.serverID || !params?.spaceID) {
     return "";

@@ -65,7 +65,8 @@ class WebSockets {
       const socketConn = global.io.sockets.sockets.get(userInfo.socketId);
       if (socketConn) {
         spaces.map((space) => {
-          socketConn.join(space);
+          socketConn.join(space.toString());
+          console.log("Joined", space, socketConn.id, userInfo.socketId)
         })
 
       }
