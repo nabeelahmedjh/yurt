@@ -22,9 +22,6 @@ import { getData } from "@/lib/get-data";
 
 import CreateServerModal from "@/components/modals/create-server-modal";
 import LogoutButton from "@/components/logout-button";
-import { Button } from "../ui/button";
-
-import { socket } from "@/app/socket-client";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
@@ -39,11 +36,6 @@ export default function ChatServers() {
     name: profileData?.user?.email ?? "Unknown",
     img: "",
   };
-
-  useEffect(() => {
-    socket.emit("identity", profileData?.user?._id);
-    console.log("profileData", profileData?.user?._id);
-  }, []);
 
   // useEffect(() => {
   //   console.log("profile", profileData);

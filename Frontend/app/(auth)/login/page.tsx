@@ -169,7 +169,7 @@ export default function Login() {
                   return;
                 }
                 const { data } = event;
-                console.log(data.token);
+                // console.log(data.token);
                 document.cookie = "authToken=" + data.token;
                 router.refresh();
               });
