@@ -21,15 +21,15 @@ export async function postLogin(loginData: object) {
     if (response?.statusText === "OK") {
       setCookie("authToken", response.data.token);
       
-      let profileData = await axios.get(`${apiUrl}/auth/profile`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${response.data.token}`,
-        },
-      })
-          socket.emit("identity", profileData.data.data.user._id);
+      // let profileData = await axios.get(`${apiUrl}/auth/profile`, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${response.data.token}`,
+      //   },
+      // })
+      //     socket.emit("identity", profileData.data.data.user._id);
     
-          console.log("profileData", profileData.data.data.user._id);      
+      //     console.log("profileData", profileData.data.data.user._id);      
     }
   } catch (error) {
     console.error("Error:", error);
