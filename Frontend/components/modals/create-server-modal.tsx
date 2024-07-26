@@ -31,6 +31,8 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import useCreateServer from "@/hooks/useCreateServer";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function CreateServerModal({
@@ -41,6 +43,7 @@ export default function CreateServerModal({
   const [open, setOpen] = React.useState(false);
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
+  const { loading, handleCreateServer } = useCreateServer();
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -56,14 +59,18 @@ export default function CreateServerModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { data, status } = await postServer(values);
+    // const { data, status } = await postServer(values);
 
-    if (status?.code === 201) {
+    const error = await handleCreateServer(values);
+
+    if (!error) {
       // router.push(`/servers/${data?._id}`);
       router.refresh();
       toast.success("Server Created Successfully");
       form.reset();
       setOpen(false);
+    } else {
+      toast.error("Something went wrong");
     }
   }
 

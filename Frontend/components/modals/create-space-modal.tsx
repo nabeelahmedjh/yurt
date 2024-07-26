@@ -30,6 +30,8 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import useCreateSpace from "@/hooks/useCreateSpace";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function CreateSpaceModal({
@@ -40,6 +42,8 @@ export default function CreateSpaceModal({
   const [open, setOpen] = React.useState(false);
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
+
+  const { loading, handleCreateSpace } = useCreateSpace();
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -55,16 +59,18 @@ export default function CreateSpaceModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { data, status } = await postSpace(values, params);
+    // const { data, status } = await postSpace(values, params);
 
-    // console.log("data", data);
+    const error = await handleCreateSpace(params.serverID, values);
 
-    if (status?.code === 201) {
+    if (!error) {
       // router.push(`/servers/${params?.serverID}/${data?.data?._id}`);
       router.refresh();
       toast.success("Space Created Successfully");
       form.reset();
       setOpen(false);
+    } else {
+      toast.error("Something went wrong");
     }
   }
 
