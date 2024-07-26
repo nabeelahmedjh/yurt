@@ -11,5 +11,12 @@ const createSpace = async (serverId: string, data: any) => {
   return APIManager.post(url, data, {}, true);
 };
 
+const getServers = async () => {
+  const url = ENDPOINTS.SERVERS;
+  return APIManager.get(url, {}, {}, true);
+}
 
-export { createServer, createSpace };
+
+
+
+export { createServer, createSpace, getServers };

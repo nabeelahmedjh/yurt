@@ -1,18 +1,23 @@
 "use client";
 
 import React from "react";
-
-import useSWR from "swr";
+import { Tent } from "lucide-react";
 
 import { useParams } from "next/navigation";
 
+import useGetServers from "@/hooks/useGetServers";
+
 import { getData } from "@/lib/get-data";
-import { Tent } from "lucide-react";
+import useSWR from "swr";
 
 export default function ChatHeader() {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
-  const { data, error, isLoading } = useSWR("/servers", getData);
+  // const { data, error, isLoading } = useSWR("/servers", getData);
+
+  const { data, isLoading } = useGetServers();
+
+  if (data) console.log(data);
 
   if (isLoading) return;
 
