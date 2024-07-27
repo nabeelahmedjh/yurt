@@ -11,12 +11,45 @@ const createSpace = async (serverId: string, data: any) => {
   return APIManager.post(url, data, {}, true);
 };
 
+const createMessage = async (spaceId: string, data: any) => {
+  const url = ENDPOINTS.MESSAGES(spaceId);
+  return APIManager.post(url, data, {}, true);
+};
+
 const getServers = async () => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, {}, {}, true);
 }
 
+const getMessages = async (spaceId: string) => {
+  const url = ENDPOINTS.MESSAGES(spaceId);
+  return APIManager.get(url, {}, {}, true);
+};
+
+const getProfile = async () => {
+  const url = ENDPOINTS.PROFILE;
+  return APIManager.get(url, {}, {}, true);
+}
+
+const login = async (data: any) => {
+  const url = ENDPOINTS.LOGIN;
+  return APIManager.post(url, data, {}, false);
+};
+
+const signup = async (data: any) => {
+  const url = ENDPOINTS.SIGNUP;
+  return APIManager.post(url, data, {}, false);
+};
 
 
 
-export { createServer, createSpace, getServers };
+export { 
+  createServer, 
+  createSpace, 
+  createMessage, 
+  getServers, 
+  getMessages,
+  getProfile, 
+  login, 
+  signup, 
+};

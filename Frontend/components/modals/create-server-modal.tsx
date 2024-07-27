@@ -1,8 +1,6 @@
 "use client";
-import axios from "axios";
-import { getCookie } from "cookies-next";
-import { useParams } from "next/navigation";
-import React from "react";
+
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,17 +31,18 @@ import { toast } from "sonner";
 
 import useCreateServer from "@/hooks/useCreateServer";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 export default function CreateServerModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const params = useParams<{ serverID: string; spaceID: string }>();
+  const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { loading, handleCreateServer } = useCreateServer();
+  const { handleCreateServer } = useCreateServer();
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -59,8 +58,6 @@ export default function CreateServerModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // const { data, status } = await postServer(values);
-
     const error = await handleCreateServer(values);
 
     if (!error) {
@@ -132,27 +129,4 @@ export default function CreateServerModal({
       </DialogContent>
     </Dialog>
   );
-}
-
-async function postServer(serverDetails: object) {
-  let response;
-  let token = getCookie("authToken");
-  try {
-    response = await axios.post(`${apiUrl}/servers`, serverDetails, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error:", error);
-  }
-
-  return {
-    data: response?.data,
-    status: {
-      code: response?.status,
-      text: response?.statusText,
-    },
-  };
 }

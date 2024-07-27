@@ -56,7 +56,7 @@ export default function ChatContent() {
   };
 
   return (
-    <div className="bg-red-300 flex flex-col h-dvh">
+    <div className="flex flex-col h-dvh">
       <ChatHeader />
       <ScrollArea className="flex-1 overflow-y-auto">
         <ChatMessages

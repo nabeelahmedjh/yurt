@@ -1,7 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-
-import { useEffect } from "react";
 
 import {
   Tooltip,
@@ -9,17 +6,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import { Separator } from "@/components/ui/separator";
-
 import { ChevronDown, Plus, TentIcon } from "lucide-react";
-
-import useSWR, { useSWRConfig } from "swr";
-
 import { useParams, useRouter } from "next/navigation";
-
-import { getData } from "@/lib/get-data";
 import CreateSpaceModal from "@/components/modals/create-space-modal";
+import useGetServers from "@/hooks/useGetServers";
 
 export default function ChatSpaces({
   isWhiteboardOpen,
@@ -29,17 +20,7 @@ export default function ChatSpaces({
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
-  const { mutate } = useSWRConfig();
-
-  const { data, error, isLoading } = useSWR("/servers", getData);
-
-  // useEffect(() => {
-  //   console.log("SpacesData: ", data);
-  // }, [data]);
-
-  useEffect(() => {
-    mutate("/servers");
-  }, [params]);
+  const { data } = useGetServers();
 
   if (isWhiteboardOpen) return null;
 

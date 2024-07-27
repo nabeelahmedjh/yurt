@@ -12,6 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { TOKEN } from "@/constants";
+
 export default function LogoutButton() {
   const router = useRouter();
   return (
@@ -20,7 +22,7 @@ export default function LogoutButton() {
         <TooltipTrigger>
           <div
             onClick={() => {
-              deleteCookie("authToken");
+              deleteCookie(TOKEN);
               router.refresh();
             }}
             className="hover:bg-gray-300 p-2 rounded-[8px]"

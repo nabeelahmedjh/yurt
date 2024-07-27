@@ -1,31 +1,20 @@
 "use client";
+
 import ChatLayout from "@/components/chat/chat-layout";
-import { useEffect, useState } from "react";
-
 import { socket } from "@/app/socket-client";
-import { getData } from "@/lib/get-data";
-
+import useGetProfile from "@/hooks/useGetProfile";
 export default function Layout({ children }: { children?: React.ReactNode }) {
-  const [isMounted, setIsMounted] = useState(false);
-  const [profileId, setProfileId] = useState<any>(null);
+  const { data: profileData } = useGetProfile();
 
-  useEffect(() => {
-    setIsMounted(true);
+  const profileId = profileData?.user?._id;
 
-    async function getProfile() {
-      const profileData = await getData("/auth/profile");
-      setProfileId(profileData.user._id);
+  if (profileId) {
+    if (!sessionStorage.getItem("isIdentitySent")) {
+      socket.emit("identity", profileId);
+
+      sessionStorage.setItem("isIdentitySent", "true");
     }
-    getProfile();
-
-    if (isMounted && profileId) {
-      if (!sessionStorage.getItem("isIdentitySent")) {
-        socket.emit("identity", profileId);
-
-        sessionStorage.setItem("isIdentitySent", "true");
-      }
-    }
-  }, [isMounted, profileId]);
+  }
 
   return (
     <>

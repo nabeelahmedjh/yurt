@@ -1,9 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosInstance } from 'axios';
 import { getCookie } from "cookies-next";
+import { TOKEN } from '@/constants';
 
 
 const getTokenFromCookies = (): string | undefined => {
-  return getCookie("authToken") 
+  return getCookie(TOKEN) 
 };
 
 class APIManager {

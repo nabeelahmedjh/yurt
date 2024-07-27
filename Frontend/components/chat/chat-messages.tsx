@@ -1,20 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "lucide-react";
-
-import axios from "axios";
-
-import { getCookie } from "cookies-next";
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
+import MessageItem from "@/components/chat/chat-message-item";
+import useGetMessages from "@/hooks/useGetMessages";
 
 export default function ChatMessages({
   messages,
@@ -27,98 +15,28 @@ export default function ChatMessages({
 }) {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
-  useEffect(() => {
-    async function getData() {
-      if (params?.serverID && params?.spaceID) {
-        const { data } = await getMessages(params);
+  const { data } = useGetMessages();
+  if (data) setMessages(data);
 
-        setMessages(data);
-      }
-    }
-
-    getData();
-  }, [params]);
-
-  if (!params?.serverID || !params?.spaceID) {
-    return "";
-  }
+  if (!params?.serverID || !params?.spaceID) return "";
 
   return (
     <div className="p-4">
-      {messages?.map((message: any) => (
-        <li className="list-none" key={message._id}>
-          <MessageItem
-            img={message.img}
-            content={message.content}
-            name={
-              message?.sentBy?.username
-                ? message?.sentBy?.username
-                : message?.sentBy?.email ?? "Unknown"
-            }
-          />
-        </li>
-      ))}
+      {params?.spaceID &&
+        messages?.map((message: any) => (
+          <li className="list-none" key={message._id}>
+            <MessageItem
+              img={message.img}
+              content={message.content}
+              name={
+                message?.sentBy?.username
+                  ? message?.sentBy?.username
+                  : message?.sentBy?.email ?? "Unknown"
+              }
+            />
+          </li>
+        ))}
       <div className="pb-4" ref={messageContainerRef}></div>
     </div>
   );
-}
-
-function MessageItem({
-  img,
-  name,
-  content,
-}: {
-  img?: string;
-  name: string;
-  content: string;
-}) {
-  return (
-    <>
-      <div className="p-2 ml-4">
-        <div className="flex gap-4">
-          <div>
-            <Avatar className="size-8">
-              <AvatarImage src={img} />
-              <AvatarFallback className="bg-green-200">
-                <User className="text-green-700" />
-              </AvatarFallback>
-            </Avatar>
-          </div>
-          <p className="text-[1rem] self-center font-medium text-green-700">
-            {name}
-          </p>
-        </div>
-        <div className="ml-12">
-          <p className=" whitespace-pre-wrap bg-orange-50 text-orange-900 rounded-[8px] inline-block px-2 py-1 break-words max-w-[70vw] sm:max-w-[30vw]">
-            {content}
-          </p>
-        </div>
-      </div>
-    </>
-  );
-}
-
-async function getMessages(params: { serverID: string; spaceID: string }) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  let response;
-  let token = getCookie("authToken");
-
-  try {
-    response = await axios.get(`${apiUrl}/spaces/${params?.spaceID}/messages`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error:", error);
-  }
-
-  return {
-    data: response?.data?.data,
-    status: {
-      code: response?.status,
-      text: response?.statusText,
-    },
-  };
 }

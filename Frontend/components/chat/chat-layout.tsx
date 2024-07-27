@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
 
+import { useEffect, useRef, useState } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -13,7 +13,6 @@ import ChatSidebar from "@/components/chat/chat-sidebar";
 import ChatContent from "@/components/chat/chat-content";
 import ChatRightbar from "@/components/chat/chat-rightbar";
 
-import Explore from "@/components/explore-servers/explore";
 import Whiteboard from "../whiteboard";
 
 import { useViewportWidth } from "@/lib/viewport-width";

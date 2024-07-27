@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
@@ -9,42 +7,25 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import { Separator } from "@/components/ui/separator";
-
 import { CompassIcon, Plus, User2 } from "lucide-react";
-
-import useSWR, { useSWRConfig } from "swr";
-
 import { useParams, useRouter } from "next/navigation";
-
-import { getData } from "@/lib/get-data";
-
 import CreateServerModal from "@/components/modals/create-server-modal";
 import LogoutButton from "@/components/logout-button";
+import useGetProfile from "@/hooks/useGetProfile";
+import useGetServers from "@/hooks/useGetServers";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
-  const { mutate } = useSWRConfig();
-  const { data, error, isLoading } = useSWR("/servers", getData);
-
-  const { data: profileData } = useSWR("/auth/profile", getData);
+  const { data, isLoading } = useGetServers();
+  const { data: profileData } = useGetProfile();
 
   const profile = {
     name: profileData?.user?.email ?? "Unknown",
     img: "",
   };
-
-  // useEffect(() => {
-  //   console.log("profile", profileData);
-  //   console.log("data", data);
-  // }, [profileData, data]);
-
-  useEffect(() => {
-    mutate("/servers");
-  }, [params]);
 
   return (
     <div className="bg-secondary border-r-2 h-dvh p-2 flex flex-col items-center">
