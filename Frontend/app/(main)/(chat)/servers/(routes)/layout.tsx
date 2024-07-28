@@ -1,8 +1,9 @@
 "use client";
 
 import ChatLayout from "@/components/chat/chat-layout";
-import { socket } from "@/app/socket-client";
 import useGetProfile from "@/hooks/useGetProfile";
+import SocketService from "@/services/SocketService";
+
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const { data: profileData } = useGetProfile();
 
@@ -10,6 +11,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 
   if (profileId) {
     if (!sessionStorage.getItem("isIdentitySent")) {
+      const socket = SocketService.connect();
       socket.emit("identity", profileId);
 
       sessionStorage.setItem("isIdentitySent", "true");

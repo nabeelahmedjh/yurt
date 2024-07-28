@@ -16,9 +16,7 @@ class SocketService {
 
   public connect(): Socket {
     if (!this.socket) {
-      this.socket = io(this.SOCKET_URL, {
-        withCredentials: true,
-      });
+      this.socket = io(this.SOCKET_URL);
     }
     return this.socket;
   }
