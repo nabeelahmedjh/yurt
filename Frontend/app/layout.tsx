@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
-
+import { JotaiProvider } from "@/components/jotai-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 // const rubik = Rubik({ subsets: ["latin"] });
@@ -33,7 +33,7 @@ export default function RootLayout({
           defaultTheme="light"
           disableTransitionOnChange
         >
-          {children}
+          <JotaiProvider>{children}</JotaiProvider>
         </ThemeProvider>
       </body>
     </html>

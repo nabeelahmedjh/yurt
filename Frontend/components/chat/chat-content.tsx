@@ -1,16 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
+"use client";
 
+import { useState, useRef, useEffect } from "react";
 import ChatHeader from "@/components/chat/chat-header";
 import ChatMessages from "@/components/chat/chat-messages";
 import ChatInput from "@/components/chat/chat-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import useGetMessages from "@/hooks/useGetMessages";
 import { socket } from "@/app/socket-client";
 
 export default function ChatContent() {
   const [messages, setMessages] = useState<object[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const { data } = useGetMessages();
+
+  useEffect(() => {
+    console.log("Data");
+    if (data) setMessages(data);
+  }, [data]);
 
   useEffect(() => {
     if (socket.connected) {
@@ -62,7 +70,6 @@ export default function ChatContent() {
         <ChatMessages
           messageContainerRef={messagesEndRef}
           messages={messages}
-          setMessages={setMessages}
         />
       </ScrollArea>
       <ChatInput />

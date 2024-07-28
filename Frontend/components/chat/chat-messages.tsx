@@ -2,21 +2,15 @@
 
 import { useParams } from "next/navigation";
 import MessageItem from "@/components/chat/chat-message-item";
-import useGetMessages from "@/hooks/useGetMessages";
 
 export default function ChatMessages({
   messages,
-  setMessages,
   messageContainerRef,
 }: {
   messages?: any;
-  setMessages?: any;
   messageContainerRef?: any;
 }) {
   const params = useParams<{ serverID: string; spaceID: string }>();
-
-  const { data } = useGetMessages();
-  if (data) setMessages(data);
 
   if (!params?.serverID || !params?.spaceID) return "";
 
