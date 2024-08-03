@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
 import { hasCookie } from "cookies-next";
+import { TOKEN } from "@/constants";
 
 export const viewport = {
   width: "device-width",
@@ -11,7 +12,7 @@ export const viewport = {
 };
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
-  if (!hasCookie("authToken", { cookies })) {
+  if (!hasCookie(TOKEN, { cookies })) {
     redirect("/login");
   }
 

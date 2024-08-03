@@ -1,8 +1,7 @@
 "use client";
-import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useParams } from "next/navigation";
-import React from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,16 +29,22 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+import useCreateSpace from "@/hooks/useCreateSpace";
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 export default function CreateSpaceModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
+
+  const { handleCreateSpace } = useCreateSpace();
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -55,16 +60,16 @@ export default function CreateSpaceModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { data, status } = await postSpace(values, params);
+    const error = await handleCreateSpace(params.serverID, values);
 
-    // console.log("data", data);
-
-    if (status?.code === 201) {
+    if (!error) {
       // router.push(`/servers/${params?.serverID}/${data?.data?._id}`);
       router.refresh();
       toast.success("Space Created Successfully");
       form.reset();
       setOpen(false);
+    } else {
+      toast.error("Something went wrong");
     }
   }
 
@@ -119,34 +124,4 @@ export default function CreateSpaceModal({
       </DialogContent>
     </Dialog>
   );
-}
-
-async function postSpace(
-  spaceDetails: object,
-  params: { serverID: string; spaceID: string }
-) {
-  let response;
-  let token = getCookie("authToken");
-  try {
-    response = await axios.post(
-      `${apiUrl}/servers/${params?.serverID}/spaces`,
-      spaceDetails,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error:", error);
-  }
-
-  return {
-    data: response?.data?.data,
-    status: {
-      code: response?.status,
-      text: response?.statusText,
-    },
-  };
 }

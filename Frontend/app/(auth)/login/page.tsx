@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import {
   Form,
   FormControl,
@@ -17,9 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,17 +29,18 @@ import {
   LockKeyholeIcon,
   Mail,
 } from "lucide-react";
-
 import { loginSchema } from "./schema";
+import useGoogleOAuth from "@/hooks/useGoogleOAuth";
+import useLogin from "@/hooks/useLogin";
 
-import { postLogin } from "./post-login";
-
-import { useRouter } from "next/navigation";
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 export default function Login() {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
+  const { isLoading, handleLogin } = useLogin();
+  const handleGoogleOAuth = useGoogleOAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -53,21 +51,8 @@ export default function Login() {
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    setIsLoading(true);
-    const { data, status } = await postLogin(values);
-    console.log(data);
-    setIsLoading(false);
+    await handleLogin(values);
     form.reset();
-
-    if (status?.text === "OK") {
-      router.refresh();
-
-      /* Below solution does not work for some reason.
-         current workaround is to have the route push in layout
-         and then refresh the page in here */
-
-      // router.push("/servers");
-    }
   }
 
   return (
@@ -153,28 +138,7 @@ export default function Login() {
         </div>
         <div className="flex flex-col items-center space-y-2 mt-4">
           <p>or</p>
-          <Button
-            variant="link"
-            onClick={() => {
-              const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-              const width = 500;
-              const height = 550;
-              const left = window.innerWidth / 2 - width / 2;
-              const top = window.innerHeight / 2 - height / 2;
-              const options = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`;
-              window.open(`${apiUrl}/auth/google`, "_blank", options);
-
-              window.addEventListener("message", (event) => {
-                if (event.origin !== apiUrl) {
-                  return;
-                }
-                const { data } = event;
-                // console.log(data.token);
-                document.cookie = "authToken=" + data.token;
-                router.refresh();
-              });
-            }}
-          >
+          <Button variant="link" onClick={() => handleGoogleOAuth()}>
             <p>Sign In with Google</p>
           </Button>
         </div>

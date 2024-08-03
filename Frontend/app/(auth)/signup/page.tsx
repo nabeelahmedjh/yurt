@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import {
   Form,
   FormControl,
@@ -17,16 +16,11 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { signupSchema } from "./schema";
-
-import { postSignup } from "./post-signup";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -37,10 +31,15 @@ import {
   Mail,
   UserRound,
 } from "lucide-react";
+import useSignup from "@/hooks/useSignup";
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 export default function Signup() {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { isLoading, handleSignup } = useSignup();
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -52,10 +51,7 @@ export default function Signup() {
   });
 
   async function onSubmit(values: z.infer<typeof signupSchema>) {
-    setIsLoading(true);
-    const { data } = await postSignup(values);
-    console.log(data);
-    setIsLoading(false);
+    await handleSignup(values);
     form.reset();
   }
 

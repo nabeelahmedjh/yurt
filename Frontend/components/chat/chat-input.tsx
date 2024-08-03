@@ -1,29 +1,31 @@
 "use client";
+
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
-import axios from "axios";
-
-import { getCookie } from "cookies-next";
-
 import { useParams } from "next/navigation";
 import { ArrowUp } from "lucide-react";
+import useCreateMessage from "@/hooks/useCreateMessage";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 export default function ChatInput() {
   const [text, setText] = useState("");
   const params = useParams<{ serverID: string; spaceID: string }>();
+  const { handleCreateMessage } = useCreateMessage();
 
   async function onSubmit(e: any) {
     e.preventDefault();
-    // console.log(text);
-    const formData = new FormData();
+    // const formData = new FormData();
+    // formData.append("content", text);
 
-    formData.append("content", text);
+    const formData = {
+      content: text,
+    };
 
-    await postMessage(formData, params);
+    await handleCreateMessage(params.spaceID, formData);
 
     setText("");
     e.target.value = "";
@@ -60,34 +62,4 @@ export default function ChatInput() {
       </div>
     )
   );
-}
-
-async function postMessage(
-  chatMessage: object,
-  params: { serverID: string; spaceID: string }
-) {
-  let response;
-  let token = getCookie("authToken");
-  try {
-    response = await axios.post(
-      `${apiUrl}/spaces/${params?.spaceID}/messages`,
-      chatMessage,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error:", error);
-  }
-
-  return {
-    data: response?.data,
-    status: {
-      code: response?.status,
-      text: response?.statusText,
-    },
-  };
 }

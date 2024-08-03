@@ -1,8 +1,6 @@
 "use client";
-import axios from "axios";
-import { getCookie } from "cookies-next";
-import { useParams } from "next/navigation";
-import React from "react";
+
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,16 +29,20 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+import useCreateServer from "@/hooks/useCreateServer";
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 export default function CreateServerModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const params = useParams<{ serverID: string; spaceID: string }>();
+  const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { handleCreateServer } = useCreateServer();
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -56,14 +58,16 @@ export default function CreateServerModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { data, status } = await postServer(values);
+    const error = await handleCreateServer(values);
 
-    if (status?.code === 201) {
+    if (!error) {
       // router.push(`/servers/${data?._id}`);
       router.refresh();
       toast.success("Server Created Successfully");
       form.reset();
       setOpen(false);
+    } else {
+      toast.error("Something went wrong");
     }
   }
 
@@ -125,27 +129,4 @@ export default function CreateServerModal({
       </DialogContent>
     </Dialog>
   );
-}
-
-async function postServer(serverDetails: object) {
-  let response;
-  let token = getCookie("authToken");
-  try {
-    response = await axios.post(`${apiUrl}/servers`, serverDetails, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error:", error);
-  }
-
-  return {
-    data: response?.data,
-    status: {
-      code: response?.status,
-      text: response?.statusText,
-    },
-  };
 }
