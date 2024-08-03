@@ -10,12 +10,10 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
   const profileId = profileData?.user?._id;
 
   if (profileId) {
-    if (!sessionStorage.getItem("isIdentitySent")) {
-      const socket = SocketService.connect();
-      socket.emit("identity", profileId);
+    const socket = SocketService.connect();
+    socket.emit("identity", profileId);
 
-      sessionStorage.setItem("isIdentitySent", "true");
-    }
+    sessionStorage.setItem("isIdentitySent", "true");
   }
 
   return (
