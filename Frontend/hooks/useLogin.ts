@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { login } from '@/ApiManager/apiMethods';
+import { login, getProfile } from '@/ApiManager/apiMethods';
 import { setCookie } from "cookies-next";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
-import { TOKEN } from '@/constants';
+import { TOKEN, USER_ID } from '@/constants';
 
 const useLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -15,8 +15,15 @@ const useLogin = () => {
 
     try {
       const response:any = await login(data);
+
       if (response.token) {
+        
         setCookie(TOKEN, response.token);
+        
+        const data: any = await getProfile();
+        const userId = data.data.user._id;
+        setCookie(USER_ID, userId);
+
         router.refresh();
 
       /* Below solution does not work for some reason.

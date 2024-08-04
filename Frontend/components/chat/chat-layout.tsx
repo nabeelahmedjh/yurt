@@ -6,16 +6,16 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-
 import type { ImperativePanelHandle } from "react-resizable-panels";
-
 import ChatSidebar from "@/components/chat/chat-sidebar";
 import ChatContent from "@/components/chat/chat-content";
 import ChatRightbar from "@/components/chat/chat-rightbar";
-
 import Whiteboard from "../whiteboard";
-
 import { useViewportWidth } from "@/lib/viewport-width";
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 export default function ChatLayout() {
   const [isWhiteboardOpen, setIsWhiteboardOpen] = useState(false);

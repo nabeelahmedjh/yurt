@@ -7,9 +7,12 @@ import ChatInput from "@/components/chat/chat-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useGetMessages from "@/hooks/useGetMessages";
 
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
 export default function ChatContent() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
   const { messages } = useGetMessages();
 
   useEffect(() => {
