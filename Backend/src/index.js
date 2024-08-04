@@ -10,6 +10,7 @@ import logger from "morgan";
 import cors from "cors";
 import WebSockets from "./sockets/sockets.js";
 import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui"
 import passport from "passport";
 import "./strategy/jwt-strategy.js";
 import "./strategy/local-strategy.js";
@@ -28,8 +29,14 @@ dbConnection();
 const app = express();
 const socketio = new Server({
   cors: {
-    origin: "http://localhost:3001",
+    origin: ["http://localhost:3001", "https://admin.socket.io"],
+    credentials: true,
   },
+});
+
+instrument(socketio, {
+  auth: false,
+  mode: "development",
 });
 
 app.use(logger("dev"));
