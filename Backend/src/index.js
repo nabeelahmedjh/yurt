@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import "dotenv/config";
@@ -60,6 +61,7 @@ app.use(passport.session());
 app.use(cors(corsOptions));
 
 app.use("/", routes);
+app.use('/uploads', express.static(path.join(import.meta.dirname, '..' , 'uploads')))
 
 const server = http.createServer(app);
 global.io = socketio.listen(server);
