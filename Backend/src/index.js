@@ -61,7 +61,7 @@ app.use(passport.session());
 app.use(cors(corsOptions));
 
 app.use("/", routes);
-app.use('/uploads', express.static(path.join(import.meta.dirname, '..' , 'uploads')))
+app.use("/uploads", express.static(path.join(import.meta.url, "..", "uploads")));
 
 const server = http.createServer(app);
 global.io = socketio.listen(server);
