@@ -26,7 +26,7 @@ export default function ChatInput() {
   const { handleCreateMessage } = useCreateMessage();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const MAX_FILES_UPLOAD_LIMIT = 1;
+    const MAX_FILES_UPLOAD_LIMIT = 10;
 
     if (event.target.files) {
       const newFiles = Array.from(event.target.files);
@@ -40,7 +40,9 @@ export default function ChatInput() {
     }
   };
 
-  const handleRemoveFile = (fileName: string) => {
+  const handleRemoveFile = (fileName?: string) => {
+    !fileName && setAttachedFiles([]);
+
     setAttachedFiles((prevFiles) =>
       prevFiles.filter((file) => file.name !== fileName)
     );
@@ -136,7 +138,7 @@ function FilePreview({
   onRemoveFile,
 }: {
   attachedFiles: File[];
-  onRemoveFile: (fileName: string) => void;
+  onRemoveFile: (fileName?: string) => void;
 }) {
   const [filePreviews, setFilePreviews] = useState<{ [key: string]: string }>(
     {}
@@ -160,44 +162,53 @@ function FilePreview({
   if (!attachedFiles.length) return null;
 
   return (
-    <div className="bg-slate-100 rounded-3xl px-3 mx-4 my-1">
-      <ScrollArea className="overflow-x-auto">
-        <ul className="flex">
-          {attachedFiles.map((file) => (
-            <li
-              key={file.name}
-              className="file-item w-40 mx-1 my-4 flex flex-col bg-secondary rounded-lg border shadow-md p-2"
-              data-filename={file.name}
-            >
-              <span
-                title="Remove file"
-                className="self-end p-1 mb-1 hover:bg-slate-500/10 rounded-full cursor-pointer"
-                onClick={() => onRemoveFile(file.name)}
+    <div className="flex flex-col gap-1 bg-slate-100 rounded-3xl pt-4 mx-4 my-1">
+      <div
+        title="Remove all files"
+        onClick={() => onRemoveFile()}
+        className="self-end mr-4 p-1 cursor-pointer bg-secondary border rounded-[8px] hover:bg-secondary/30 hover:scale-105 transition-transform"
+      >
+        <X className="size-4" />
+      </div>
+      <div className="bg-white rounded-3xl px-3 mx-4 my-1">
+        <ScrollArea className="overflow-x-auto">
+          <ul className="flex">
+            {attachedFiles.map((file) => (
+              <li
+                key={file.name}
+                className="file-item w-40 mx-1 my-4 flex flex-col bg-secondary rounded-lg border shadow-md p-2"
+                data-filename={file.name}
               >
-                <X />
-              </span>
-              {filePreviews[file.name] ? (
-                <img
-                  src={filePreviews[file.name]}
-                  alt={file.name}
-                  className="h-24 object-cover rounded-sm"
-                />
-              ) : (
-                <div className="flex justify-center">
-                  <File strokeWidth={1} className="size-24 px-1" />
+                <span
+                  title="Remove file"
+                  className="self-end p-1 mb-1 hover:bg-slate-500/10 rounded-full cursor-pointer"
+                  onClick={() => onRemoveFile(file.name)}
+                >
+                  <X />
+                </span>
+                {filePreviews[file.name] ? (
+                  <img
+                    src={filePreviews[file.name]}
+                    alt={file.name}
+                    className="h-24 object-cover rounded-sm"
+                  />
+                ) : (
+                  <div className="flex justify-center">
+                    <File strokeWidth={1} className="size-24 px-1" />
+                  </div>
+                )}
+                <div
+                  title={file.name}
+                  className="px-1 mt-4 text-sm overflow-hidden whitespace-nowrap text-ellipsis"
+                >
+                  {file.name}
                 </div>
-              )}
-              <div
-                title={file.name}
-                className="px-1 mt-4 text-sm overflow-hidden whitespace-nowrap text-ellipsis"
-              >
-                {file.name}
-              </div>
-            </li>
-          ))}
-        </ul>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+              </li>
+            ))}
+          </ul>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
     </div>
   );
 }
