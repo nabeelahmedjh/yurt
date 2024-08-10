@@ -6,10 +6,18 @@ import {
   AutosizeTextarea,
   AutosizeTextAreaRef,
 } from "@/components/ui/autosize-textarea";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MessageFileModal from "@/components/modals/message-file-modal";
-import { ArrowUp, File, PaperclipIcon, X } from "lucide-react";
+import { ArrowUp, File, PaperclipIcon, Smile, X } from "lucide-react";
+import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -17,6 +25,7 @@ import { ArrowUp, File, PaperclipIcon, X } from "lucide-react";
 ////////////////////////////////////////////////////////////////////////
 
 export default function ChatInput() {
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [openMessageFileModal, setOpenMessageFileModal] = useState(false);
   const [text, setText] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
@@ -82,6 +91,22 @@ export default function ChatInput() {
             onSubmit={handleSubmit}
             className="flex justify-between items-center"
           >
+            <div className=" absolute bottom-[12%]">
+              <EmojiPicker
+                onEmojiClick={(emojiData) => setText(text + emojiData.emoji)}
+                emojiStyle={EmojiStyle.NATIVE}
+                open={isEmojiPickerOpen}
+              />
+            </div>
+
+            <div onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}>
+              {isEmojiPickerOpen ? (
+                <X className="size-9 p-1 rounded-full border-0 hover:bg-gray-200/70" />
+              ) : (
+                <Smile className="size-9 p-1 rounded-full border-0 hover:bg-gray-200/70" />
+              )}
+            </div>
+
             <div
               aria-label="Attach file"
               onClick={() => fileInputRef.current?.click()}
@@ -132,6 +157,7 @@ export default function ChatInput() {
 }
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { set } from "date-fns";
 
 function FilePreview({
   attachedFiles,
