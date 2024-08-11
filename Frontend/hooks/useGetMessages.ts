@@ -30,7 +30,7 @@ const useGetMessages = () => {
     const socket = SocketService.connect();
 
     const handleMessage = (message: any) => {
-      // console.log('new message', message.message)
+      console.log('new message', message.message)
       setMessages((prevMessages) => [...prevMessages, message.message]);
     };
 

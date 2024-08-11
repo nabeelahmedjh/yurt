@@ -15,7 +15,7 @@ const getJoinedSpacesIds = async (userId) => {
 };
 
 const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
-    console.log("spaceId", spaceId)
+   
     const newMessage = await Message.create({
         content: content,
         sentBy: sentBy,
@@ -23,8 +23,14 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
         attachment: attachment,
 
     });
+    
+    const messagePopulated = await Message.findById(newMessage._id).populate({
+        path: 'sentBy',
+        select: '-serversJoined' 
+      }).exec();    
+    console.log(messagePopulated);
 
-    const newMessageObj = newMessage.toObject();
+    const newMessageObj = messagePopulated;
 
     global.io.to(spaceId).emit("new message", { message: newMessageObj });
     return newMessageObj;

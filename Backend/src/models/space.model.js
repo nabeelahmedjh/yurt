@@ -4,12 +4,17 @@ const spaceSchema = new mongoose.Schema(
   {
     description: {
       type: String,
-      default: "",
+      required: true
     },
     name: {
       type: String,
       required: true,
     },
+    spaceBanner: {
+      type: String,
+      required: false,
+      default : ""
+    }
   },
   { timestamps: true }
 );

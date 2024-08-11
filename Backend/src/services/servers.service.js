@@ -4,11 +4,12 @@ import { Server, Space, User } from "../models/index.js";
 const createServer = async (req, res) => {
   const user = req.user.user;
   console.log(user);
-  const { name, description } = req.body;
+  const { name, description,banner} = req.body;
 
   const newServer = await Server.create({
     name,
     description,
+    banner,
     admins: [user._id],
     members: [user._id],
   });
@@ -16,12 +17,13 @@ const createServer = async (req, res) => {
   const logedInUser = await User.findOne({ _id: user._id });
   console.log("model")
   logedInUser.serversJoined.push(newServer._id);
+  
   await logedInUser.save();
 
   return newServer
 };
 
-const getServers = async (req, res) => {
+const getJionedServers = async (req, res) => {
   const user = req.user;
   const userId = user.user._id;
 
@@ -41,6 +43,40 @@ const getServers = async (req, res) => {
   ])
   return servers;
 };
+
+const getAllServers = async(req, res) =>{
+  const user = req.user;
+  const userId = user.user._id;
+
+  const servers = await Server.aggregate([
+    { 
+    $addFields: {
+        userJoined: {
+          $in: [new mongoose.Types.ObjectId(userId), "$members"]
+        }
+      }
+    },
+    {
+      $sort: {
+        userJoined: -1
+      }
+    },
+    {
+      
+      $project: {
+        name: 1,            
+        description: 1,
+        banner: 1,     
+        userJoined: 1,      
+        membersCount: {     
+          $size: "$members"
+        },
+        _id: 1              
+      }
+    }
+  ])
+  return servers;
+}
 
 const createSpace = async (req, res) => {
   const { serverId } = req.params;
@@ -66,6 +102,7 @@ const createSpace = async (req, res) => {
 
 export default {
   createServer,
-  getServers,
+  getJionedServers,
+  getAllServers,
   createSpace,
 };

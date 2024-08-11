@@ -33,12 +33,33 @@ const createServer = async (req, res) => {
 
 const getServers = async (req, res) => {
   try {
-    const servers = await serversService.getServers(req, res);
-    return res.status(200).json({
+
+    const filter = req.query;
+    console.log(filter.servers);
+
+    if(filter.servers === "joined"){
+      const servers = await serversService.getJionedServers(req, res);
+      return res.status(200).json({
       data: servers
     })
+    }
+    else if(filter.servers === "all"){
+      const servers = await serversService.getAllServers(req, res);
+
+      return res.status(200).json({
+        data: servers
+      })
+    }
+
+    else{
+      return res.status(400).json({
+        data: "Please apply filter correctly. servers=joined 0r servers=all."
+      })
+    }
+
+    
   } catch (error) {
-    return res.status(200).json({
+    return res.status(500).json({
       error: { message: error.message },
     })
   }
