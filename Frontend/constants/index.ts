@@ -1,10 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TOKEN = "token";
 const USER_ID = "user_id";
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const FILEMANAGER_HOST = process.env.NEXT_PUBLIC_FILEMANAGER_HOST;
+const FILEMANAGER_LISCENCE_KEY =
+  process.env.NEXT_PUBLIC_FILEMANAGER_LISCENCE_KEY;
 
-
-export {
-    TOKEN,
-    API_URL,
-    USER_ID
-}
+export { TOKEN, USER_ID, API_URL, FILEMANAGER_HOST, FILEMANAGER_LISCENCE_KEY };
