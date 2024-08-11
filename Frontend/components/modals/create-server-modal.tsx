@@ -62,7 +62,7 @@ export default function CreateServerModal({
 
     if (!error) {
       // router.push(`/servers/${data?._id}`);
-      router.refresh();
+      // router.refresh();
       toast.success("Server Created Successfully");
       form.reset();
       setOpen(false);

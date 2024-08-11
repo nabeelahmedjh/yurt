@@ -64,7 +64,7 @@ export default function CreateSpaceModal({
 
     if (!error) {
       // router.push(`/servers/${params?.serverID}/${data?.data?._id}`);
-      router.refresh();
+      // router.refresh();
       toast.success("Space Created Successfully");
       form.reset();
       setOpen(false);
