@@ -24,15 +24,9 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
 
     });
     
-    const messagePopulated = await Message.findById(newMessage._id).populate({
-        path: 'sentBy',
-        select: '-serversJoined' 
-      }).exec();    
-    console.log(messagePopulated);
 
-    const newMessageObj = messagePopulated;
 
-    global.io.to(spaceId).emit("new message", { message: newMessageObj });
+    const newMessageObj = newMessage.toObject();
     return newMessageObj;
 }
 
