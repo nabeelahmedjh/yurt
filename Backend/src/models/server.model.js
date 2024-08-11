@@ -8,11 +8,12 @@ const serverSchema = new moongose.Schema(
     },
     description: {
       type: String,
-      required: false,
+      required: true,
     },
     banner: {
       type: String,
       required: false,
+      default: ""
     },
     spaces: [
       {

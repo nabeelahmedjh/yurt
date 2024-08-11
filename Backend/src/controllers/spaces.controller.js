@@ -4,7 +4,7 @@ import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
 
 const createSpace = async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, spaceBanner } = req.body;
 
   if (!name) {
     return res.status(400).json({
@@ -20,7 +20,7 @@ const createSpace = async (req, res) => {
 
   try {
 
-    const newSpace = await Space.create({ name, description });
+    const newSpace = await Space.create({ name, description, spaceBanner });
 
     res.status(201).json({
       data: newSpace
@@ -41,9 +41,6 @@ const sendMessageInSpace = async (req, res) => {
     : null;
   const sentBy = req.user.user._id;
 
-
-
-
   if (!content) {
     return res.status(400).json({
       error: { message: "Content is required" },
@@ -55,10 +52,11 @@ const sendMessageInSpace = async (req, res) => {
     spaceId: spaceId,
     attachment: attachment,
   }
-  console.log(message);
+  
   try {
     const sentMessage = await spacesService.sendMessageInSpace(content, spaceId, sentBy, attachment);
     sentMessage.sentBy = req.user.user;
+    global.io.to(spaceId).emit("new message", { message: sentMessage});
     return res.status(201).json({
       data: sentMessage
     });

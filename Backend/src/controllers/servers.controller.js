@@ -32,17 +32,44 @@ const createServer = async (req, res) => {
 };
 
 const getServers = async (req, res) => {
+  // const {type, search} = req.query;
+  // ==========================
+  const type =  req.query.type ?? "";
+  const search =  req.query.search ?? "";
+
+  console.log(search)
   try {
-    const servers = await serversService.getServers(req, res);
-    return res.status(200).json({
+    
+    if(!type|| type === "joined" ){
+      const servers = await serversService.getJionedServers(req, res);
+      return res.status(200).json({
       data: servers
     })
+    }
+    else if(type === "all"){
+      const servers = await serversService.getAllServers(req, res);
+      const searchRegex = new RegExp(search, "i"); 
+      const matchingServers = servers.filter(server => searchRegex.test(server.name));
+      return res.status(200).json({
+      data: matchingServers
+    });
+    }
+    
+    
+    else{
+      return res.status(400).json({
+        data: "Please apply filter correctly. servers=joined 0r servers=all."
+      })
+    }
   } catch (error) {
-    return res.status(200).json({
+    return res.status(500).json({
       error: { message: error.message },
     })
   }
 };
+
+
+
 
 const createSpace = async (req, res) => {
 
@@ -128,4 +155,5 @@ export default {
   getServers,
   createSpace,
   joinServer,
+  
 };
