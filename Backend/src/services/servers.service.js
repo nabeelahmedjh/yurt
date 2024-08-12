@@ -26,7 +26,6 @@ const createServer = async (req, res) => {
 const getJionedServers = async (req, res) => {
   const user = req.user;
   const userId = user.user._id;
-
   const servers = await Server.aggregate([
     {
       $match:
@@ -44,13 +43,22 @@ const getJionedServers = async (req, res) => {
   return servers;
 };
 
-const getAllServers = async(req, res) =>{
-  const user = req.user;
-  const userId = user.user._id;
+const getAllServers = async(userId, search) =>{
+
 
   const servers = await Server.aggregate([
+  
+    {
+    $match:{
+      name:{
+        $regex: search,
+        '$options': "i"
+      }
+    }
+    },
     { 
     $addFields: {
+
         userJoined: {
           $in: [new mongoose.Types.ObjectId(userId), "$members"]
         }

@@ -9,6 +9,6 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", spacesController.createSpace);
-router.post("/:spaceId/messages", upload.single("attachment"), spacesController.sendMessageInSpace);
+router.post("/:spaceId/messages", upload.array("attachment", 5), spacesController.sendMessageInSpace);
 router.get("/:spaceId/messages", spacesController.getMessagesInSpace);
 export default router;

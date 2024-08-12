@@ -32,8 +32,7 @@ const createServer = async (req, res) => {
 };
 
 const getServers = async (req, res) => {
-  // const {type, search} = req.query;
-  // ==========================
+
   const type =  req.query.type ?? "";
   const search =  req.query.search ?? "";
 
@@ -47,11 +46,11 @@ const getServers = async (req, res) => {
     })
     }
     else if(type === "all"){
-      const servers = await serversService.getAllServers(req, res);
-      const searchRegex = new RegExp(search, "i"); 
-      const matchingServers = servers.filter(server => searchRegex.test(server.name));
+      const user = req.user;
+      const userId = user.user._id;
+      const servers = await serversService.getAllServers(userId, search);
       return res.status(200).json({
-      data: matchingServers
+      data: servers
     });
     }
     

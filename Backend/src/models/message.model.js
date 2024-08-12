@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    attachment: {
+    attachment: [{
       type: Object,
       required: false,
       default: null,
-    },
+    }],
     content: {
       type: String,
       default: "",
