@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { hasCookie } from "cookies-next";
 import Image from "next/image";
-import { TOKEN } from "@/constants";
+import { TOKEN, USER_ID } from "@/constants";
 import loginIllustration from "@/public/auth-bg.svg";
 
 export default function AuthLayout({
@@ -10,7 +10,7 @@ export default function AuthLayout({
 }: {
   children?: React.ReactNode;
 }) {
-  if (hasCookie(TOKEN, { cookies })) {
+  if (hasCookie(TOKEN, { cookies }) && hasCookie(USER_ID, { cookies })) {
     redirect("/servers");
   }
 

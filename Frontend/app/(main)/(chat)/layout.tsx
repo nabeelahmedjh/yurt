@@ -13,6 +13,7 @@ export const viewport = {
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
   if (!hasCookie(TOKEN, { cookies }) || !hasCookie(USER_ID, { cookies })) {
+    console.warn("No token or user id cookie found");
     redirect("/login");
   }
 
