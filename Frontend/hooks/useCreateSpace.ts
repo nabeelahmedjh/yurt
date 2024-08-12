@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { createSpace } from '@/ApiManager/apiMethods';
+import { useState } from "react";
+import { createSpace } from "@/ApiManager/apiMethods";
+import useGetServers from "@/hooks/useGetServers";
 
 interface SpaceData {
   name: string;
@@ -8,17 +9,17 @@ interface SpaceData {
 
 const useCreateSpace = () => {
   const [loading, setLoading] = useState(false);
+  const { mutate } = useGetServers();
 
   const handleCreateSpace = async (serverId: string, data: SpaceData) => {
     setLoading(true);
 
     try {
       await createSpace(serverId, data);
+      mutate();
       return null;
     } catch (err) {
-
       return (err as Error).message || "An error occurred";
-     
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint"
   },
   "dependencies": {
@@ -31,7 +31,7 @@
     "emoji-picker-react": "^4.11.1",
     "jotai": "^2.9.1",
     "lucide-react": "^0.376.0",
-    "next": "14.2.3",
+    "next": "^14.2.5",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
