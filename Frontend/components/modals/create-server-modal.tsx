@@ -62,7 +62,12 @@ export default function CreateServerModal({
 
     if (!error) {
       // router.push(`/servers/${data?._id}`);
-      // router.refresh();
+
+      // router refresh is required so that identity event emits again and the new
+      // server is added in to the room
+
+      router.refresh();
+
       toast.success("Server Created Successfully");
       form.reset();
       setOpen(false);

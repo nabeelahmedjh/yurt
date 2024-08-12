@@ -64,7 +64,12 @@ export default function CreateSpaceModal({
 
     if (!error) {
       // router.push(`/servers/${params?.serverID}/${data?.data?._id}`);
-      // router.refresh();
+
+      // router refresh is required so that identity event emits again and the new
+      // server is added in to the room
+
+      router.refresh();
+
       toast.success("Space Created Successfully");
       form.reset();
       setOpen(false);

@@ -19,7 +19,7 @@ export default function MessageItem({
   attachment?: {
     source: string;
     type: string;
-  };
+  }[];
 }) {
   return (
     <>
@@ -45,13 +45,14 @@ export default function MessageItem({
           <p className=" whitespace-pre-wrap inline-block px-2 py-1 break-words max-w-[70vw] sm:max-w-[30vw]">
             {content}
           </p>
-          {attachment && (
-            <div className="p-2">
-              {attachment?.type.includes("image") ? (
-                <PhotoView src={API_URL + "/" + attachment.source}>
+
+          {attachment?.map((file, index) => (
+            <div key={index} className="p-2">
+              {file?.type.includes("image") ? (
+                <PhotoView src={API_URL + "/" + file.source}>
                   <img
                     alt=""
-                    src={API_URL + "/" + attachment.source}
+                    src={API_URL + "/" + file.source}
                     className="h-20 max-w-64 object-cover rounded-[4px]"
                   />
                 </PhotoView>
@@ -59,7 +60,7 @@ export default function MessageItem({
                 <div className="flex flex-col">
                   <File className="mx-2 size-20 text-lime-50" />
                   <a
-                    href={API_URL + "/" + attachment.source}
+                    href={API_URL + "/" + file.source}
                     target="_blank"
                     className="mt-2 bg-lime-50 hover:underline-offset-2 hover:underline p-[.5px] text-center rounded-[4px]"
                   >
@@ -68,7 +69,7 @@ export default function MessageItem({
                 </div>
               )}
             </div>
-          )}
+          ))}
         </div>
       </div>
     </>

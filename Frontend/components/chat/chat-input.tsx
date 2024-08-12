@@ -35,12 +35,22 @@ export default function ChatInput() {
   const { handleCreateMessage } = useCreateMessage();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const MAX_FILES_UPLOAD_LIMIT = 10;
+    const MAX_FILES_UPLOAD_LIMIT = 5;
+    const MAX_FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5 MB
 
     if (event.target.files) {
       const newFiles = Array.from(event.target.files);
 
       if (attachedFiles.length + newFiles.length > MAX_FILES_UPLOAD_LIMIT) {
+        setOpenMessageFileModal(true);
+        return;
+      }
+
+      const hasLargeFile = newFiles.some(
+        (file) => file.size > MAX_FILE_SIZE_LIMIT
+      );
+
+      if (hasLargeFile) {
         setOpenMessageFileModal(true);
         return;
       }
@@ -136,6 +146,7 @@ export default function ChatInput() {
                   text.trim().length > 0
                 ) {
                   e.preventDefault();
+                  setIsEmojiPickerOpen(!isEmojiPickerOpen);
                   handleSubmit(e);
                 } else if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
