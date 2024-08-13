@@ -103,7 +103,9 @@ export default function ChatInput() {
           >
             <div className=" absolute bottom-[12%]">
               <EmojiPicker
-                onEmojiClick={(emojiData) => setText(text + emojiData.emoji)}
+                onEmojiClick={(emojiData) =>
+                  setText((prev) => prev + emojiData.emoji)
+                }
                 emojiStyle={EmojiStyle.NATIVE}
                 open={isEmojiPickerOpen}
               />
@@ -146,7 +148,7 @@ export default function ChatInput() {
                   text.trim().length > 0
                 ) {
                   e.preventDefault();
-                  setIsEmojiPickerOpen(!isEmojiPickerOpen);
+                  setIsEmojiPickerOpen(false);
                   handleSubmit(e);
                 } else if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
