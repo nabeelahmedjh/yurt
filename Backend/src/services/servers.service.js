@@ -28,7 +28,6 @@ const getJionedServers = async (req, res) => {
 
 const getAllServers = async (userId, search) => {
 
-
   const servers = await Server.aggregate([
 
     {
@@ -64,8 +63,17 @@ const getAllServers = async (userId, search) => {
         },
         _id: 1
       }
+    },
+    {
+      $lookup: {
+        from: "tags",
+        localField: "tags",
+        foreignField: "_id",
+        as: "tags"
+      }
     }
-  ]).populate("tags");
+  ]);
+
   return servers;
 }
 

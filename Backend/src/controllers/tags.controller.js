@@ -12,12 +12,6 @@ const createTag = async (req, res) => {
         });
     }
 
-    if (!description) {
-        return res.status(400).json({
-            error: { message: "Description is required" },
-        });
-    }
-
     try {
 
         const newTag = await tagsService.createTag(name, description);
@@ -119,10 +113,27 @@ const updateTag = async (req, res) => {
     }
 }
 
+const bulkDeteteTags = async (req, res) => {
+    try {
+        const tags = await tagsService.bulkDeleteTags();
+        return res.status(200).json({
+            data: tags
+        });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            error: {
+                message: error.message
+            }
+        });
+    }
+}
+
 export default {
     createTag,
     getTags,
     bulkUploadTags,
     deleteTag,
-    updateTag
+    updateTag,
+    bulkDeteteTags
 };

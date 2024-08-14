@@ -70,7 +70,7 @@ const getServers = async (req, res) => {
 
     else {
       return res.status(400).json({
-        data: "Please apply filter correctly. servers=joined 0r servers=all."
+        data: "Please apply filter correctly. type=joined 0r type=all."
       })
     }
   } catch (error) {

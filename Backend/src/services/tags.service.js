@@ -36,11 +36,17 @@ const updateTag = async (tagId, name, description) => {
     return tag;
 };
 
+const bulkDeleteTags = async () => {
+    const tags = await Tag.deleteMany();
+    return tags;
+}
+
 
 export default {
     createTag,
     getTags,
     bulkUploadTags,
     deleteTag,
-    updateTag
+    updateTag,
+    bulkDeleteTags
 };
