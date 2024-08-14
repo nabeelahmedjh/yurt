@@ -5,7 +5,12 @@ const createServer = async (req, res) => {
   const { name, description } = req.body;
   const tags = req.body.tags ?? [];
   const user = req.user.user;
-  const banner = req.file ? req.file.path : "";
+  const banner = req.file ? {
+    name: file.originalname,
+    size: file.size,
+    type: file.mimetype,
+    source: file.path,
+  } : null;
 
   if (!name) {
     return res.status(400).json({
@@ -41,8 +46,6 @@ const getServers = async (req, res) => {
 
   const type = req.query.type ?? "";
   const search = req.query.search ?? "";
-
-  console.log(search)
   try {
 
     if (!type || type === "joined") {

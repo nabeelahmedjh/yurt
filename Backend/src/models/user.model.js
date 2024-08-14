@@ -23,8 +23,8 @@ const userSchema = new mongoose.Schema(
       Select: false,
     },
     avatar: {
-      type: String,
-      default: "",
+      type: Object,
+      default: null,
     },
     verified: {
       type: Boolean,

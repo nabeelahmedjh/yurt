@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 router.post("/signup", authController.signUp);
+router.put("/users/:id", passport.authenticate("jwt", { session: false }), authController.updateUser);
 router.post("/login", authController.login);
 router.get(
   "/profile",

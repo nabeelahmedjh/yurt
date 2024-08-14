@@ -89,9 +89,34 @@ const deleteTag = async (req, res) => {
 }
 
 const updateTag = async (req, res) => {
-    res.status(200).json({
-        message: "Hello from tags controller"
-    });
+    const { tagId } = req.params;
+
+    const { name, description } = req.body;
+
+    if (!name) {
+        return res.status(400).json({
+            error: { message: "Name is required" },
+        });
+    }
+
+    if (!description) {
+        return res.status(400).json({
+            error: { message: "Description is required" },
+        });
+    }
+
+    try {
+        const tag = await tagsService.updateTag(tagId, name, description);
+        return res.status(200).json({
+            data: tag
+        });
+    } catch (error) {
+        return res.status(500).json({
+            error: {
+                message: error.message
+            }
+        });
+    }
 }
 
 export default {

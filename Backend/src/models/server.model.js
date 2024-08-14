@@ -12,9 +12,9 @@ const serverSchema = new moongose.Schema(
       required: true,
     },
     banner: {
-      type: String,
+      type: Object,
       required: false,
-      default: ""
+      default: null
     },
     tags: [
       {

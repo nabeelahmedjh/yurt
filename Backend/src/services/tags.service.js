@@ -26,8 +26,13 @@ const deleteTag = async (tagId) => {
     return tag;
 };
 
-const updateTag = async (tagId, tagBody) => {
-    const tag = await tag.findByIdAndUpdate(tagId, tagBody, { new: true });
+const updateTag = async (tagId, name, description) => {
+
+
+    const tag = await tag.findByIdAndUpdate(tagId, {
+        name: name,
+        description: description
+    }, { new: true });
     return tag;
 };
 
