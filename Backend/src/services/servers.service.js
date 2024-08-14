@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Server, Space, User } from "../models/index.js";
+import paginate from "../utils/pagination.js";
 
 const createServer = async (name, description, user, banner, tags) => {
 
@@ -88,9 +89,23 @@ const createSpace = async (req, res) => {
 
 };
 
+const getAdminsByServerId = async (serverId,) => {
+  const server = await Server.findById(serverId).populate("admins");
+  return server.admins;
+
+}
+
+const getMembersByServerId = async (serverId) => {
+  const server = await Server.findById(serverId).populate("members");
+  return server.members;
+}
+
+
 export default {
   createServer,
   getJionedServers,
   getAllServers,
   createSpace,
+  getMembersByServerId,
+  getAdminsByServerId
 };
