@@ -13,8 +13,13 @@ const spaceSchema = new mongoose.Schema(
     spaceBanner: {
       type: String,
       required: false,
-      default : ""
-    }
+      default: ""
+    },
+    type: {
+      type: String,
+      required: false,
+      default: "chat",
+    },
   },
   { timestamps: true }
 );

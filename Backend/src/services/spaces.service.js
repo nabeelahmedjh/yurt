@@ -3,6 +3,17 @@ import { Server } from "../models/index.js"
 import { Message } from "../models/index.js"
 import mongoose from "mongoose";
 
+
+const createSpace = async (name, description, spaceBanner, type) => {
+    const space = await Space.create({
+        name,
+        description,
+        spaceBanner,
+        type
+    });
+    return space;
+}
+
 const getJoinedSpacesIds = async (userId) => {
 
     const servers = await Server.find({ members: userId });
@@ -15,7 +26,7 @@ const getJoinedSpacesIds = async (userId) => {
 };
 
 const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
-   
+
     const newMessage = await Message.create({
         content: content,
         sentBy: sentBy,
@@ -23,7 +34,7 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
         attachment: attachment,
 
     });
-    
+
 
 
     const newMessageObj = newMessage.toObject();
@@ -60,5 +71,6 @@ const getAllMessageInSpace = async (spaceId) => {
 export default {
     getJoinedSpacesIds,
     sendMessageInSpace,
-    getAllMessageInSpace
+    getAllMessageInSpace,
+    createSpace
 }

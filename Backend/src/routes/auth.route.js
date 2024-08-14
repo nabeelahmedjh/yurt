@@ -3,6 +3,7 @@ import authController from "../controllers/auth.controller.js";
 import passport from "passport";
 import "../strategy/google-strategy.js";
 import jwt from 'jsonwebtoken';
+import upload from "../config/multerConfig.js";
 
 
 
@@ -10,6 +11,7 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 router.post("/signup", authController.signUp);
+router.put("/users/:id", passport.authenticate("jwt", { session: false }), upload.single('avatar'), authController.updateUser);
 router.post("/login", authController.login);
 router.get(
   "/profile",

@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 import { Server, Space, User } from "../models/index.js";
+import paginate from "../utils/pagination.js";
 
-const createServer = async (req, res) => {
-  const user = req.user.user;
-  console.log(user);
-  const { name, description,banner} = req.body;
+const createServer = async (name, description, user, banner, tags) => {
 
   const newServer = await Server.create({
     name,
@@ -12,52 +10,36 @@ const createServer = async (req, res) => {
     banner,
     admins: [user._id],
     members: [user._id],
+    tags: tags,
   });
 
   const logedInUser = await User.findOne({ _id: user._id });
-  console.log("model")
   logedInUser.serversJoined.push(newServer._id);
-  
   await logedInUser.save();
-
-  return newServer
+  return await newServer.populate("tags");
 };
 
 const getJionedServers = async (req, res) => {
   const user = req.user;
   const userId = user.user._id;
-  const servers = await Server.aggregate([
-    {
-      $match:
-        { members: new mongoose.Types.ObjectId(userId) },
-    },
-    {
-      $lookup: {
-        from: "spaces",
-        localField: "spaces",
-        foreignField: "_id",
-        as: "spaces",
-      }
-    }
-  ])
+  const servers = await Server.find().populate(["tags", "spaces"]);
   return servers;
 };
 
-const getAllServers = async(userId, search) =>{
-
+const getAllServers = async (userId, search) => {
 
   const servers = await Server.aggregate([
-  
+
     {
-    $match:{
-      name:{
-        $regex: search,
-        '$options': "i"
+      $match: {
+        name: {
+          $regex: search,
+          '$options': "i"
+        }
       }
-    }
     },
-    { 
-    $addFields: {
+    {
+      $addFields: {
 
         userJoined: {
           $in: [new mongoose.Types.ObjectId(userId), "$members"]
@@ -70,47 +52,65 @@ const getAllServers = async(userId, search) =>{
       }
     },
     {
-      
       $project: {
-        name: 1,            
+        name: 1,
         description: 1,
-        banner: 1,     
-        userJoined: 1,      
-        membersCount: {     
+        banner: 1,
+        userJoined: 1,
+        tags: 1,
+        membersCount: {
           $size: "$members"
         },
-        _id: 1              
+        _id: 1
+      }
+    },
+    {
+      $lookup: {
+        from: "tags",
+        localField: "tags",
+        foreignField: "_id",
+        as: "tags"
       }
     }
-  ])
+  ]);
+
   return servers;
 }
 
-const createSpace = async (req, res) => {
-  const { serverId } = req.params;
-  const { name, description } = req.body;
-
-
+const createSpace = async (serverId, name, description, type) => {
 
   let newSpace;
   newSpace = await Space.create({
     name,
     description,
     server: serverId,
+    type
   });
 
   const server = await Server.findById(serverId);
   server.spaces.push(newSpace._id);
   await server.save();
-
-
   return newSpace;
 
 };
+
+const getAdminsByServerId = async (serverId,) => {
+  const server = await Server.findById(serverId).populate("admins");
+  return server.admins;
+
+}
+
+const getMembersByServerId = async (serverId) => {
+  const server = await Server.findById(serverId).populate("members");
+  return server.members;
+}
+
 
 export default {
   createServer,
   getJionedServers,
   getAllServers,
   createSpace,
+  getMembersByServerId,
+  getAdminsByServerId
 };
