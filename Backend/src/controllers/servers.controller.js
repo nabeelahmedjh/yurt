@@ -70,7 +70,7 @@ const getServers = async (req, res) => {
 
     else {
       return res.status(400).json({
-        data: "Please apply filter correctly. servers=joined 0r servers=all."
+        data: "Please apply filter correctly. type=joined 0r type=all."
       })
     }
   } catch (error) {
@@ -87,6 +87,7 @@ const createSpace = async (req, res) => {
 
   const { serverId } = req.params;
   const { name, description } = req.body;
+  const type = req.body.type ?? "chat";
 
   if (!serverId) {
     return res.status(400).json({
@@ -107,7 +108,7 @@ const createSpace = async (req, res) => {
   }
 
   try {
-    const newSpace = await serversService.createSpace(req, res);
+    const newSpace = await serversService.createSpace(serverId, name, description, type);
     return res.status(201).json({
       data: newSpace,
     });
@@ -162,10 +163,59 @@ const joinServer = async (req, res) => {
     })
   }
 }
+
+const getMembers = async (req, res) => {
+
+  const { serverId } = req.params;
+  const user = req.user.user;
+  const type = req.query.type ?? "";
+  const page = req.query.page ?? 1;
+  const limit = req.query.limit ?? 10;
+  const offset = req.query.offset ?? '';
+
+
+  if (!type) {
+    return res.status(400).json({
+      error: {
+        message: "Please provide type"
+      }
+    });
+  }
+
+  if (!serverId) {
+    return res.status(400).json({
+      error: { message: "ServerId is required" },
+    });
+  }
+
+  let resp = null;
+  try {
+    if (type === "admin") {
+      resp = await serversService.getAdminsByServerId(serverId, page, limit, offset);
+      console.log(resp);
+    } else if (type === "normal") {
+      resp = await serversService.getMembersByServerId(serverId, page, limit, offset);
+    }
+
+    return res.status(200).json({
+      data: resp
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: { message: error.message },
+    });
+  }
+
+  res.json({
+    data: "getMembers"
+  });
+}
+
 export default {
   createServer,
   getServers,
   createSpace,
   joinServer,
+  getMembers
 
 };

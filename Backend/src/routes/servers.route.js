@@ -10,5 +10,6 @@ router.post("/", upload.single('banner'), serversController.createServer);
 // router.get("/:serverId", serversController.getServer);
 router.post("/:serverId/spaces", serversController.createSpace);
 router.put("/:serverId/join", serversController.joinServer);
+router.get("/:serverId/members", serversController.getMembers);
 
 export default router;

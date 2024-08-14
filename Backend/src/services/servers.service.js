@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Server, Space, User } from "../models/index.js";
+import paginate from "../utils/pagination.js";
 
 const createServer = async (name, description, user, banner, tags) => {
 
@@ -26,7 +27,6 @@ const getJionedServers = async (req, res) => {
 };
 
 const getAllServers = async (userId, search) => {
-
 
   const servers = await Server.aggregate([
 
@@ -63,34 +63,54 @@ const getAllServers = async (userId, search) => {
         },
         _id: 1
       }
+    },
+    {
+      $lookup: {
+        from: "tags",
+        localField: "tags",
+        foreignField: "_id",
+        as: "tags"
+      }
     }
-  ]).populate("tags");
+  ]);
+
   return servers;
 }
 
-const createSpace = async (req, res) => {
-  const { serverId } = req.params;
-  const { name, description } = req.body;
+const createSpace = async (serverId, name, description, type) => {
 
   let newSpace;
   newSpace = await Space.create({
     name,
     description,
     server: serverId,
+    type
   });
 
   const server = await Server.findById(serverId);
   server.spaces.push(newSpace._id);
   await server.save();
-
-
   return newSpace;
 
 };
+
+const getAdminsByServerId = async (serverId,) => {
+  const server = await Server.findById(serverId).populate("admins");
+  return server.admins;
+
+}
+
+const getMembersByServerId = async (serverId) => {
+  const server = await Server.findById(serverId).populate("members");
+  return server.members;
+}
+
 
 export default {
   createServer,
   getJionedServers,
   getAllServers,
   createSpace,
+  getMembersByServerId,
+  getAdminsByServerId
 };
