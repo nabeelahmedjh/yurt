@@ -3,8 +3,6 @@ import { Server, Space, User } from "../models/index.js";
 
 const createServer = async (name, description, user, banner, tags) => {
 
-  console.log("tags", tags)
-
   const newServer = await Server.create({
     name,
     description,
@@ -14,14 +12,9 @@ const createServer = async (name, description, user, banner, tags) => {
     tags: tags,
   });
 
-  console.log("newServer", newServer)
-
   const logedInUser = await User.findOne({ _id: user._id });
-  console.log("model")
   logedInUser.serversJoined.push(newServer._id);
-
   await logedInUser.save();
-
   return await newServer.populate("tags");
 };
 
