@@ -37,6 +37,13 @@ const userSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    interests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+        default: [],
+      },
+    ],
   },
   {
     toJSON: {

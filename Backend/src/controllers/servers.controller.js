@@ -1,7 +1,11 @@
 import { Server, User } from "../models/index.js";
 import { serversService } from "../services/index.js";
 const createServer = async (req, res) => {
+
   const { name, description } = req.body;
+  const tags = req.body.tags ?? [];
+  const user = req.user.user;
+  const banner = req.file ? req.file.path : "";
 
   if (!name) {
     return res.status(400).json({
@@ -17,13 +21,15 @@ const createServer = async (req, res) => {
 
   try {
 
-    const newServer = await serversService.createServer(req, res);
+    const newServer = await serversService.createServer(name, description, user, banner, tags);
 
     return res.status(201).json({
       data: newServer
     });
   } catch (error) {
+    console.log("error", error);
     return res.status(500).json({
+
       error: {
         message: error.message
       }
@@ -33,29 +39,29 @@ const createServer = async (req, res) => {
 
 const getServers = async (req, res) => {
 
-  const type =  req.query.type ?? "";
-  const search =  req.query.search ?? "";
+  const type = req.query.type ?? "";
+  const search = req.query.search ?? "";
 
   console.log(search)
   try {
-    
-    if(!type|| type === "joined" ){
+
+    if (!type || type === "joined") {
       const servers = await serversService.getJionedServers(req, res);
       return res.status(200).json({
-      data: servers
-    })
+        data: servers
+      })
     }
-    else if(type === "all"){
+    else if (type === "all") {
       const user = req.user;
       const userId = user.user._id;
       const servers = await serversService.getAllServers(userId, search);
       return res.status(200).json({
-      data: servers
-    });
+        data: servers
+      });
     }
-    
-    
-    else{
+
+
+    else {
       return res.status(400).json({
         data: "Please apply filter correctly. servers=joined 0r servers=all."
       })
@@ -154,5 +160,5 @@ export default {
   getServers,
   createSpace,
   joinServer,
-  
+
 };
