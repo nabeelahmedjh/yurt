@@ -38,6 +38,8 @@ const sendMessageInSpace = async (req, res) => {
   const { spaceId } = req.params;
   const attachment = req.files
     ? req.files.map(file => ({
+      name: file.originalname,
+      size: file.size,
       type: file.mimetype,
       source: file.path,
     }))
