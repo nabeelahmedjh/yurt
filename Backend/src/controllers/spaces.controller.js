@@ -57,11 +57,11 @@ const sendMessageInSpace = async (req, res) => {
     spaceId: spaceId,
     attachment: attachment,
   }
-  
+
   try {
     const sentMessage = await spacesService.sendMessageInSpace(content, spaceId, sentBy, attachment);
     sentMessage.sentBy = req.user.user;
-    global.io.to(spaceId).emit("new message", { message: sentMessage});
+    global.io.to(spaceId).emit("new message", { message: sentMessage });
     return res.status(201).json({
       data: sentMessage
     });

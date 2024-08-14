@@ -45,6 +45,12 @@ const login = async (req, res, next) => {
 const signUp = async (req, res) => {
   const { email, password, username } = req.body;
   const interests = req.body.interests || [];
+  const avatar = req.file ? {
+    name: req.fileoriginalname,
+    size: req.filesize,
+    type: req.filemimetype,
+    source: req.filepath,
+  } : null;
 
   if (!email || !password || !username) {
     return res.status(400).json({
@@ -79,6 +85,13 @@ const signUp = async (req, res) => {
 const updateUser = async (req, res) => {
 
   const { id } = req.params;
+  let interests = req.body.interests || [];
+  const avatar = req.file ? {
+    name: req.file.originalname,
+    size: req.file.size,
+    type: req.file.mimetype,
+    source: req.file.path,
+  } : null;
 
   if (id !== req.user.user._id.toString()) {
     return res.status(403).json({
@@ -95,6 +108,11 @@ const updateUser = async (req, res) => {
       },
     });
   }
+
+  if (typeof interests === 'string') {
+    interests = JSON.parse(interests);
+  }
+
 
   try {
     const user = await User.findByIdAndUpdate(id, { interests: interests, avatar: avatar }, { new: true }).populate("interests");

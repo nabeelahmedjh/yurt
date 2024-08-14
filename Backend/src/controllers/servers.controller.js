@@ -3,24 +3,28 @@ import { serversService } from "../services/index.js";
 const createServer = async (req, res) => {
 
   const { name, description } = req.body;
-  const tags = req.body.tags ?? [];
+  let tags = req.body.tags ?? [];
   const user = req.user.user;
   const banner = req.file ? {
-    name: file.originalname,
-    size: file.size,
-    type: file.mimetype,
-    source: file.path,
+    name: req.file.originalname,
+    size: req.file.size,
+    type: req.file.mimetype,
+    source: req.file.path,
   } : null;
+
+  if (typeof tags === 'string') {
+    tags = JSON.parse(tags);
+  }
 
   if (!name) {
     return res.status(400).json({
-      error: { message: "Name is required" },
+      error: { message: "name is required" },
     });
   }
 
   if (!description) {
     return res.status(400).json({
-      error: { message: "Description is required" },
+      error: { message: "description is required" },
     });
   }
 
@@ -32,7 +36,7 @@ const createServer = async (req, res) => {
       data: newServer
     });
   } catch (error) {
-    console.log("error", error);
+
     return res.status(500).json({
 
       error: {
