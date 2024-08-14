@@ -69,22 +69,19 @@ const getAllServers = async (userId, search) => {
   return servers;
 }
 
-const createSpace = async (req, res) => {
-  const { serverId } = req.params;
-  const { name, description } = req.body;
+const createSpace = async (serverId, name, description, type) => {
 
   let newSpace;
   newSpace = await Space.create({
     name,
     description,
     server: serverId,
+    type
   });
 
   const server = await Server.findById(serverId);
   server.spaces.push(newSpace._id);
   await server.save();
-
-
   return newSpace;
 
 };

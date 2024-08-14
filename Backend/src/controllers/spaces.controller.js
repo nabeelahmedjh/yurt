@@ -4,7 +4,7 @@ import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
 
 const createSpace = async (req, res) => {
-  const { name, description, spaceBanner } = req.body;
+  const { name, description, spaceBanner, type } = req.body;
 
   if (!name) {
     return res.status(400).json({
@@ -19,14 +19,12 @@ const createSpace = async (req, res) => {
   }
 
   try {
-
-    const newSpace = await Space.create({ name, description, spaceBanner });
-
+    const newSpace = await spacesService.createSpace(name, description, spaceBanner, type);
     res.status(201).json({
       data: newSpace
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       error: { message: error.message }
     });
   }

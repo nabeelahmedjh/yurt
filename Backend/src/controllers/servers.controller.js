@@ -87,6 +87,7 @@ const createSpace = async (req, res) => {
 
   const { serverId } = req.params;
   const { name, description } = req.body;
+  const type = req.body.type ?? "chat";
 
   if (!serverId) {
     return res.status(400).json({
@@ -107,7 +108,7 @@ const createSpace = async (req, res) => {
   }
 
   try {
-    const newSpace = await serversService.createSpace(req, res);
+    const newSpace = await serversService.createSpace(serverId, name, description, type);
     return res.status(201).json({
       data: newSpace,
     });
