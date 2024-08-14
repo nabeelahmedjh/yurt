@@ -23,8 +23,8 @@ const userSchema = new mongoose.Schema(
       Select: false,
     },
     avatar: {
-      type: String,
-      default: "",
+      type: Object,
+      default: null,
     },
     verified: {
       type: Boolean,
@@ -34,6 +34,13 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Server",
+        default: [],
+      },
+    ],
+    interests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
         default: [],
       },
     ],

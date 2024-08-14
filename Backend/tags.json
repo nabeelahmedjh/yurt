@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Math",
+        "description": "Math is a subject"
+    },
+    {
+        "name": "Science",
+        "description": "Science is a subject"
+    },
+    {
+        "name": "History",
+        "description": "History is a subject"
+    },
+    {
+        "name": "Geography",
+        "description": "Geography is a subject"
+    },
+    {
+        "name": "English",
+        "description": "English is a subject"
+    },
+    {
+        "name": "Physics",
+        "description": "Physics is a subject"
+    },
+    {
+        "name": "Chemistry",
+        "description": "Chemistry is a subject"
+    },
+    {
+        "name": "Biology",
+        "description": "Biology is a subject"
+    },
+    {
+        "name": "Art",
+        "description": "Art is a subject"
+    },
+    {
+        "name": "Physical Education",
+        "description": "Physical Education is a subject"
+    }
+]
