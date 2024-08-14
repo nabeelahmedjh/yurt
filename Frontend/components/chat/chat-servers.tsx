@@ -8,122 +8,150 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { CompassIcon, Plus, User2 } from "lucide-react";
+import { CircleUserRoundIcon, CompassIcon, Plus, User2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateServerModal from "@/components/modals/create-server-modal";
 import LogoutButton from "@/components/logout-button";
-import useGetProfile from "@/hooks/useGetProfile";
 import useGetServers from "@/hooks/useGetServers";
+import yurt_logo from "@/public/yurt_logo.png";
+import Image from "next/image";
+
+const sampleServerImage: string = "";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
   const { data, isLoading } = useGetServers();
-  const { data: profileData } = useGetProfile();
-
-  const profile = {
-    name: profileData?.user?.email ?? "Unknown",
-    img: "",
-  };
 
   return (
-    <div className="bg-secondary border-r-2 h-dvh p-2 flex flex-col items-center">
-      <div className="p-2">
-        <TooltipProvider delayDuration={50}>
-          <Tooltip>
-            <TooltipTrigger>
-              <Avatar>
-                <AvatarImage src={profile.img ?? ""} />
-                <AvatarFallback className="bg-green-200 text-green-950 font-medium capitalize">
-                  {profile.name
-                    .split(" ")
-                    .slice(0, 2)
-                    .map((word: any) => word.charAt(0))
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-            </TooltipTrigger>
-            <TooltipContent
-              className=" bg-green-950 text-green-200 rounded-[24px]"
-              side="right"
-              sideOffset={10}
-            >
-              <span className="flex items-center">
-                <User2 className="size-6" />{" "}
-                <p className="self-end ms-1">{profile.name}</p>
-              </span>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      <Separator className="w-[70%] my-2 bg-gray-300" />
-      <div>
-        {data?.length > 0 &&
-          data?.map((server: any) => (
-            <div className="p-2" key={server._id}>
-              <TooltipProvider delayDuration={50}>
+    <div className="bg-zinc-50 border-r-2 h-dvh p-3 flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">
+      <div className="flex flex-col overflow-y-auto">
+        <div className="">
+          <div className="p-2">
+            <TooltipProvider delayDuration={50}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Image alt="yurt logo" src={yurt_logo} />
+                </TooltipTrigger>
+                <TooltipContent
+                  className="rounded-[24px]"
+                  side="right"
+                  sideOffset={10}
+                >
+                  <span className="flex items-center">
+                    <p className="self-end ms-1">Direct Messages</p>
+                  </span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <Separator className="w-full h-[2px] rounded-full mt-2 mb-4 bg-black " />
+        </div>
+        <div className="flex flex-col overflow-y-auto justify-between w-full">
+          <div className="scrollbar-hidden overflow-y-auto mb-2">
+            {data?.length > 0 &&
+              data?.map((server: any) => (
+                <div className="p-1" key={server._id}>
+                  <TooltipProvider delayDuration={50}>
+                    <Tooltip>
+                      <TooltipTrigger
+                        onClick={() => router.push(`/servers/${server._id}`)}
+                      >
+                        <Avatar
+                          className={` flex items-center justify-center size-12 bg-primary rounded-lg border-b-0 shadow-gray-400 hover:border-b-2 transition-[border] shadow-sm ${
+                            params.serverID === server._id &&
+                            "shadow-none border-b-4 scale-110"
+                          }`}
+                        >
+                          <AvatarImage
+                            className="size-7"
+                            src={server.img ?? sampleServerImage}
+                          />
+                          <AvatarFallback className="bg-inherit font-medium">
+                            {server.name
+                              .split(" ")
+                              .slice(0, 2)
+                              .map((word: any) => word.charAt(0))
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" sideOffset={10}>
+                        <p>{server.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              ))}
+          </div>
+          <div>
+            <div>
+              <CreateServerModal>
+                <div className="flex justify-center mt-2">
+                  <TooltipProvider delayDuration={50}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
+                          <Plus />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" sideOffset={10}>
+                        <p>Create Server</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </CreateServerModal>
+            </div>
+
+            <div className="flex justify-center mt-1">
+              <TooltipProvider delayDuration={150}>
                 <Tooltip>
                   <TooltipTrigger
-                    onClick={() => router.push(`/servers/${server._id}`)}
+                    onClick={() => router.push("/explore-servers")}
                   >
-                    <Avatar
-                      className={`rounded-[8px] ring-slate-900 ${
-                        params.serverID === server._id && "ring-[3px]"
-                      }`}
-                    >
-                      <AvatarImage src={server.img ?? ""} />
-                      <AvatarFallback className="rounded-[8px] bg-white font-medium">
-                        {server.name
-                          .split(" ")
-                          .slice(0, 2)
-                          .map((word: any) => word.charAt(0))
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
+                      <CompassIcon
+                        fill="white"
+                        strokeWidth={1}
+                        className="size-6"
+                      />
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={10}>
-                    <p>{server.name}</p>
+                    <p>Explore Servers</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
-          ))}
+          </div>
+        </div>
       </div>
-      <CreateServerModal>
-        <div className="flex justify-center mt-2">
-          <TooltipProvider delayDuration={50}>
-            <Tooltip>
-              <TooltipTrigger>
-                <div className="hover:bg-gray-300 p-2 rounded-[8px]">
-                  <Plus />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right" sideOffset={10}>
-                <p>Create Server</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </CreateServerModal>
 
-      <TooltipProvider delayDuration={150}>
-        <Tooltip>
-          <TooltipTrigger onClick={() => router.push("/explore-servers")}>
-            <div className="hover:bg-gray-300 p-2 rounded-[8px]">
-              <CompassIcon className="size-6" />
+      <div className="">
+        {!isLoading && (
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <div>
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
+                      <CircleUserRoundIcon strokeWidth={1} className="size-6" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={10}>
+                    <p>Profile</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={10}>
-            <p>Explore Servers</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      {!isLoading && (
-        <div className="absolute bottom-8">
-          <LogoutButton />
-        </div>
-      )}
+            <div>
+              <LogoutButton />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

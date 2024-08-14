@@ -26,9 +26,9 @@ export default function LogoutButton() {
               deleteCookie(USER_ID);
               router.refresh();
             }}
-            className="hover:bg-gray-300 p-2 rounded-[8px]"
+            className="hover:bg-neutral-200 p-2 rounded-[8px]"
           >
-            <LogOut />
+            <LogOut strokeWidth={1} />
           </div>
         </TooltipTrigger>
         <TooltipContent side="right" sideOffset={10}>

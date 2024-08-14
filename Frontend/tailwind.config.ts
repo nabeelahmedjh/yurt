@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import type { PluginAPI } from "tailwindcss/types/config";
 
 const config = {
   darkMode: ["class"],
@@ -72,11 +73,35 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      scrollbarWidth: {
+        none: {
+          "scrollbar-width": "none",
+          "-ms-overflow-style": "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      },
+      boxShadow: {
+        "inner-bottom": "inset 0 -4px 6px rgba(0, 0, 0, 0.1)",
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("tailwind-extended-shadows"),
+
+    function ({ addUtilities }: PluginAPI) {
+      addUtilities({
+        ".scrollbar-hidden": {
+          "scrollbar-width": "none",
+          "-ms-overflow-style": "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      });
+    },
   ],
 } satisfies Config;
 
