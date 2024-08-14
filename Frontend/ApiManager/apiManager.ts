@@ -1,10 +1,9 @@
-import axios, { AxiosRequestConfig, AxiosInstance } from 'axios';
+import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
 import { getCookie } from "cookies-next";
-import { TOKEN } from '@/constants';
-
+import { TOKEN, API_URL } from "@/constants";
 
 const getTokenFromCookies = (): string | undefined => {
-  return getCookie(TOKEN) 
+  return getCookie(TOKEN);
 };
 
 class APIManager {
@@ -13,7 +12,7 @@ class APIManager {
 
   private constructor() {
     this.axiosInstance = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, 
+      baseURL: API_URL,
     });
   }
 
@@ -25,19 +24,19 @@ class APIManager {
   }
 
   public async request<T>(
-    method: 'get' | 'post' | 'put' | 'delete',
+    method: "get" | "post" | "put" | "delete",
     url: string,
     params: any = {},
     data: any = null,
-    headers: AxiosRequestConfig['headers'] = {},
+    headers: AxiosRequestConfig["headers"] = {},
     requiresAuth: boolean = false
   ): Promise<T> {
     if (requiresAuth) {
       const token = getTokenFromCookies();
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers["Authorization"] = `Bearer ${token}`;
       } else {
-        throw new Error('Authentication token not found');
+        throw new Error("Authentication token not found");
       }
     }
 
@@ -57,26 +56,51 @@ class APIManager {
     }
   }
 
-  public async get<T>(url: string, params: any = {}, headers: AxiosRequestConfig['headers'] = {}, requiresAuth: boolean = false): Promise<T> {
-    return this.request<T>('get', url, params, null, headers, requiresAuth);
+  public async get<T>(
+    url: string,
+    params: any = {},
+    headers: AxiosRequestConfig["headers"] = {},
+    requiresAuth: boolean = false
+  ): Promise<T> {
+    return this.request<T>("get", url, params, null, headers, requiresAuth);
   }
 
-  public async post<T>(url: string, data: any, headers: AxiosRequestConfig['headers'] = {}, requiresAuth: boolean = false): Promise<T> {
-    return this.request<T>('post', url, {}, data, headers, requiresAuth);
+  public async post<T>(
+    url: string,
+    data: any,
+    headers: AxiosRequestConfig["headers"] = {},
+    requiresAuth: boolean = false
+  ): Promise<T> {
+    return this.request<T>("post", url, {}, data, headers, requiresAuth);
   }
 
-  public async put<T>(url: string, data: any, headers: AxiosRequestConfig['headers'] = {}, requiresAuth: boolean = false): Promise<T> {
-    return this.request<T>('put', url, {}, data, headers, requiresAuth);
+  public async put<T>(
+    url: string,
+    data: any,
+    headers: AxiosRequestConfig["headers"] = {},
+    requiresAuth: boolean = false
+  ): Promise<T> {
+    return this.request<T>("put", url, {}, data, headers, requiresAuth);
   }
 
-  public async delete<T>(url: string, params: any = {}, headers: AxiosRequestConfig['headers'] = {}, requiresAuth: boolean = false): Promise<T> {
-    return this.request<T>('delete', url, params, null, headers, requiresAuth);
+  public async delete<T>(
+    url: string,
+    params: any = {},
+    headers: AxiosRequestConfig["headers"] = {},
+    requiresAuth: boolean = false
+  ): Promise<T> {
+    return this.request<T>("delete", url, params, null, headers, requiresAuth);
   }
 
-  public async postMultipart<T>(url: string, formData: FormData, headers: AxiosRequestConfig['headers'] = {}, requiresAuth: boolean = false): Promise<T> {
-    headers['Content-Type'] = 'multipart/form-data';
-    return this.request<T>('post', url, {}, formData, headers, requiresAuth);
+  public async postMultipart<T>(
+    url: string,
+    formData: FormData,
+    headers: AxiosRequestConfig["headers"] = {},
+    requiresAuth: boolean = false
+  ): Promise<T> {
+    headers["Content-Type"] = "multipart/form-data";
+    return this.request<T>("post", url, {}, formData, headers, requiresAuth);
   }
 }
 
-export default APIManager.getInstance(); 
+export default APIManager.getInstance();

@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { API_URL } from "@/constants";
+import { API_URL, PROXY_API_URL } from "@/constants";
 import { File, User } from "lucide-react";
 import { PhotoView } from "react-photo-view";
 import { format } from "date-fns";
+import { formatFileSize } from "@/lib/utils";
 
 export default function MessageItem({
   img,
@@ -17,6 +18,8 @@ export default function MessageItem({
   content: string;
   currentDate: Date;
   attachment?: {
+    name: string;
+    size: number;
     source: string;
     type: string;
   }[];
@@ -59,8 +62,19 @@ export default function MessageItem({
               ) : (
                 <div className="flex flex-col">
                   <File className="mx-2 size-20 text-lime-50" />
+                  <div className="flex flex-col my-1">
+                    {" "}
+                    <p className="text-center">{file.name}</p>
+                    <p className="text-sm text-center text-lime-700">
+                      {formatFileSize(file.size)}
+                    </p>
+                  </div>
                   <a
-                    href={API_URL + "/" + file.source}
+                    // href={API_URL + "/" + file.source}
+                    // download requires same origin so need to use proxy api
+
+                    download={file.name}
+                    href={PROXY_API_URL + file.source}
                     target="_blank"
                     className="mt-2 bg-lime-50 hover:underline-offset-2 hover:underline p-[.5px] text-center rounded-[4px]"
                   >
