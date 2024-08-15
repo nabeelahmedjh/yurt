@@ -50,6 +50,8 @@ const getServers = async (req, res) => {
 
   const type = req.query.type ?? "";
   const search = req.query.search ?? "";
+  let tags = req.query.tags ?? [];
+
   try {
 
     if (!type || type === "joined") {
@@ -61,7 +63,8 @@ const getServers = async (req, res) => {
     else if (type === "all") {
       const user = req.user;
       const userId = user.user._id;
-      const servers = await serversService.getAllServers(userId, search);
+      
+      const servers = await serversService.getAllServers(userId, search, tags);
       return res.status(200).json({
         data: servers
       });

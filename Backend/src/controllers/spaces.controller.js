@@ -17,7 +17,7 @@ const createSpace = async (req, res) => {
       error: { message: "Description is required" },
     });
   }
-
+  
   try {
     const newSpace = await spacesService.createSpace(name, description, spaceBanner, type);
     res.status(201).json({

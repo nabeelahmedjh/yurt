@@ -1,6 +1,7 @@
 
 import { Server } from "../models/index.js"
 import { Message } from "../models/index.js"
+import Space from "../models/space.model.js";
 import mongoose from "mongoose";
 
 

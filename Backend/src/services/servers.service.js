@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Server, Space, User } from "../models/index.js";
+import { Server, Space, User, Tag} from "../models/index.js";
 import paginate from "../utils/pagination.js";
 
 const createServer = async (name, description, user, banner, tags) => {
@@ -26,7 +26,20 @@ const getJionedServers = async (req, res) => {
   return servers;
 };
 
-const getAllServers = async (userId, search) => {
+const getAllServers = async (userId, search, tags) => {
+
+  console.log(tags)
+
+  
+  // tags = tags.split(',')
+  
+
+  console.log(tags)
+
+  const tagId = tags.map(id => new mongoose.Types.ObjectId(id));
+
+  
+
 
   const servers = await Server.aggregate([
 
@@ -36,8 +49,10 @@ const getAllServers = async (userId, search) => {
           $regex: search,
           '$options': "i"
         }
+
       }
     },
+    ...(tagId.length > 0 ? [{ $match: { tags: { $all: tagId } } }] : []),
     {
       $addFields: {
 
