@@ -43,6 +43,7 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
 }
 
 const getAllMessageInSpace = async (spaceId) => {
+
     const messages = await Message.aggregate([
         {
             $match: {

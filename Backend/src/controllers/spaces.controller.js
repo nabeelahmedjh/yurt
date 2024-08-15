@@ -34,6 +34,8 @@ const sendMessageInSpace = async (req, res) => {
 
   const { content } = req.body;
   const { spaceId } = req.params;
+
+  
   const attachment = req.files
     ? req.files.map(file => ({
       name: file.originalname,
@@ -74,6 +76,13 @@ const sendMessageInSpace = async (req, res) => {
 const getMessagesInSpace = async (req, res) => {
   const { spaceId } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid space id"
+      }
+    });
+  }
   try {
     const messages = await spacesService.getAllMessageInSpace(spaceId);
     res.status(200).json({
