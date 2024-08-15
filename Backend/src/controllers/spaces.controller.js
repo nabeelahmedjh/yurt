@@ -44,7 +44,7 @@ const sendMessageInSpace = async (req, res) => {
     : null;
   const sentBy = req.user.user._id;
 
-  if (!content) {
+  if (!content && !attachment) {
     return res.status(400).json({
       error: { message: "Content is required" },
     });

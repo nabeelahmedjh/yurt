@@ -9,7 +9,8 @@ const messageSchema = new mongoose.Schema(
     }],
     content: {
       type: String,
-      default: "",
+      default: null,
+      required: false
     },
     sentBy: {
       type: mongoose.Schema.Types.ObjectId,

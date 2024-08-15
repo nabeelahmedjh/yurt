@@ -28,13 +28,13 @@ const getJionedServers = async (req, res) => {
 
 const getAllServers = async (userId, search, tags) => {
 
-  console.log(tags)
+
 
   
   // tags = tags.split(',')
   
 
-  console.log(tags)
+
 
   const tagId = tags.map(id => new mongoose.Types.ObjectId(id));
 
