@@ -22,10 +22,10 @@ export default function ChatLayout() {
 
   const viewportWidth = useViewportWidth();
 
-  // if viewport width > 400 px, how much in percent is 350 px of viewport width
+  // if viewport width > 400 px, how much in percent is 340px of viewport width
   const newSize =
     viewportWidth > 400
-      ? ((isWhiteboardOpen ? 75 : 350) / viewportWidth) * 100
+      ? ((isWhiteboardOpen ? 75 : 340) / viewportWidth) * 100
       : 60;
 
   const ref = useRef<ImperativePanelHandle>(null);

@@ -15,6 +15,7 @@ import LogoutButton from "@/components/logout-button";
 import useGetServers from "@/hooks/useGetServers";
 import yurt_logo from "@/public/yurt_logo.png";
 import Image from "next/image";
+import { PROXY_API_URL } from "@/constants";
 
 const sampleServerImage: string = "";
 
@@ -25,7 +26,7 @@ export default function ChatServers() {
   const { data, isLoading } = useGetServers();
 
   return (
-    <div className="bg-zinc-50 border-r-2 h-dvh p-3 flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">
+    <div className="bg-zinc-100 h-dvh w-min py-3 px-4 flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">
       <div className="flex flex-col overflow-y-auto">
         <div className="">
           <div className="p-2">
@@ -66,7 +67,7 @@ export default function ChatServers() {
                         >
                           <AvatarImage
                             className="size-7"
-                            src={server.img ?? sampleServerImage}
+                            src={PROXY_API_URL + "/" + server.banner}
                           />
                           <AvatarFallback className="bg-inherit font-medium">
                             {server.name

@@ -13,6 +13,7 @@ import FileManager from "@/components/file-manager";
 
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { FolderTreeIcon } from "lucide-react";
 
 type role = "admin" | "member";
 
@@ -41,7 +42,10 @@ export default function FileManagerModal() {
         className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors cursor-pointer"
         onClick={() => setDialogVisibility(!visibility)}
       >
-        File Manager
+        <div className="text-black font-medium flex gap-4 justify-center">
+          <span>Server Directory</span>
+          <FolderTreeIcon />
+        </div>
       </div>
       <DialogComponent
         cssClass="[&>div]:!p-0 !rounded-none"

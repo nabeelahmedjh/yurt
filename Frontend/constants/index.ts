@@ -1,6 +1,6 @@
 const TOKEN = "token";
 const USER_ID = "user_id";
-const PROXY_API_URL = "/api/";
+const PROXY_API_URL = "/api";
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const FILEMANAGER_HOST = process.env.NEXT_PUBLIC_FILEMANAGER_HOST;
 const FILEMANAGER_LISCENCE_KEY =

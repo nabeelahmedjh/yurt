@@ -7,11 +7,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { ChevronDown, Plus, TentIcon } from "lucide-react";
+import { ChevronDown, PencilLineIcon, Plus, TentIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateSpaceModal from "@/components/modals/create-space-modal";
 import useGetServers from "@/hooks/useGetServers";
 import FileManagerModal from "../modals/file-manager-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { PROXY_API_URL } from "@/constants";
+
+import SpaceFallbackImage from "@/public/space.png";
+import ServerFallbackImage from "@/public/server.png";
 
 export default function ChatSpaces({
   isWhiteboardOpen,
@@ -26,106 +33,141 @@ export default function ChatSpaces({
   if (isWhiteboardOpen) return null;
 
   return (
-    <div className="bg-white h-dvh p-0 w-full flex flex-col">
-      <div className="flex flex-col items-center px-1">
-        <Separator className="w-[95%] my-2 bg-gray-300" />
+    <div
+      className={`${
+        params.serverID && data?.length > 0 && "bg-primary"
+      } h-dvh p-0 w-full flex flex-col has-[.server-settings:hover]:bg-primary/50`}
+    >
+      <div
+        onClick={() => window.alert("server setting")}
+        className="server-settings flex flex-col relative py-6 items-center justify-center px-1 [&_.pencil-icon]:hover:inline hover:cursor-pointer transition-[background-color]"
+      >
         {params.serverID && data?.length > 0 && (
-          <div className="w-full flex items-center justify-between">
-            <TooltipProvider delayDuration={700}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <p className="font-medium hover:bg-gray-200 px-1 py-[2px] rounded-[8px]">
-                    {data?.filter(
+          <div className="flex gap-4 items-center justify-center">
+            <span className="pencil-icon absolute hidden right-2 top-2">
+              <PencilLineIcon />
+            </span>
+            <div>
+              <Avatar className="size-8">
+                <AvatarImage
+                  className="m-1 rounded-full"
+                  src={
+                    PROXY_API_URL +
+                    "/" +
+                    data?.filter(
                       (server: any) => params.serverID === server._id
-                    )[0]?.name.length > 20
-                      ? `${data
-                          ?.filter(
-                            (server: any) => params.serverID === server._id
-                          )[0]
-                          .name.slice(0, 20)}...`
-                      : data?.filter(
-                          (server: any) => params.serverID === server._id
-                        )[0]?.name}
-                  </p>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={10}>
-                  <p>
-                    {
-                      data?.filter(
-                        (server: any) => params.serverID === server._id
-                      )[0]?.name
-                    }
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                    )[0]?.banner
+                  }
+                />
 
-            <CreateSpaceModal>
-              <div className="flex justify-center mt-2">
-                <TooltipProvider delayDuration={50}>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <div className="hover:bg-gray-300 p-2 rounded-[8px]">
-                        <Plus />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={10}>
-                      <p>Create Space</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </CreateSpaceModal>
+                <AvatarFallback className="bg-white">
+                  <Image
+                    className="m-1 rounded-full"
+                    alt="server image"
+                    src={ServerFallbackImage}
+                  />
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <p
+              title={
+                data?.filter((server: any) => params.serverID === server._id)[0]
+                  ?.name
+              }
+              className="font-semibold max-w-32 whitespace-nowrap text-ellipsis overflow-x-hidden"
+            >
+              {
+                data?.filter((server: any) => params.serverID === server._id)[0]
+                  ?.name
+              }
+            </p>
           </div>
         )}
       </div>
-      {params.serverID &&
-        data?.filter((server: any) => server._id === params.serverID)[0]?.spaces
-          ?.length > 0 && (
-          <div className="h-full justify-between flex flex-col">
-            <div className="p-1">
-              <div className="flex mt-4">
-                <ChevronDown className="size-4 self-center me-1" />
-                <p className="text-[14px] text-gray-500">Spaces</p>
-              </div>
-              <div className="mt-2">
-                <div>
-                  {data
-                    ?.filter((server: any) => server._id === params.serverID)
-                    .map((server: any) => (
-                      <div key={server._id} className="space-y-4">
-                        {server.spaces.map((space: any) => (
-                          <div
-                            onClick={() =>
-                              router.replace(
-                                `/servers/${params.serverID}/${space._id}`
-                              )
-                            }
-                            key={space._id}
-                            className={`${
-                              params.spaceID === space._id
-                                ? "bg-[#E6E8EB]"
-                                : "hover:bg-[#E6E8EB]"
-                            } p-2 rounded-[8px] flex gap-2 cursor-pointer`}
-                          >
-                            <span>
-                              <TentIcon />
-                            </span>
-                            <span className="font-normal text-gray-700">
-                              {space.name}
-                            </span>
+      {params.serverID && data?.length > 0 && (
+        <div className="rounded-t-lg justify-between h-full overflow-y-auto flex flex-col bg-white">
+          <div className="flex flex-col overflow-y-auto pl-2 pr-[2px]">
+            <div className="flex justify-between items-center my-2 ml-6 mr-4">
+              <p className="text-[12px] text-black font-medium bg-primary/60 rounded-[4px] h-fit">
+                Spaces.
+              </p>
+              <CreateSpaceModal>
+                <span>
+                  <TooltipProvider delayDuration={50}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="p-3">
+                          <div className="rounded-[2px] bg-black text-white size-4 flex justify-center items-center">
+                            <Plus />
                           </div>
-                        ))}
-                      </div>
-                    ))}
-                </div>
-              </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" sideOffset={10}>
+                        <p>Create Space</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+              </CreateSpaceModal>
             </div>
-            <div>
-              <FileManagerModal />
+            <Separator className="bg-slate-300" />
+
+            <div className="mt-2 flex flex-col overflow-y-auto">
+              {data
+                ?.filter((server: any) => server._id === params.serverID)
+                .map((server: any) => (
+                  <div
+                    key={server._id}
+                    className="flex flex-col overflow-y-auto"
+                  >
+                    <ScrollArea className="space-y-1 flex flex-col">
+                      {server.spaces.map((space: any) => (
+                        <div
+                          onClick={() =>
+                            router.replace(
+                              `/servers/${params.serverID}/${space._id}`
+                            )
+                          }
+                          key={space._id}
+                          className={`${
+                            params.spaceID === space._id
+                              ? "bg-neutral-200"
+                              : "hover:bg-neutral-100"
+                          } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
+                        >
+                          <span>
+                            <Avatar className="size-6">
+                              <AvatarImage
+                                src={PROXY_API_URL + "/" + space.spaceBanner}
+                              />
+
+                              <AvatarFallback className="bg-transparent">
+                                <Image
+                                  alt="space image"
+                                  src={SpaceFallbackImage}
+                                />
+                              </AvatarFallback>
+                            </Avatar>
+                          </span>
+                          <span
+                            title={space.name}
+                            className="w-2 flex-grow font-medium text-black overflow-x-hidden text-ellipsis whitespace-nowrap"
+                          >
+                            {space.name}
+                          </span>
+                        </div>
+                      ))}
+                      <ScrollBar />
+                    </ScrollArea>
+                  </div>
+                ))}
             </div>
           </div>
-        )}
+          <div>
+            <FileManagerModal />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

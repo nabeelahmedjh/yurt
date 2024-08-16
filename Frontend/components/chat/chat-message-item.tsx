@@ -74,7 +74,7 @@ export default function MessageItem({
                     // download requires same origin so need to use proxy api
 
                     download={file.name}
-                    href={PROXY_API_URL + file.source}
+                    href={PROXY_API_URL + "/" + file.source}
                     target="_blank"
                     className="mt-2 bg-lime-50 hover:underline-offset-2 hover:underline p-[.5px] text-center rounded-[4px]"
                   >
