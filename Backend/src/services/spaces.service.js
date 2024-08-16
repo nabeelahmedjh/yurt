@@ -1,6 +1,7 @@
 
 import { Server } from "../models/index.js"
 import { Message } from "../models/index.js"
+import Space from "../models/space.model.js";
 import mongoose from "mongoose";
 
 
@@ -42,6 +43,7 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
 }
 
 const getAllMessageInSpace = async (spaceId) => {
+
     const messages = await Message.aggregate([
         {
             $match: {
