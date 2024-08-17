@@ -1,11 +1,5 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import { PenIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BotMessageSquareIcon, BrushIcon } from "lucide-react";
 
 export default function ChatRightbar({
   setIsWhiteboardOpen,
@@ -13,21 +7,26 @@ export default function ChatRightbar({
   setIsWhiteboardOpen?: any;
 }) {
   return (
-    <div className="h-dvh bg-white">
-      <TooltipProvider delayDuration={150}>
-        <Tooltip>
-          <TooltipTrigger
-            onClick={() => setIsWhiteboardOpen((prev: any) => !prev)}
-          >
-            <div className="hover:bg-gray-300 p-2 rounded-[8px]">
-              <PenIcon className="size-6" />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={10}>
-            <p>Whiteboard</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <div className="h-dvh bg-white flex flex-col items-center mx-4 gap-4 mt-4">
+      <h1 className="font-bold text-xl w-full">Study Tools</h1>
+      <div className="w-full space-y-4">
+        <Button
+          variant="tool"
+          className="w-full"
+          onClick={() => setIsWhiteboardOpen((prev: any) => !prev)}
+        >
+          <p className="font-bold max-lg:text-xs">Let&apos;s collaborate</p>
+          <BrushIcon className="ml-1 xl:ml-4" />
+        </Button>
+        <Button
+          variant="tool"
+          className="w-full"
+          onClick={() => alert("Feature in progress")}
+        >
+          <p className="font-bold">Ask questions</p>
+          <BotMessageSquareIcon className="ml-6" />
+        </Button>
+      </div>
     </div>
   );
 }

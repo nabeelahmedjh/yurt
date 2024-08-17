@@ -1,47 +1,50 @@
 "use client";
 
-import { Tent } from "lucide-react";
 import { useParams } from "next/navigation";
 import useGetServers from "@/hooks/useGetServers";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
+
+import { PROXY_API_URL } from "@/constants";
+import SpaceFallbackImage from "@/public/space.png";
 
 export default function ChatHeader() {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
   const { data, isLoading } = useGetServers();
 
+  const space = data
+    ?.filter((server: any) => server._id === params.serverID)?.[0]
+    ?.spaces?.filter((space: any) => space._id === params.spaceID)?.[0];
+
   if (isLoading) return;
 
   return (
     <div>
-      <div className="bg-white h-[72px] flex flex-col items-start justify-center pl-4 gap-2 shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]">
+      <div className="bg-zinc-100 h-[85px] flex flex-col items-start justify-center pl-4 gap-2 border-b">
         {params.serverID && params.spaceID && (
-          <div className="flex gap-4">
+          <div className="flex w-full gap-6 ml-[5%]">
             <span className="self-center">
-              <Tent className="size-10" />
+              <Avatar className="size-10">
+                <AvatarImage src={PROXY_API_URL + "/" + space.spaceBanner} />
+
+                <AvatarFallback className="bg-transparent">
+                  <Image alt="space image" src={SpaceFallbackImage} />
+                </AvatarFallback>
+              </Avatar>
             </span>
-            <div className="flex flex-col">
-              <p className="font-medium">
-                {
-                  data
-                    ?.filter(
-                      (server: any) => server._id === params.serverID
-                    )?.[0]
-                    ?.spaces?.filter(
-                      (space: any) => space._id === params.spaceID
-                    )?.[0]?.name
-                }
+            <div className="flex flex-col justify-center w-full">
+              <p
+                title={space.name}
+                className="font-medium text-2xl text-black overflow-hidden text-ellipsis whitespace-nowrap w-[60%]"
+              >
+                {space.name}
               </p>
-              <p className="text-gray-600 font-light">
+              {/* <p className="text-gray-600 font-light">
                 {
-                  data
-                    ?.filter(
-                      (server: any) => server._id === params.serverID
-                    )?.[0]
-                    ?.spaces?.filter(
-                      (space: any) => space._id === params.spaceID
-                    )?.[0]?.description
+                  space?.description
                 }
-              </p>
+              </p> */}
             </div>
           </div>
         )}

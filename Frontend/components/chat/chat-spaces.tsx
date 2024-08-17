@@ -19,6 +19,7 @@ import { PROXY_API_URL } from "@/constants";
 
 import SpaceFallbackImage from "@/public/space.png";
 import ServerFallbackImage from "@/public/server.png";
+import { useEffect } from "react";
 
 export default function ChatSpaces({
   isWhiteboardOpen,

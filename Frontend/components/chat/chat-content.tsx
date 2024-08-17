@@ -6,6 +6,7 @@ import ChatMessages from "@/components/chat/chat-messages";
 import ChatInput from "@/components/chat/chat-input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useGetMessages from "@/hooks/useGetMessages";
+import { useParams, useRouter } from "next/navigation";
 
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -14,6 +15,9 @@ import useGetMessages from "@/hooks/useGetMessages";
 export default function ChatContent() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { messages } = useGetMessages();
+
+  const params = useParams<{ serverID: string; spaceID: string }>();
+  const router = useRouter();
 
   useEffect(() => {
     scrollToBottom();
