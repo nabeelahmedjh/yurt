@@ -21,11 +21,11 @@ export default function ChatHeader() {
 
   return (
     <div>
-      <div className="bg-zinc-100 h-[85px] flex flex-col items-start justify-center pl-4 gap-2 border-b">
+      <div className="bg-zinc-100 py-4 flex flex-col items-start justify-center pl-4 gap-2 border-b">
         {params.serverID && params.spaceID && (
           <div className="flex w-full gap-6 ml-[5%]">
             <span className="self-center">
-              <Avatar className="size-10">
+              <Avatar className="size-8">
                 <AvatarImage src={PROXY_API_URL + "/" + space.spaceBanner} />
 
                 <AvatarFallback className="bg-transparent">
@@ -36,7 +36,7 @@ export default function ChatHeader() {
             <div className="flex flex-col justify-center w-full">
               <p
                 title={space.name}
-                className="font-medium text-2xl text-black overflow-hidden text-ellipsis whitespace-nowrap w-[60%]"
+                className="font-medium text-xl text-black overflow-hidden text-ellipsis whitespace-nowrap w-[60%]"
               >
                 {space.name}
               </p>

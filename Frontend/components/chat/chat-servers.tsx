@@ -29,11 +29,11 @@ export default function ChatServers() {
     <div className="bg-zinc-100 h-dvh w-min py-3 px-4 flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">
       <div className="flex flex-col overflow-y-auto">
         <div className="">
-          <div className="p-2">
+          <div className="p-1 flex justify-center">
             <TooltipProvider delayDuration={50}>
               <Tooltip>
                 <TooltipTrigger>
-                  <Image alt="yurt logo" src={yurt_logo} />
+                  <Image className="size-10" alt="yurt logo" src={yurt_logo} />
                 </TooltipTrigger>
                 <TooltipContent
                   className="rounded-[24px]"

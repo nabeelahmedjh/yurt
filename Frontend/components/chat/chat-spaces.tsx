@@ -41,12 +41,12 @@ export default function ChatSpaces({
     >
       <div
         onClick={() => window.alert("server setting")}
-        className="server-settings flex flex-col relative py-6 items-center justify-center px-1 [&_.pencil-icon]:hover:inline hover:cursor-pointer transition-[background-color]"
+        className="server-settings flex flex-col relative py-4 items-center justify-center px-1 [&_.pencil-icon]:hover:inline hover:cursor-pointer transition-[background-color]"
       >
         {params.serverID && data?.length > 0 && (
           <div className="flex gap-4 items-center justify-center">
             <span className="pencil-icon absolute hidden right-2 top-2">
-              <PencilLineIcon />
+              <PencilLineIcon className="size-4" />
             </span>
             <div>
               <Avatar className="size-8">
