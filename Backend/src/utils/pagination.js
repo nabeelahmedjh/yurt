@@ -1,29 +1,29 @@
-const paginate = async (model, query, { page, limit = 10, offset }, populateOptions) => {
-    let skip = 0;
+const paginateArray = async (page, limit = 10, offset, objects) => {
 
-    if (offset !== undefined || !offset) {
-        // Offset-based pagination
-        skip = Number(offset);
-    } else if (page !== undefined) {
-        // Page-based pagination
-        skip = (Number(page) - 1) * limit;
-    }
+    const skip = page !== undefined ? (page - 1) * limit : offset;
+	const totalItems = objects.length;
+	const results = offset >= totalItems ? [] : objects.splice(skip, limit);
+	const totalPages = Math.ceil(totalItems / limit);
 
-    const results = await model.find(query)
-        .skip(skip)
-        .limit(Number(limit))
-        .papulate(populateOptions);
+	const resp = {
+		results,
+		page: page !== undefined ? Number(page) : undefined,
+		offset: offset !== undefined ? Number(offset) : undefined,
+		limit: limit !== undefined ? Number(limit) : undefined,
+        totalItems: totalItems !== undefined ? Number(totalItems) : undefined,
+        totalPages: totalPages !== undefined ? Number(totalPages) : undefined,
+	};
 
-    const totalItems = await model.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
+	console.log(resp);
 
-    return {
-        results,
-        page: page !== undefined ? Number(page) : undefined,
-        offset: offset !== undefined ? Number(offset) : undefined,
-        totalPages,
-        totalItems,
-    };
+	return resp;
 };
 
-export default paginate;
+const paginateQuery = async () => {
+	return "NOT YET IMPLEMENTED";
+};
+
+export default {
+	paginateArray,
+	paginateQuery,
+};
