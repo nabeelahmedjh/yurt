@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Server, Space, User, Tag} from "../models/index.js";
-import paginate from "../utils/pagination.js";
+import Pagination from "../utils/pagination.js";
 
 const createServer = async (name, description, user, banner, tags) => {
 
@@ -109,15 +109,17 @@ const createSpace = async (serverId, name, description, type) => {
 
 };
 
-const getAdminsByServerId = async (serverId,) => {
-  const server = await Server.findById(serverId).populate("admins");
-  return server.admins;
 
-}
+const getMembersByServerId =async (serverId, page, limit, offset, type) => {
 
-const getMembersByServerId = async (serverId) => {
-  const server = await Server.findById(serverId).populate("members");
-  return server.members;
+  // return response in pagination format
+  if (type === "normal") {
+    const server = await Server.findById(serverId).populate("members");
+    return Pagination.paginateArray(page, limit, offset, server.members);
+  } else if (type === "admin") {
+    const server = await Server.findById(serverId).populate("admins");
+    return Pagination.paginateArray(page, limit, offset, server.admins);
+  }
 }
 
 
@@ -127,5 +129,4 @@ export default {
   getAllServers,
   createSpace,
   getMembersByServerId,
-  getAdminsByServerId
 };
