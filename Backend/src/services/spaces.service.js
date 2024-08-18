@@ -1,78 +1,77 @@
-
-import { Server } from "../models/index.js"
-import { Message } from "../models/index.js"
+import { Server } from "../models/index.js";
+import { Message } from "../models/index.js";
 import Space from "../models/space.model.js";
 import mongoose from "mongoose";
-
+import pagination from "../utils/pagination.js";
 
 const createSpace = async (name, description, spaceBanner, type) => {
-    const space = await Space.create({
-        name,
-        description,
-        spaceBanner,
-        type
-    });
-    return space;
-}
+	const space = await Space.create({
+		name,
+		description,
+		spaceBanner,
+		type,
+	});
+	return space;
+};
 
 const getJoinedSpacesIds = async (userId) => {
-
-    const servers = await Server.find({ members: userId });
-    let spacesIds = [];
-    servers.map((server) => {
-        spacesIds = [...spacesIds, ...server.spaces];
-    });
-    return spacesIds;
-
+	const servers = await Server.find({ members: userId });
+	let spacesIds = [];
+	servers.map((server) => {
+		spacesIds = [...spacesIds, ...server.spaces];
+	});
+	return spacesIds;
 };
 
 const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
+	const newMessage = await Message.create({
+		content: content,
+		sentBy: sentBy,
+		spaceId: spaceId,
+		attachment: attachment,
+	});
 
-    const newMessage = await Message.create({
-        content: content,
-        sentBy: sentBy,
-        spaceId: spaceId,
-        attachment: attachment,
+	const newMessageObj = newMessage.toObject();
+	return newMessageObj;
+};
 
-    });
+const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
+	const messages = await Message.find({ spaceId: spaceId }).populate(
+		"sentBy",
+		"-password"
+	);
 
+    return pagination.paginateArray(page, limit, offset, messages)
 
-
-    const newMessageObj = newMessage.toObject();
-    return newMessageObj;
-}
-
-const getAllMessageInSpace = async (spaceId) => {
-
-    const messages = await Message.aggregate([
-        {
-            $match: {
-                spaceId: new mongoose.Types.ObjectId(spaceId),
-            },
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "sentBy",
-                foreignField: "_id",
-                as: "sentBy",
-                // hide password field
-                pipeline: [
-                    {
-                        $project: {
-                            password: 0
-                        }
-                    }
-                ]
-            },
-        },
-        { $unwind: "$sentBy" },
-    ]);
-    return messages;
-}
+	return messages;
+	// const messages = await Message.aggregate([
+	//     {
+	//         $match: {
+	//             spaceId: new mongoose.Types.ObjectId(spaceId),
+	//         },
+	//     },
+	//     {
+	//         $lookup: {
+	//             from: "users",
+	//             localField: "sentBy",
+	//             foreignField: "_id",
+	//             as: "sentBy",
+	//             // hide password field
+	//             pipeline: [
+	//                 {
+	//                     $project: {
+	//                         password: 0
+	//                     }
+	//                 }
+	//             ]
+	//         },
+	//     },
+	//     { $unwind: "$sentBy" },
+	// ]);
+};
 export default {
-    getJoinedSpacesIds,
-    sendMessageInSpace,
-    getAllMessageInSpace,
-    createSpace
-}
+	getJoinedSpacesIds,
+	sendMessageInSpace,
+	getAllMessageInSpace,
+	createSpace,
+};

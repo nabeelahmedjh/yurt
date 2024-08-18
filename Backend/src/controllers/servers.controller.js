@@ -167,9 +167,9 @@ const joinServer = async (req, res) => {
 const getMembers = async (req, res) => {
 	const { serverId } = req.params;
 	const type = req.query.type ?? "";
-	const page = req.query.page ?? 1;
+	const page = req.query.page ?? "";
 	const limit = req.query.limit ?? 10;
-	const offset = req.query.offset ?? (page - 1) * limit;
+	const offset = page === "" ? req.query.offset ?? '' :  (page - 1) * limit;
 
 	if (!type) {
 		return res.status(400).json({

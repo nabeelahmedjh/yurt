@@ -82,6 +82,10 @@ const sendMessageInSpace = async (req, res) => {
 
 const getMessagesInSpace = async (req, res) => {
 	const { spaceId } = req.params;
+	const type = req.query.type ?? "";
+	const page = req.query.page ?? "";
+	const limit = req.query.limit ?? 10;
+	const offset = page === "" ? req.query.offset ?? "" : (page - 1) * limit;
 
 	if (!mongoose.Types.ObjectId.isValid(spaceId)) {
 		return res.status(400).json({
@@ -91,9 +95,19 @@ const getMessagesInSpace = async (req, res) => {
 		});
 	}
 	try {
-		const messages = await spacesService.getAllMessageInSpace(spaceId);
+		const resp = await spacesService.getAllMessageInSpace(
+			spaceId,
+			page,
+			limit,
+			offset
+		);
 		res.status(200).json({
-			data: messages,
+			data: resp.results,
+			page: resp.page,
+			offset: resp.offset,
+			limit: resp.limit,
+			totalItems: resp.totalItems,
+			totalPages: resp.totalPages,
 		});
 	} catch (error) {
 		res.status(500).json({
