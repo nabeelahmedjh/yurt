@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { ChevronDown, PencilLineIcon, Plus, TentIcon } from "lucide-react";
+import { PencilLineIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateSpaceModal from "@/components/modals/create-space-modal";
 import useGetServers from "@/hooks/useGetServers";
@@ -19,19 +19,12 @@ import { PROXY_API_URL } from "@/constants";
 
 import SpaceFallbackImage from "@/public/space.png";
 import ServerFallbackImage from "@/public/server.png";
-import { useEffect } from "react";
 
-export default function ChatSpaces({
-  isWhiteboardOpen,
-}: {
-  isWhiteboardOpen: any;
-}) {
+export default function ChatSpaces() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
   const { data } = useGetServers();
-
-  if (isWhiteboardOpen) return null;
 
   return (
     <div

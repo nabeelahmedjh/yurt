@@ -109,9 +109,7 @@ export default function ChatServers() {
             <div className="flex justify-center mt-1">
               <TooltipProvider delayDuration={150}>
                 <Tooltip>
-                  <TooltipTrigger
-                    onClick={() => router.push("/explore-servers")}
-                  >
+                  <TooltipTrigger onClick={() => router.push("/explore")}>
                     <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
                       <CompassIcon
                         fill="white"

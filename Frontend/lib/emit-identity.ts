@@ -7,7 +7,7 @@ export const emitIdentity = () => {
 
   if (userId) {
     const socket = SocketService.connect();
-    console.log("Emitting identity", userId);
+    // console.log("Emitting identity", userId);
     socket.emit("identity", userId);
   }
 };
