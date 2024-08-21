@@ -57,7 +57,7 @@ const getServers = async (req, res) => {
 
 	try {
 		if (!type || type === "joined") {
-			const servers = await serversService.getJionedServers(req, res);
+			const servers = await serversService.getJoinedServers(req, res);
 			return res.status(200).json({
 				data: servers,
 			});
