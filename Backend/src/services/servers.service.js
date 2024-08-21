@@ -48,7 +48,7 @@ const getJoinedServers = async (req, res) => {
   return servers;
 };
 
-const getAllServers = async (userId, search, tags) => {
+const getAllServers = async (userId, search, tags, page, limit, offset) => {
 
 
 
@@ -110,8 +110,8 @@ const getAllServers = async (userId, search, tags) => {
       }
     }
   ]);
-
-  return servers;
+  return Pagination.paginateArray(page, limit, offset, servers);
+  
 }
 
 const createSpace = async (serverId, name, description, type) => {

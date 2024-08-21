@@ -64,10 +64,19 @@ const getServers = async (req, res) => {
 		} else if (type === "all") {
 			const user = req.user;
 			const userId = user.user._id;
+			const page = req.query.page ?? "";
+			const limit = req.query.limit ?? 10;
+			const offset = page === "" ? req.query.offset ?? '' :  (page - 1) * limit;
 
-			const servers = await serversService.getAllServers(userId, search, tags);
+
+			const servers = await serversService.getAllServers(userId, search, tags, page, limit, offset);
 			return res.status(200).json({
-				data: servers,
+				data: servers.results,
+				page: servers.page,
+				offset: servers.offset,
+				limit: servers.limit,
+				totalItems: servers.totalItems,
+				totalPages: servers.totalPages,
 			});
 		} else {
 			return res.status(400).json({
