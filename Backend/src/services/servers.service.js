@@ -48,23 +48,17 @@ const getJoinedServers = async (req, res) => {
   return servers;
 };
 
-const getAllServers = async (userId, search, tags) => {
-
-
+const getAllServers = async (userId, search, tags, page, limit, offset) => {
 
   
-  // tags = tags.split(',')
+  let tagId = [];
+  if (tags && tags.length > 0) {
+    tagId = tags.split(',').map(id => new mongoose.Types.ObjectId(id));
+  }
   
-
-
-
-  const tagId = tags.map(id => new mongoose.Types.ObjectId(id));
-
+  console.log(tagId);
   
-
-
   const servers = await Server.aggregate([
-
     {
       $match: {
         name: {
@@ -110,8 +104,8 @@ const getAllServers = async (userId, search, tags) => {
       }
     }
   ]);
-
-  return servers;
+  return Pagination.paginateArray(page, limit, offset, servers);
+  
 }
 
 const createSpace = async (serverId, name, description, type) => {
