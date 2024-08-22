@@ -2,12 +2,13 @@ import mongoose from "mongoose";
 import { Server, Space, User, Tag} from "../models/index.js";
 import Pagination from "../utils/pagination.js";
 
-const createServer = async (name, description, user, banner, tags) => {
+const createServer = async (name, description, user, banner, serverImage, tags) => {
 
   const newServer = await Server.create({
     name,
     description,
     banner,
+    serverImage,
     admins: [user._id],
     members: [user._id],
     tags: tags,
@@ -50,14 +51,11 @@ const getJoinedServers = async (req, res) => {
 
 const getAllServers = async (userId, search, tags, page, limit, offset) => {
 
-  
-  let tagId = [];
+  let tagNames = [];
   if (tags && tags.length > 0) {
-    tagId = tags.split(',').map(id => new mongoose.Types.ObjectId(id));
+    tagNames = tags.split(','); 
   }
-  
-  console.log(tagId);
-  
+
   const servers = await Server.aggregate([
     {
       $match: {
@@ -68,7 +66,22 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
 
       }
     },
-    ...(tagId.length > 0 ? [{ $match: { tags: { $all: tagId } } }] : []),
+    ...(tagNames.length > 0 ? [
+      {
+        
+        $lookup: {
+          from: "tags",
+          localField: "tags", 
+          foreignField: "_id",
+          as: "tag"
+        }
+      },
+      {
+        $match: {
+          "tag.name": { $all: tagNames }
+        }
+      },
+    ] : []),
     {
       $addFields: {
 
