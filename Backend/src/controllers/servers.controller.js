@@ -54,6 +54,7 @@ const getServers = async (req, res) => {
 	const type = req.query.type ?? "";
 	const search = req.query.search ?? "";
 	let tags = req.query.tags ?? [];
+	console.log(req.query);
 
 	try {
 		if (!type || type === "joined") {

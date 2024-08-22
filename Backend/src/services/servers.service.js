@@ -50,21 +50,15 @@ const getJoinedServers = async (req, res) => {
 
 const getAllServers = async (userId, search, tags, page, limit, offset) => {
 
-
-
   
-  // tags = tags.split(',')
+  let tagId = [];
+  if (tags && tags.length > 0) {
+    tagId = tags.split(',').map(id => new mongoose.Types.ObjectId(id));
+  }
   
-
-
-
-  const tagId = tags.map(id => new mongoose.Types.ObjectId(id));
-
+  console.log(tagId);
   
-
-
   const servers = await Server.aggregate([
-
     {
       $match: {
         name: {
