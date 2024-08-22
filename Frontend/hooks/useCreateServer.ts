@@ -9,7 +9,10 @@ interface ServerData {
 
 const useCreateServer = () => {
   const [loading, setLoading] = useState(false);
-  const { mutate } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+  const { mutate } = useGetServers(searchParam);
 
   const handleCreateServer = async (data: ServerData) => {
     setLoading(true);

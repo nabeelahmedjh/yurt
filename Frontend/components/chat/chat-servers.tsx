@@ -23,7 +23,11 @@ export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
-  const { data, isLoading } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+
+  const { data, isLoading } = useGetServers(searchParam);
 
   return (
     <div className="bg-zinc-100 h-dvh w-min py-3 px-4 flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">

@@ -9,7 +9,10 @@ interface SpaceData {
 
 const useCreateSpace = () => {
   const [loading, setLoading] = useState(false);
-  const { mutate } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+  const { mutate } = useGetServers(searchParam);
 
   const handleCreateSpace = async (serverId: string, data: SpaceData) => {
     setLoading(true);

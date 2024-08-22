@@ -24,7 +24,11 @@ export default function ChatSpaces() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
-  const { data } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+
+  const { data } = useGetServers(searchParam);
 
   return (
     <div

@@ -47,7 +47,7 @@ export default function ChatLayout() {
       : 60;
 
   useEffect(() => {
-    console.log("resizing panel");
+    // console.log("resizing panel");
 
     if (leftPanelRef.current) {
       leftPanelRef.current.resize(newSize);
@@ -78,9 +78,13 @@ export default function ChatLayout() {
         <ResizablePanel ref={leftPanelRef} maxSize={newSize} minSize={0}>
           <ChatSidebar />
         </ResizablePanel>
-        {params?.serverID && (
-          <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
-        )}
+
+        <ResizableHandle
+          className={`bg-black hover:bg-gray-400 w-[2px] ${
+            !params?.serverID && "hidden"
+          }`}
+        />
+
         <ResizablePanel defaultSize={65}>
           {isWhiteboardOpen && <Whiteboard />}
           {params?.spaceID && <ChatContent />}
@@ -88,9 +92,12 @@ export default function ChatLayout() {
           {isExploreOpen && <Explore />}
         </ResizablePanel>
 
-        {!isExploreOpen && (
-          <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
-        )}
+        <ResizableHandle
+          className={`bg-black hover:bg-gray-400 w-[2px] ${
+            isExploreOpen && "hidden"
+          }`}
+        />
+
         <ResizablePanel ref={rightPanelRef} maxSize={20} minSize={0}>
           {!isExploreOpen && <ChatRightbar />}
         </ResizablePanel>

@@ -1,5 +1,5 @@
-import APIManager from './apiManager';
-import ENDPOINTS from './endpoints';
+import APIManager from "./apiManager";
+import ENDPOINTS from "./endpoints";
 
 const createServer = async (data: any) => {
   const url = ENDPOINTS.SERVERS;
@@ -16,10 +16,10 @@ const createMessage = async (spaceId: string, data: any) => {
   return APIManager.post(url, data, {}, true);
 };
 
-const getServers = async () => {
+const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
-  return APIManager.get(url, {}, {}, true);
-}
+  return APIManager.get(url, params, {}, true);
+};
 
 const getMessages = async (spaceId: string) => {
   const url = ENDPOINTS.MESSAGES(spaceId);
@@ -29,7 +29,7 @@ const getMessages = async (spaceId: string) => {
 const getProfile = async () => {
   const url = ENDPOINTS.PROFILE;
   return APIManager.get(url, {}, {}, true);
-}
+};
 
 const login = async (data: any) => {
   const url = ENDPOINTS.LOGIN;
@@ -41,15 +41,13 @@ const signup = async (data: any) => {
   return APIManager.post(url, data, {}, false);
 };
 
-
-
-export { 
-  createServer, 
-  createSpace, 
-  createMessage, 
-  getServers, 
+export {
+  createServer,
+  createSpace,
+  createMessage,
+  getServers,
   getMessages,
-  getProfile, 
-  login, 
-  signup, 
+  getProfile,
+  login,
+  signup,
 };
