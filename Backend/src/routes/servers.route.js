@@ -4,7 +4,7 @@ import upload from "../config/multerConfig.js";
 const router = express.Router();
 
 router.get("/", serversController.getServers);
-router.post("/", upload.single('banner'), serversController.createServer);
+router.post("/", upload.fields([{name: 'banner', maxCount: 1}, {name: 'serverImage', maxCount: 1}]), serversController.createServer);
 // router.put("/:serverId", serversController.updateServer);
 // router.delete("/:serverId", serversController.deleteServer);
 // router.get("/:serverId", serversController.getServer);

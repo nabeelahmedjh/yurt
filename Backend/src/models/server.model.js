@@ -16,6 +16,11 @@ const serverSchema = new moongose.Schema(
       required: false,
       default: null
     },
+    serverImage: {
+      type: Object,
+      required: false,
+      default: null
+    },
     tags: [
       {
         type: moongose.Schema.Types.ObjectId,

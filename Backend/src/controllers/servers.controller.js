@@ -4,14 +4,27 @@ const createServer = async (req, res) => {
 	const { name, description } = req.body;
 	let tags = req.body.tags ?? [];
 	const user = req.user.user;
-	const banner = req.file
+	const banner = req.files?.['banner'] && req.files?.['banner']?.[0]
 		? {
-				name: req.file.originalname,
-				size: req.file.size,
-				type: req.file.mimetype,
-				source: req.file.path,
-		  }
+			name: req.files['banner'][0].originalname,
+			size: req.files['banner'][0].size,
+			type: req.files['banner'][0].mimetype,
+			source: req.files['banner'][0].path,
+		}
 		: null;
+
+	const serverImage = req.files?.['serverImage'] && req.files?.['serverImage']?.[0]
+		? {
+			name: req.files['serverImage'][0].originalname,
+			size: req.files['serverImage'][0].size,
+			type: req.files['serverImage'][0].mimetype,
+			source: req.files['serverImage'][0].path,
+
+		}
+		: null;
+
+	console.log(serverImage);
+	
 
 	if (typeof tags === "string") {
 		tags = JSON.parse(tags);
@@ -35,6 +48,7 @@ const createServer = async (req, res) => {
 			description,
 			user,
 			banner,
+			serverImage,
 			tags
 		);
 
@@ -67,7 +81,7 @@ const getServers = async (req, res) => {
 			const userId = user.user._id;
 			const page = req.query.page ?? "";
 			const limit = req.query.limit ?? 10;
-			const offset = page === "" ? req.query.offset ?? '' :  (page - 1) * limit;
+			const offset = page === "" ? req.query.offset ?? '' : (page - 1) * limit;
 
 
 			const servers = await serversService.getAllServers(userId, search, tags, page, limit, offset);
@@ -179,7 +193,7 @@ const getMembers = async (req, res) => {
 	const type = req.query.type ?? "";
 	const page = req.query.page ?? "";
 	const limit = req.query.limit ?? 10;
-	const offset = page === "" ? req.query.offset ?? '' :  (page - 1) * limit;
+	const offset = page === "" ? req.query.offset ?? '' : (page - 1) * limit;
 
 	if (!type) {
 		return res.status(400).json({

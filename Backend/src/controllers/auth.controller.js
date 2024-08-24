@@ -69,7 +69,6 @@ const signUp = async (req, res) => {
       avatar: avatar,
     });
 
-
     res.status(200).json({
       data: await user.populate("interests")
     });
