@@ -88,7 +88,7 @@ const config = {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
+    require("tailwindcss-animated"),
     require("tailwind-extended-shadows"),
 
     function ({ addUtilities }: PluginAPI) {

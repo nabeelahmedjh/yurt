@@ -5,7 +5,7 @@ export default function HomeLayout({
 }: {
   children?: React.ReactNode;
 }) {
-  redirect("/servers");
+  // redirect("/servers");
 
   return (
     <>
