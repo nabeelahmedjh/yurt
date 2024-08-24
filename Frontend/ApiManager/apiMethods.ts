@@ -31,6 +31,11 @@ const getProfile = async () => {
   return APIManager.get(url, {}, {}, true);
 };
 
+const getTags = async () => {
+  const url = ENDPOINTS.TAGS;
+  return APIManager.get(url, {}, {}, true);
+};
+
 const login = async (data: any) => {
   const url = ENDPOINTS.LOGIN;
   return APIManager.post(url, data, {}, false);
@@ -48,6 +53,7 @@ export {
   getServers,
   getMessages,
   getProfile,
+  getTags,
   login,
   signup,
 };

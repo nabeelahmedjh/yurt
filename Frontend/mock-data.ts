@@ -62,3 +62,13 @@ export const allServersMockData = Array.from({ length: 23 }, (_, i) => ({
   userJoined: false,
   membersCount: 20,
 }));
+
+export const tagsMockData = Array.from({ length: 8 }, (_, i) => ({
+  _id: `66c96bee61a2b783fe23742${i}`,
+  name: `Geography`,
+  description: `Geography is a subject${i}`,
+  usageCount: 0,
+  __v: 0,
+  createdAt: "2024-08-24T05:13:18.483Z",
+  updatedAt: "2024-08-24T05:13:18.483Z",
+}));

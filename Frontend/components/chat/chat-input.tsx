@@ -163,7 +163,6 @@ export default function ChatInput() {
 }
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { set } from "date-fns";
 
 function FilePreview({
   attachedFiles,
