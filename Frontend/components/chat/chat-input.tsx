@@ -7,14 +7,7 @@ import {
   AutosizeTextAreaRef,
 } from "@/components/ui/autosize-textarea";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import MessageFileModal from "@/components/modals/message-file-modal";
 import { ArrowUp, File, PaperclipIcon, Smile, X } from "lucide-react";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
@@ -126,7 +119,7 @@ export default function ChatInput() {
             >
               <PaperclipIcon className="size-9 p-1 rounded-full border-0 rotate-[315deg]" />
             </div>
-            <Input
+            <input
               multiple
               onChange={handleFileChange}
               ref={fileInputRef}
