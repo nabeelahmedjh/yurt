@@ -3,8 +3,7 @@
 import { useState } from "react";
 
 import ImageModal from "./image-modal";
-import { toast } from "sonner";
-import { Upload, UploadIcon, X } from "lucide-react";
+import { UploadIcon, X } from "lucide-react";
 
 export default function UploadAvatar({
   field,
@@ -65,19 +64,19 @@ export default function UploadAvatar({
           <img
             src={croppedFile ? URL.createObjectURL(croppedFile) : ""}
             alt="Server Image"
-            className="object-cover w-full h-full rounded-full"
+            className="object-cover w-full h-[150px] rounded-full border border-neutral-100"
           />
         </div>
       ) : (
         <label htmlFor="serverImage" className="cursor-pointer">
-          <div className="flex flex-col items-center justify-center w-full h-full rounded-full p-1 bg-gray-200">
+          <div className="flex flex-col items-center justify-center w-[150px] h-[150px] rounded-full p-1 bg-neutral-100">
             <UploadIcon />
             <p className="text-sm text-gray-500 mt-2">Upload Image</p>
           </div>
         </label>
       )}
       {errorMsg && (
-        <p className="text-sm text-red-500 text-nowrap mt-8 -ml-2">
+        <p className="text-sm text-red-500 text-nowrap pt-1 -ml-2">
           {errorMsg}
         </p>
       )}

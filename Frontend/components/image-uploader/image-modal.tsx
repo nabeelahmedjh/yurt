@@ -135,13 +135,14 @@ export default function ImageModal({
           <ReactCrop
             circularCrop
             keepSelection
-            minWidth={200}
-            minHeight={200}
+            minWidth={400}
+            minHeight={400}
             crop={crop}
             onChange={(c, percentCrop) => setCrop(percentCrop)}
             aspect={aspectRatio}
           >
             <img
+              className="w-full h-full"
               draggable={false}
               src={filePreview}
               ref={cropRef}
@@ -154,7 +155,6 @@ export default function ImageModal({
             onClick={() => {
               if (croppedResult) {
                 setCroppedFile(croppedResult);
-                console.log("croppedFile", croppedResult);
                 field.onChange(croppedResult);
                 setIsOpen(false);
               }
