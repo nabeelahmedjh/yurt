@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import useCreateServer from "@/hooks/useCreateServer";
+import UploadAvatar from "@/components/image-uploader/upload-avatar";
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -43,22 +44,48 @@ export default function CreateServerModal({
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { handleCreateServer } = useCreateServer();
-
+  const MAX_FILE_SIZE_MB = 1;
   const formSchema = z.object({
+    serverImage: z
+      .union([z.instanceof(File), z.undefined()])
+      .refine((file) => file !== undefined, "Server Image is required.")
+      .refine(
+        (file) =>
+          file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
+        {
+          message: `File size must be less than ${MAX_FILE_SIZE_MB}MB.`,
+        }
+      )
+      .refine((file) => file === undefined || file.type.startsWith("image/"), {
+        message: "Only Image files are allowed.",
+      }),
     name: z.string().min(2).max(50),
     description: z.string().min(2).max(100),
+    tags: z.array(z.string()).max(5),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      serverImage: undefined,
       name: "",
       description: "",
+      tags: [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const error = await handleCreateServer(values);
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("description", values.description);
+    // formData.append("tags", JSON.stringify(values.tags));
+    formData.append(
+      "tags",
+      JSON.stringify(["66c9af0f61a2b783fe23761b", "66c9af0f61a2b783fe23761d"])
+    );
+    formData.append("serverImage", values.serverImage);
+
+    const error = await handleCreateServer(formData);
 
     if (!error) {
       // router.push(`/servers/${data?._id}`);
@@ -93,6 +120,24 @@ export default function CreateServerModal({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-2"
             >
+              <FormField
+                control={form.control}
+                name="serverImage"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center">
+                    <FormControl>
+                      <div className="size-[150px]">
+                        <UploadAvatar
+                          maxFileSize={MAX_FILE_SIZE_MB}
+                          field={field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="name"
