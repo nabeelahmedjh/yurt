@@ -4,7 +4,8 @@ const createServer = async (req, res) => {
 	const { name, description } = req.body;
 	let tags = req.body.tags ?? [];
 	const user = req.user.user;
-	const banner = req.files?.['banner'] && req.files?.['banner']?.[0]
+	
+	const banner = req.files['banner'] && req.files?.['banner']?.[0]
 		? {
 			name: req.files['banner'][0].originalname,
 			size: req.files['banner'][0].size,
@@ -13,7 +14,7 @@ const createServer = async (req, res) => {
 		}
 		: null;
 
-	const serverImage = req.files?.['serverImage'] && req.files?.['serverImage']?.[0]
+	const serverImage = req.files['serverImage'] && req.files?.['serverImage']?.[0]
 		? {
 			name: req.files['serverImage'][0].originalname,
 			size: req.files['serverImage'][0].size,

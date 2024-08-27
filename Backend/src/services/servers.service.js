@@ -92,7 +92,7 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
     },
     {
       $sort: {
-        userJoined: -1
+        userJoined: 1
       }
     },
     {

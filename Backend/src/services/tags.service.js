@@ -11,7 +11,7 @@ const createTag = async (name, description) => {
 };
 
 const getTags = async () => {
-    const tags = await Tag.find();
+    const tags = await Tag.find().sort({"usageCount" : -1});
     return tags;
 };
 
