@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useParams, usePathname } from "next/navigation";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import type { ImperativePanelHandle } from "react-resizable-panels";
 import ChatSidebar from "@/components/chat/chat-sidebar";
 import ChatContent from "@/components/chat/chat-content";
 import ChatRightbar from "@/components/chat/chat-rightbar";
 import Whiteboard from "@/components/whiteboard";
 import ServerGreeting from "@/components/server-greeting";
-import { useViewportWidth } from "@/lib/viewport-width";
-import { useParams } from "next/navigation";
 import SplashScreen from "@/components/splash-screen";
+import Explore from "@/components/explore-servers/explore";
+import { useViewportWidth } from "@/lib/viewport-width";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -23,10 +24,20 @@ import SplashScreen from "@/components/splash-screen";
 export default function ChatLayout() {
   const [loading, setLoading] = useState(true);
   const [isFading, setIsFading] = useState(false);
-  const [isWhiteboardOpen, setIsWhiteboardOpen] = useState(false);
+
+  const leftPanelRef = useRef<ImperativePanelHandle>(null);
+  const rightPanelRef = useRef<ImperativePanelHandle>(null);
+
   const params = useParams<{ serverID: string; spaceID: string }>();
+  const pathname = usePathname();
 
   const viewportWidth = useViewportWidth();
+
+  const isGreetingOpen = pathname === "/servers";
+  const isExploreOpen = pathname === "/explore";
+  const isWhiteboardOpen = pathname === "/whiteboard";
+
+  // console.log("pathname", pathname);
 
   // if viewport width > 400 px, how much in percent is 340px of viewport width
   const newSize =
@@ -35,15 +46,19 @@ export default function ChatLayout() {
         100
       : 60;
 
-  const ref = useRef<ImperativePanelHandle>(null);
-
   useEffect(() => {
-    const panel = ref.current;
+    // console.log("resizing panel");
 
-    if (panel) {
-      panel.resize(newSize);
+    if (leftPanelRef.current) {
+      leftPanelRef.current.resize(newSize);
     }
-  }, [newSize]);
+
+    if (rightPanelRef.current) {
+      let newSize: number;
+      isExploreOpen ? (newSize = 0) : (newSize = 20);
+      rightPanelRef.current.resize(newSize);
+    }
+  }, [newSize, isExploreOpen]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -60,22 +75,31 @@ export default function ChatLayout() {
     <>
       {loading && <SplashScreen isFading={isFading} />}
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel ref={ref} maxSize={newSize} minSize={1}>
-          <ChatSidebar isWhiteboardOpen={isWhiteboardOpen} />
+        <ResizablePanel ref={leftPanelRef} maxSize={newSize} minSize={0}>
+          <ChatSidebar />
         </ResizablePanel>
-        {!isWhiteboardOpen && params?.serverID && (
-          <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
-        )}
+
+        <ResizableHandle
+          className={`bg-black hover:bg-gray-400 w-[2px] ${
+            !params?.serverID && "hidden"
+          }`}
+        />
+
         <ResizablePanel defaultSize={65}>
           {isWhiteboardOpen && <Whiteboard />}
-          {!isWhiteboardOpen && params?.spaceID && <ChatContent />}
-          {!isWhiteboardOpen && !params?.spaceID && !params.serverID && (
-            <ServerGreeting />
-          )}
+          {params?.spaceID && <ChatContent />}
+          {isGreetingOpen && <ServerGreeting />}
+          {isExploreOpen && <Explore />}
         </ResizablePanel>
-        <ResizableHandle className="bg-black hover:bg-gray-400 w-[2px]" />
-        <ResizablePanel maxSize={20} minSize={1} defaultSize={20}>
-          <ChatRightbar setIsWhiteboardOpen={setIsWhiteboardOpen} />
+
+        <ResizableHandle
+          className={`bg-black hover:bg-gray-400 w-[2px] ${
+            isExploreOpen && "hidden"
+          }`}
+        />
+
+        <ResizablePanel ref={rightPanelRef} maxSize={20} minSize={0}>
+          {!isExploreOpen && <ChatRightbar />}
         </ResizablePanel>
       </ResizablePanelGroup>
     </>

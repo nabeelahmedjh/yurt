@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
 import { getCookie } from "cookies-next";
+import queryString from "query-string";
 import { TOKEN, API_URL } from "@/constants";
 
 const getTokenFromCookies = (): string | undefined => {
@@ -44,6 +45,8 @@ class APIManager {
       method,
       url,
       params,
+      paramsSerializer: (params) =>
+        queryString.stringify(params, { arrayFormat: "comma" }),
       data,
       headers,
     };

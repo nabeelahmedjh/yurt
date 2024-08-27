@@ -2,16 +2,14 @@ import { useState } from "react";
 import { createServer } from "@/ApiManager/apiMethods";
 import useGetServers from "@/hooks/useGetServers";
 
-interface ServerData {
-  name: string;
-  description: string;
-}
-
 const useCreateServer = () => {
   const [loading, setLoading] = useState(false);
-  const { mutate } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+  const { mutate } = useGetServers(searchParam);
 
-  const handleCreateServer = async (data: ServerData) => {
+  const handleCreateServer = async (data: any) => {
     setLoading(true);
 
     try {

@@ -11,7 +11,11 @@ import SpaceFallbackImage from "@/public/space.png";
 export default function ChatHeader() {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
-  const { data, isLoading } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+
+  const { data, isLoading } = useGetServers(searchParam);
 
   const space = data
     ?.filter((server: any) => server._id === params.serverID)?.[0]

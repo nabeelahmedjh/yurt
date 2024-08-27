@@ -23,7 +23,11 @@ export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
-  const { data, isLoading } = useGetServers();
+  const searchParam = {
+    type: "joined",
+  };
+
+  const { data, isLoading } = useGetServers(searchParam);
 
   return (
     <div className="bg-zinc-100 h-dvh w-min py-3 px-4 flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">
@@ -57,7 +61,9 @@ export default function ChatServers() {
                   <TooltipProvider delayDuration={50}>
                     <Tooltip>
                       <TooltipTrigger
-                        onClick={() => router.push(`/servers/${server._id}`)}
+                        onClick={() => {
+                          router.push(`/servers/${server._id}`);
+                        }}
                       >
                         <Avatar
                           className={` flex items-center justify-center size-12 bg-primary rounded-lg border-b-0 shadow-gray-400 hover:border-b-2 transition-[border] shadow-sm ${
@@ -66,8 +72,10 @@ export default function ChatServers() {
                           }`}
                         >
                           <AvatarImage
-                            className="size-7"
-                            src={PROXY_API_URL + "/" + server.banner}
+                            className="h-[90%] w-[90%] rounded-xl"
+                            src={
+                              PROXY_API_URL + "/" + server?.serverImage?.source
+                            }
                           />
                           <AvatarFallback className="bg-inherit font-medium">
                             {server.name
@@ -109,9 +117,7 @@ export default function ChatServers() {
             <div className="flex justify-center mt-1">
               <TooltipProvider delayDuration={150}>
                 <Tooltip>
-                  <TooltipTrigger
-                    onClick={() => router.push("/explore-servers")}
-                  >
+                  <TooltipTrigger onClick={() => router.push("/explore")}>
                     <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
                       <CompassIcon
                         fill="white"

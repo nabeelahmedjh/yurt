@@ -45,3 +45,30 @@ export const spaceMockData = [
     __v: 1,
   },
 ];
+
+export const allServersMockData = Array.from({ length: 23 }, (_, i) => ({
+  _id: "66c427da145e53ae1da4e11b",
+  name: "Geography Tribe",
+  description:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
+  banner: {
+    name: "Screenshot from 2024-08-17 15-00-14.png",
+    size: 345998,
+    type: "image/png",
+    source:
+      "uploads/Screenshot from 2024-08-17 15-00-14-991036115-1724131290574.png",
+  },
+  tags: [],
+  userJoined: false,
+  membersCount: 20,
+}));
+
+export const tagsMockData = Array.from({ length: 8 }, (_, i) => ({
+  _id: `66c96bee61a2b783fe23742${i}`,
+  name: `Geography`,
+  description: `Geography is a subject${i}`,
+  usageCount: 0,
+  __v: 0,
+  createdAt: "2024-08-24T05:13:18.483Z",
+  updatedAt: "2024-08-24T05:13:18.483Z",
+}));

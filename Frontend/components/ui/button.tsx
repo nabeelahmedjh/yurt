@@ -20,12 +20,14 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-black/70 underline-offset-4 hover:underline",
         tool: "bg-primary hover:border-b-[6px] hover:text-black border hover:shadow-[0_5px_0_0_rgba(0,0,0,1)] transition-all duration-300 delay-0",
+        unstyled: "",
       },
       size: {
         default: "h-12 px-4 py-2 rounded-[32px]",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        unsized: "",
       },
     },
     defaultVariants: {

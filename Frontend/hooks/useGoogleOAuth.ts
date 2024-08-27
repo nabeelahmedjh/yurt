@@ -1,3 +1,4 @@
+import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next";
 import { TOKEN, API_URL, USER_ID } from "@/constants";
@@ -6,9 +7,9 @@ import { getProfile } from "@/ApiManager/apiMethods";
 export default function useGoogleOAuth() {
   const router = useRouter();
 
-  const handleGoogleOAuth = async () => {
+  const handleGoogleOAuth = useCallback(() => {
     const width = 500;
-    const height = 550;
+    const height = 720;
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
     const options = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`;
@@ -37,7 +38,20 @@ export default function useGoogleOAuth() {
     };
 
     window.addEventListener("message", handleMessage);
-  };
+
+    const interval = setInterval(() => {
+      if (authWindow?.closed) {
+        window.removeEventListener("message", handleMessage);
+        clearInterval(interval);
+      }
+    }, 1000);
+  }, [router]);
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("message", handleGoogleOAuth);
+    };
+  }, [handleGoogleOAuth]);
 
   return handleGoogleOAuth;
 }
