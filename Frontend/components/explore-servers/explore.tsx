@@ -5,7 +5,7 @@ import Tags from "@/components/explore-servers/tags";
 import Servers from "@/components/explore-servers/servers";
 import useGetServers from "@/hooks/useGetServers";
 import { useSearchParams } from "next/navigation";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 
 export default function Explore() {
   const searchParams = useSearchParams();
@@ -13,9 +13,11 @@ export default function Explore() {
   const searchParam = {
     type: "all",
     search: searchParams.get("search") || "",
+    tags: searchParams.get("tags") || "",
+    limit: 10,
   };
 
-  const { data, mutate } = useGetServers(searchParam);
+  const { data, mutate, isLoading } = useGetServers(searchParam);
 
   useEffect(() => {
     mutate();
@@ -25,7 +27,7 @@ export default function Explore() {
     <div className="h-dvh overflow-auto">
       <Search />
       <Tags />
-      <Servers servers={data} />
+      <Servers isLoading={isLoading} servers={data} />
     </div>
   );
 }

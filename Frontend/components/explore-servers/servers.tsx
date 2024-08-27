@@ -2,9 +2,19 @@ import { PROXY_API_URL } from "@/constants";
 import { Button } from "../ui/button";
 import Image from "next/image";
 
-export default function Servers({ servers }: { servers: any }) {
+export default function Servers({
+  servers,
+  isLoading,
+}: {
+  servers: any;
+  isLoading: boolean;
+}) {
+  if (isLoading) {
+    return <ServerLoadingSkeleton />;
+  }
+
   return (
-    <div className="mx-12 mb-12 gap-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="mx-12 mb-12 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {servers?.map((server: any) => (
         <ServerCard key={server._id} server={server} />
       ))}
@@ -18,7 +28,7 @@ function ServerCard({ server }: { server: any }) {
   };
 
   return (
-    <div className="border-2 rounded-sm relative pt-[150px] bg-primary">
+    <div className="border-2 rounded-sm bg-primary relative pt-[350px] mb-6">
       <div className="rounded-t-sm absolute top-0 w-full">
         <Image
           className="rounded-t-[8px] w-full h-[200px] object-cover"
@@ -34,14 +44,23 @@ function ServerCard({ server }: { server: any }) {
           }
         />
       </div>
-      <div className="relative p-4 pt-8 bg-white rounded-b-sm rounded-t-[32px]">
+      <div className="absolute bottom-0 w-full border-t border-neutral-200 p-4 pt-8 bg-white rounded-b-sm rounded-t-[32px]">
         <p
           title={server.name}
-          className="max-w-[80%] overflow-hidden text-ellipsis font-medium text-lg mb-2"
+          className="max-w-[80%] overflow-hidden text-ellipsis font-medium text-lg mb-1"
         >
           {server.name}
         </p>
-        <p className="text-slate-500"> {server.description} </p>
+        {server.tags?.length > 0 &&
+          server.tags?.map((tag: any) => (
+            <span
+              key={tag._id}
+              className="bg-gray-200 text-slate-600 text-sm px-2 py-1 rounded-sm mr-2"
+            >
+              {tag.name}
+            </span>
+          ))}
+        <p className="text-slate-500 mt-2"> {server.description} </p>
         <div className="flex items-center w-full justify-between mt-6">
           <div className="flex items-center">
             <span className="bg-gray-400 size-2 rounded-full mr-2"></span>
@@ -63,6 +82,31 @@ function ServerCard({ server }: { server: any }) {
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ServerLoadingSkeleton() {
+  return (
+    <div className="mx-12 mb-12 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {[...Array(10)].map((_, index) => (
+        <div
+          key={index}
+          className="border-2 rounded-sm bg-primary relative pt-[350px] mb-6 animate-pulse"
+        >
+          <div className="rounded-t-sm absolute top-0 w-full">
+            <div className="w-full h-[200px] bg-gray-300"></div>
+          </div>
+          <div className="absolute bottom-0 w-full border-t border-neutral-200 p-4 pt-8 bg-white rounded-b-sm rounded-t-[32px]">
+            <div className="w-full h-4 bg-gray-300 mb-2"></div>
+            <div className="w-full h-4 bg-gray-300 mb-2"></div>
+            <div className="w-full h-4 bg-gray-300 mb-2"></div>
+            <div className="w-full h-4 bg-gray-300 mb-2"></div>
+            <div className="w-full h-4 bg-gray-300 mb-2"></div>
+            <div className="w-full h-4 bg-gray-300 mb-2"></div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
