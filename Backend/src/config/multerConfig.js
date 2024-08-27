@@ -1,10 +1,34 @@
 // multerConfig.js
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+import getServerIdBySpaceId from '../utils/functions.utils.js';
 
 // Set storage engine
 const storage = multer.diskStorage({
-    destination: './uploads/',
+    destination: async (req, file, cb) => {
+        try {
+            const spaceId = req.params.spaceId;
+            let dir;
+
+            if (spaceId) {
+                const serverId = await getServerIdBySpaceId(spaceId);
+                const serverIdString = serverId._id.toString();
+                dir = `./uploads/${serverIdString}/${spaceId}`;
+            } else {
+                dir = './uploads/profiles';
+            }
+            
+            console.log('Directory:', dir);
+
+            await fs.promises.mkdir(dir, { recursive: true });
+
+            cb(null, dir);
+        } catch (error) {
+            console.error('Error creating directory:', error);
+            cb(error);
+        }
+    },
     filename: (req, file, cb) => {
         cb(null, path.parse(file.originalname).name + '-' + Math.round(Math.random() * 1E9) + '-' + Date.now() + path.extname(file.originalname));
     }
