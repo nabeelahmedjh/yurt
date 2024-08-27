@@ -9,7 +9,7 @@ export default function useGoogleOAuth() {
 
   const handleGoogleOAuth = useCallback(() => {
     const width = 500;
-    const height = 700;
+    const height = 720;
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
     const options = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`;

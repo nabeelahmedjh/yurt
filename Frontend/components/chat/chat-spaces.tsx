@@ -48,19 +48,19 @@ export default function ChatSpaces() {
             <div>
               <Avatar className="size-8">
                 <AvatarImage
-                  className="m-1 rounded-full"
+                  className="rounded-full"
                   src={
                     PROXY_API_URL +
                     "/" +
                     data?.filter(
                       (server: any) => params.serverID === server._id
-                    )[0]?.banner
+                    )[0]?.serverImage?.source
                   }
                 />
 
                 <AvatarFallback className="bg-white">
                   <Image
-                    className="m-1 rounded-full"
+                    className="rounded-full"
                     alt="server image"
                     src={ServerFallbackImage}
                   />

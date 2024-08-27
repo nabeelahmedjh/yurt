@@ -61,7 +61,9 @@ export default function ChatServers() {
                   <TooltipProvider delayDuration={50}>
                     <Tooltip>
                       <TooltipTrigger
-                        onClick={() => router.push(`/servers/${server._id}`)}
+                        onClick={() => {
+                          router.push(`/servers/${server._id}`);
+                        }}
                       >
                         <Avatar
                           className={` flex items-center justify-center size-12 bg-primary rounded-lg border-b-0 shadow-gray-400 hover:border-b-2 transition-[border] shadow-sm ${
@@ -70,8 +72,10 @@ export default function ChatServers() {
                           }`}
                         >
                           <AvatarImage
-                            className="size-7"
-                            src={PROXY_API_URL + "/" + server.banner}
+                            className="h-[90%] w-[90%] rounded-xl"
+                            src={
+                              PROXY_API_URL + "/" + server?.serverImage?.source
+                            }
                           />
                           <AvatarFallback className="bg-inherit font-medium">
                             {server.name
