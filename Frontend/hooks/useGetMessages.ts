@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
 import { useParams } from "next/navigation";
 import { getMessages } from "@/ApiManager/apiMethods";
 import SocketService from "@/services/SocketService";
 import { emitIdentity } from "@/lib/emit-identity";
 
-const fetcher = async (spaceId: string) => {
-  const data: any = await getMessages(spaceId);
-  return data;
+const PAGE_SIZE = 10;
+const fetcher = async (spaceId: string, pageIndex: number) => {
+  if (isNaN(pageIndex)) pageIndex = 0;
+  const searchParams = {
+    limit: PAGE_SIZE,
+    page: pageIndex + 1,
+  };
+
+  const data: any = await getMessages(spaceId, searchParams);
+  return data?.data || [];
 };
 
 const useGetMessages = () => {
@@ -16,11 +23,23 @@ const useGetMessages = () => {
 
   const [messages, setMessages] = useState<object[]>([]);
 
-  const { data, error, mutate } = useSWR(spaceId ?? null, fetcher, {
-    onSuccess: (data) => {
-      setMessages(data?.data || []);
-    },
-  });
+  const getKey = (pageIndex: number, previousPageData: any) => {
+    if (!spaceId) return null;
+    if (previousPageData && !previousPageData.length) return null;
+    return [spaceId, pageIndex];
+  };
+
+  const { data, error, mutate, size, setSize, isValidating } = useSWRInfinite(
+    getKey,
+    ([spaceId, pageIndex]) => fetcher(spaceId.toString(), Number(pageIndex))
+  );
+
+  useEffect(() => {
+    if (data) {
+      const mergedMessages = data ? [].concat(...data) : [];
+      setMessages(mergedMessages);
+    }
+  }, [data]);
 
   useEffect(() => {
     mutate();
@@ -30,7 +49,7 @@ const useGetMessages = () => {
     const socket = SocketService.connect();
 
     const handleMessage = (message: any) => {
-      console.log('new message', message.message)
+      console.log("new message", message.message);
       setMessages((prevMessages) => [...prevMessages, message.message]);
     };
 
@@ -48,9 +67,18 @@ const useGetMessages = () => {
     };
   }, []);
 
+  const isLoadingInitialData = !data && !error;
+  const isLoadingMore =
+    isLoadingInitialData ||
+    (size > 0 && data && typeof data[size - 1] === "undefined");
+  const isReachingEnd = data && data[data.length - 1]?.length < PAGE_SIZE;
+
   return {
     messages,
-    isLoading: !error && !data,
+    isLoading: isLoadingInitialData || isValidating,
+    isLoadingMore,
+    isReachingEnd,
+    setSize,
     error,
   };
 };
