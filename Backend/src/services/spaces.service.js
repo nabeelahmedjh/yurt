@@ -36,39 +36,56 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
 };
 
 const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
-	const messages = await Message.find({ spaceId: spaceId }).populate(
-		"sentBy",
-		"-password"
-	);
+	
+	const messages = await Message.aggregate([
+	    {
+	        $match: {
+	            spaceId: new mongoose.Types.ObjectId(spaceId),
+	        },
+	    },
+	    {
+	        $lookup: {
+	            from: "users",
+	            localField: "sentBy",
+	            foreignField: "_id",
+	            as: "sentBy",
+	            
+	            pipeline: [
+					{
+						$lookup: {
+							from: "tags", 
+							localField: "interests",
+							foreignField: "_id",
+							as: "interests",
+						},
+					},
+	                {
+	                    $project: {
+	                        _id: 1,                  
+                        	username: 1,
+							Bio: 1,             
+                        	email: 1,                
+                        	avatar: 1,                              
+                        	verified: 1,             
+                        	interests: 1,                             
+	                    }
+	                }
+	            ]
+	        },
+	    },
+		{
+			$sort: {
+				createdAt: 1
+			}
+		}
+	    
+	]);
 
-    return pagination.paginateArray(page, limit, offset, messages)
-
-	return messages;
-	// const messages = await Message.aggregate([
-	//     {
-	//         $match: {
-	//             spaceId: new mongoose.Types.ObjectId(spaceId),
-	//         },
-	//     },
-	//     {
-	//         $lookup: {
-	//             from: "users",
-	//             localField: "sentBy",
-	//             foreignField: "_id",
-	//             as: "sentBy",
-	//             // hide password field
-	//             pipeline: [
-	//                 {
-	//                     $project: {
-	//                         password: 0
-	//                     }
-	//                 }
-	//             ]
-	//         },
-	//     },
-	//     { $unwind: "$sentBy" },
-	// ]);
+	return pagination.paginateArray(page, limit, offset, messages)
 };
+
+
+
 export default {
 	getJoinedSpacesIds,
 	sendMessageInSpace,

@@ -13,7 +13,9 @@ const userSchema = new mongoose.Schema(
     },
     Bio:{
       type: String,
-      required: false
+      required: false,
+      default: ""
+
     },
     email: {
       type: String,
