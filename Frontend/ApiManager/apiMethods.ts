@@ -21,9 +21,9 @@ const getServers = async (params: {}) => {
   return APIManager.get(url, params, {}, true);
 };
 
-const getMessages = async (spaceId: string) => {
+const getMessages = async (spaceId: string, params: {}) => {
   const url = ENDPOINTS.MESSAGES(spaceId);
-  return APIManager.get(url, {}, {}, true);
+  return APIManager.get(url, params, {}, true);
 };
 
 const getProfile = async () => {

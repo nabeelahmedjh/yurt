@@ -119,42 +119,44 @@ export default function ChatSpaces() {
                     className="flex flex-col overflow-y-auto"
                   >
                     <ScrollArea className="space-y-1 flex flex-col">
-                      {server.spaces.map((space: any) => (
-                        <div
-                          onClick={() =>
-                            router.replace(
-                              `/servers/${params.serverID}/${space._id}`
-                            )
-                          }
-                          key={space._id}
-                          className={`${
-                            params.spaceID === space._id
-                              ? "bg-neutral-200"
-                              : "hover:bg-neutral-100"
-                          } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
-                        >
-                          <span>
-                            <Avatar className="size-6">
-                              <AvatarImage
-                                src={PROXY_API_URL + "/" + space.spaceBanner}
-                              />
-
-                              <AvatarFallback className="bg-transparent">
-                                <Image
-                                  alt="space image"
-                                  src={SpaceFallbackImage}
-                                />
-                              </AvatarFallback>
-                            </Avatar>
-                          </span>
-                          <span
-                            title={space.name}
-                            className="w-2 flex-grow font-medium text-black overflow-x-hidden text-ellipsis whitespace-nowrap"
+                      {server.spaces
+                        .sort((a: any, b: any) => a.name.localeCompare(b.name))
+                        .map((space: any) => (
+                          <div
+                            onClick={() =>
+                              router.replace(
+                                `/servers/${params.serverID}/${space._id}`
+                              )
+                            }
+                            key={space._id}
+                            className={`${
+                              params.spaceID === space._id
+                                ? "bg-neutral-200"
+                                : "hover:bg-neutral-100"
+                            } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
                           >
-                            {space.name}
-                          </span>
-                        </div>
-                      ))}
+                            <span>
+                              <Avatar className="size-6">
+                                <AvatarImage
+                                  src={PROXY_API_URL + "/" + space.spaceBanner}
+                                />
+
+                                <AvatarFallback className="bg-transparent">
+                                  <Image
+                                    alt="space image"
+                                    src={SpaceFallbackImage}
+                                  />
+                                </AvatarFallback>
+                              </Avatar>
+                            </span>
+                            <span
+                              title={space.name}
+                              className="w-2 flex-grow font-medium text-black overflow-x-hidden text-ellipsis whitespace-nowrap"
+                            >
+                              {space.name}
+                            </span>
+                          </div>
+                        ))}
                       <ScrollBar />
                     </ScrollArea>
                   </div>

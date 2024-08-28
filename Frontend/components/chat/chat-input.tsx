@@ -17,7 +17,11 @@ import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-export default function ChatInput() {
+export default function ChatInput({
+  scrollToBottomRef,
+}: {
+  scrollToBottomRef: React.RefObject<HTMLDivElement>;
+}) {
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [openMessageFileModal, setOpenMessageFileModal] = useState(false);
   const [text, setText] = useState("");
@@ -69,6 +73,8 @@ export default function ChatInput() {
     });
 
     await handleCreateMessage(params.spaceID, formData);
+
+    scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
 
     setText("");
     setAttachedFiles([]);

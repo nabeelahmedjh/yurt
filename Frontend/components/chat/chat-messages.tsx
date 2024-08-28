@@ -5,13 +5,19 @@ import MessageItem from "@/components/chat/chat-message-item";
 import { PhotoProvider } from "react-photo-view";
 import "@/app/react-photo-view.css";
 import { format, isSameDay } from "date-fns";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loader } from "lucide-react";
 
 export default function ChatMessages({
   messages,
   messageContainerRef,
+  scrollAreaRef,
+  isLoadingMore,
 }: {
   messages?: any;
   messageContainerRef?: any;
+  scrollAreaRef?: any;
+  isLoadingMore?: boolean;
 }) {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
@@ -20,8 +26,14 @@ export default function ChatMessages({
   let previousDate: Date | null = null;
 
   return (
-    <PhotoProvider maskOpacity={0.9}>
-      <div className="p-4">
+    <PhotoProvider className="h-full" maskOpacity={0.9}>
+      {/* <ScrollArea> */}
+      <div ref={scrollAreaRef} className="p-4 h-full overflow-y-auto">
+        {isLoadingMore && (
+          <div className="w-full flex justify-center font-medium p-6">
+            <Loader className="animate-spin animate" />
+          </div>
+        )}
         {params?.spaceID &&
           messages?.map((message: any, index: number) => {
             const currentDate = new Date(message.createdAt);
@@ -46,7 +58,7 @@ export default function ChatMessages({
                   name={
                     message?.sentBy?.username
                       ? message?.sentBy?.username
-                      : message?.sentBy?.email ?? "Unknown"
+                      : message?.sentBy?.email ?? "User"
                   }
                 />
               </li>
@@ -54,6 +66,7 @@ export default function ChatMessages({
           })}
         <div className="pb-4" ref={messageContainerRef}></div>
       </div>
+      {/* </ScrollArea> */}
     </PhotoProvider>
   );
 }
