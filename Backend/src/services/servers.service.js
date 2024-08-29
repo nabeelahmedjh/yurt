@@ -161,12 +161,13 @@ const getServerById = async (serverId) => {
 
 }
 
-const createSpace = async (serverId, name, description, type) => {
+const createSpace = async (serverId, name, description, spaceImage, type) => {
 
   let newSpace;
   newSpace = await Space.create({
     name,
     description,
+    spaceImage,
     server: serverId,
     type
   });

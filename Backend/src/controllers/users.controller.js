@@ -20,13 +20,15 @@ const getUser = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
     const userId = req.user.user._id;
-    const avatar = {
+    const avatar = res.file ? {
         name: req.file.originalname,
 		size: req.file.size,
 		type: req.file.mimetype,
 		source: req.file.path,
 
-    };
+    }: null;
+
+    
 
     try {
         const updateAvatar = await usersService.updateAvatar(userId, avatar);

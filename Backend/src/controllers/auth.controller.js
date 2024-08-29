@@ -68,16 +68,19 @@ const signUp = async (req, res) => {
       interests: interests,
       avatar: avatar,
     });
-
-    res.status(200).json({
-      data: await user.populate("interests")
-    });
+    const token = jwt.sign({ user: user }, process.env.JWT_SECRET);
+    return res.status(200).json({ token });
   } catch (error) {
-    return res.status(500).json({
-      error: {
-        message: error.message
-      },
-    });
+    if (error.code === 11000 && error.keyValue && error.keyValue.email) {
+      return res.status(409).json({
+          error: { message: 'Email already exists. Please use a different email address.' },
+      });
+  } else {
+
+      return res.status(500).json({
+          error: { message: error.message },
+      });
+  }
   }
 };
 

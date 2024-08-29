@@ -10,10 +10,10 @@ const spaceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    spaceBanner: {
-      type: String,
+    spaceImage: {
+      type: Object,
       required: false,
-      default: ""
+      default: null
     },
     type: {
       type: String,

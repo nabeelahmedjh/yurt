@@ -24,10 +24,7 @@ const createServer = async (req, res) => {
 
 		}
 		: null;
-
-	console.log(serverImage);
 	
-
 	if (typeof tags === "string") {
 		tags = JSON.parse(tags);
 	}
@@ -111,7 +108,6 @@ const getServers = async (req, res) => {
 const getServer = async (req, res) => {
 	const {serverId} = req.params;
 
-
 	if (!mongoose.Types.ObjectId.isValid(serverId)) {
 		return res.status(400).json({
 			error: {
@@ -134,8 +130,19 @@ const getServer = async (req, res) => {
 
 const createSpace = async (req, res) => {
 	const { serverId } = req.params;
-	const { name, description } = req.body;
+	const name  = req.body.name;
+	const description = req.body.description;
 	const type = req.body.type ?? "chat";
+	console.log(req.body);
+	console.log(serverId);
+
+	const spaceImage = req.file ? {
+        name: req.file.originalname,
+		size: req.file.size,
+		type: req.file.mimetype,
+		source: req.file.path,
+
+    } : null;
 
 	if (!serverId) {
 		return res.status(400).json({
@@ -160,6 +167,7 @@ const createSpace = async (req, res) => {
 			serverId,
 			name,
 			description,
+			spaceImage,
 			type
 		);
 		return res.status(201).json({
