@@ -1,5 +1,6 @@
 import { Server, User } from "../models/index.js";
 import { serversService } from "../services/index.js";
+import mongoose from "mongoose";
 const createServer = async (req, res) => {
 	const { name, description } = req.body;
 	let tags = req.body.tags ?? [];
@@ -105,6 +106,31 @@ const getServers = async (req, res) => {
 		});
 	}
 };
+
+
+const getServer = async (req, res) => {
+	const {serverId} = req.params;
+
+
+	if (!mongoose.Types.ObjectId.isValid(serverId)) {
+		return res.status(400).json({
+			error: {
+				message: "Invalid server id",
+			},
+		});
+	}
+	try {
+		const server = await serversService.getServerById(serverId);
+		return res.status(200).json({
+			data: server,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			error: { message: error.message },
+		});		
+	}
+}
+
 
 const createSpace = async (req, res) => {
 	const { serverId } = req.params;
@@ -242,6 +268,7 @@ const getMembers = async (req, res) => {
 export default {
 	createServer,
 	getServers,
+	getServer,
 	createSpace,
 	joinServer,
 	getMembers,

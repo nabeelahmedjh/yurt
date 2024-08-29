@@ -121,6 +121,46 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
   
 }
 
+
+const getServerById = async (serverId) => {
+
+  const server = await Server.aggregate([
+    {
+      $match:{_id: new mongoose.Types.ObjectId(serverId)}
+    },
+    {
+      $lookup:{
+        from : "spaces",
+        localField: "spaces",
+        foreignField: "_id",
+        as: "spaces",
+        pipeline: [
+          {
+            $addFields: {
+              lowercaseName: { $toLower: "$name" }
+            }
+          },
+          {
+            $sort: {
+              lowercaseName: 1
+            }
+          },
+          {
+            $project: {
+              lowercaseName: 0
+            }
+          }
+        ]
+      },
+
+      
+    }
+  ])
+
+  return server;
+
+}
+
 const createSpace = async (serverId, name, description, type) => {
 
   let newSpace;
@@ -156,6 +196,7 @@ export default {
   createServer,
   getJoinedServers,
   getAllServers,
+  getServerById,
   createSpace,
   getMembersByServerId,
 };
