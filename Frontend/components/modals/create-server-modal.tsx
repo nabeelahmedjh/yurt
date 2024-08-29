@@ -166,7 +166,7 @@ export default function CreateServerModal({
               <form
                 id="create-server"
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-2 px-1"
+                className="space-y-3 px-1"
               >
                 <FormField
                   control={form.control}
@@ -174,7 +174,7 @@ export default function CreateServerModal({
                   render={({ field }) => (
                     <FormItem className="flex flex-col items-center">
                       <FormControl>
-                        <div className="mt-1">
+                        <div className="mt-4 flex flex-col items-center">
                           <UploadAvatar
                             maxFileSize={MAX_FILE_SIZE_MB}
                             field={field}
