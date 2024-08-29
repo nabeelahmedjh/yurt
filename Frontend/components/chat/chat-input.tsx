@@ -92,6 +92,7 @@ export default function ChatInput({
           setOpenMessageFileModal={setOpenMessageFileModal}
         />
         <FilePreview
+          fileInputRef={fileInputRef}
           attachedFiles={attachedFiles}
           onRemoveFile={handleRemoveFile}
         />
@@ -138,7 +139,6 @@ export default function ChatInput({
               className="bg-transparent"
               placeholder="Type your message..."
               name="chat-input"
-              required
               value={text}
               onKeyDown={(e) => {
                 if (
@@ -173,9 +173,11 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 function FilePreview({
   attachedFiles,
   onRemoveFile,
+  fileInputRef,
 }: {
   attachedFiles: File[];
   onRemoveFile: (fileName?: string) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
 }) {
   const [filePreviews, setFilePreviews] = useState<{ [key: string]: string }>(
     {}
@@ -202,7 +204,12 @@ function FilePreview({
     <div className="flex flex-col gap-1 bg-slate-100 rounded-3xl pt-4 mx-4 my-1">
       <div
         title="Remove all files"
-        onClick={() => onRemoveFile()}
+        onClick={() => {
+          onRemoveFile();
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        }}
         className="self-end mr-4 p-1 cursor-pointer bg-secondary border rounded-[8px] hover:bg-secondary/30 hover:scale-105 transition-transform"
       >
         <X className="size-4" />
@@ -219,7 +226,12 @@ function FilePreview({
                 <span
                   title="Remove file"
                   className="self-end p-1 mb-1 hover:bg-slate-500/10 rounded-full cursor-pointer"
-                  onClick={() => onRemoveFile(file.name)}
+                  onClick={() => {
+                    onRemoveFile(file.name);
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = "";
+                    }
+                  }}
                 >
                   <X />
                 </span>
