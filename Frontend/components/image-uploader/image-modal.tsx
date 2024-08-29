@@ -11,15 +11,16 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, X } from "lucide-react";
 
 interface ImageModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   selectedFile?: File;
-  setCroppedFile: (file: File) => void;
+  setCroppedFile: (file: File | undefined) => void;
   filePreview: string;
   field: any;
+  fileInputRef: any;
 }
 
 export default function ImageModal({
@@ -29,6 +30,7 @@ export default function ImageModal({
   setCroppedFile,
   filePreview,
   field,
+  fileInputRef,
 }: ImageModalProps) {
   const [crop, setCrop] = useState<Crop>();
   const [croppedResult, setCroppedResult] = useState<File | undefined>(
@@ -126,7 +128,19 @@ export default function ImageModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+      <DialogContent
+        className="[&_.dialog-close-btn]:hidden"
+        onPointerDownOutside={() => {
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        }}
+        onEscapeKeyDown={() => {
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
@@ -150,18 +164,33 @@ export default function ImageModal({
               alt="Your uploaded image"
             />
           </ReactCrop>
-          <button
-            className="bg-green-500 text-white rounded-full p-2"
-            onClick={() => {
-              if (croppedResult) {
-                setCroppedFile(croppedResult);
-                field.onChange(croppedResult);
-                setIsOpen(false);
-              }
-            }}
-          >
-            <CheckIcon />
-          </button>
+          <div className="space-x-4">
+            <button
+              className="bg-green-500 text-white rounded-full p-2"
+              onClick={() => {
+                if (croppedResult) {
+                  setCroppedFile(croppedResult);
+                  field.onChange(croppedResult);
+                  setIsOpen(false);
+                }
+              }}
+            >
+              <CheckIcon />
+            </button>
+            <button
+              className="bg-red-400 text-white rounded-full p-2"
+              onClick={() => {
+                if (fileInputRef.current) {
+                  setCroppedFile(undefined);
+                  field.onChange(undefined);
+                  fileInputRef.current.value = "";
+                  setIsOpen(false);
+                }
+              }}
+            >
+              <X />
+            </button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

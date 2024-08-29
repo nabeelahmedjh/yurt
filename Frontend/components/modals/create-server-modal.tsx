@@ -46,6 +46,7 @@ export default function CreateServerModal({
   children: React.ReactNode;
 }) {
   const MultiSelectConatinerRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -121,6 +122,11 @@ export default function CreateServerModal({
       router.refresh();
 
       toast.success("Server Created Successfully");
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
       form.reset();
       setOpen(false);
     } else {
@@ -176,6 +182,7 @@ export default function CreateServerModal({
                       <FormControl>
                         <div className="mt-4 flex flex-col items-center">
                           <UploadAvatar
+                            fileRef={fileInputRef}
                             maxFileSize={MAX_FILE_SIZE_MB}
                             field={field}
                           />

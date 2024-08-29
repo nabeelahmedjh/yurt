@@ -78,6 +78,8 @@ export default function ChatInput({
 
     setText("");
     setAttachedFiles([]);
+    fileInputRef.current?.value && (fileInputRef.current.value = "");
+
     if (autosizeTextareaRef.current) {
       autosizeTextareaRef.current.textArea.style.height = `${autosizeTextareaRef.current.minHeight}px`;
     }
