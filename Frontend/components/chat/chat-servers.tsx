@@ -13,11 +13,9 @@ import { useParams, useRouter } from "next/navigation";
 import CreateServerModal from "@/components/modals/create-server-modal";
 import LogoutButton from "@/components/logout-button";
 import useGetServers from "@/hooks/useGetServers";
-import yurt_logo from "@/public/yurt_logo.png";
+import yurt_logo from "@/public/yurt_logo.svg";
 import Image from "next/image";
 import { PROXY_API_URL } from "@/constants";
-
-const sampleServerImage: string = "";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
@@ -37,7 +35,11 @@ export default function ChatServers() {
             <TooltipProvider delayDuration={50}>
               <Tooltip>
                 <TooltipTrigger>
-                  <Image className="size-10" alt="yurt logo" src={yurt_logo} />
+                  <Image
+                    className="object-cover max-w-10"
+                    alt="yurt logo"
+                    src={yurt_logo}
+                  />
                 </TooltipTrigger>
                 <TooltipContent
                   className="rounded-[24px]"
@@ -61,6 +63,7 @@ export default function ChatServers() {
                   <TooltipProvider delayDuration={50}>
                     <Tooltip>
                       <TooltipTrigger
+                        className="pb-2"
                         onClick={() => {
                           router.push(`/servers/${server._id}`);
                         }}
@@ -72,7 +75,7 @@ export default function ChatServers() {
                           }`}
                         >
                           <AvatarImage
-                            className="h-[90%] w-[90%] rounded-xl"
+                            className="h-[90%] w-[90%] rounded-xl object-cover"
                             src={
                               PROXY_API_URL + "/" + server?.serverImage?.source
                             }
