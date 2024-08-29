@@ -19,7 +19,7 @@ export default function Explore() {
     limit: 10,
   };
 
-  const { data, mutate, isLoading, size, setSize, isReachingEnd } =
+  const { data, mutate, isLoading, size, setSize, isReachingEnd, noMorePages } =
     useGetServers(searchParam, true);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function Explore() {
       <Servers isLoading={isLoading} servers={data} />
       {!isLoading && (
         <div className="w-full flex justify-center mb-8">
-          {isReachingEnd ? (
+          {isReachingEnd || noMorePages ? (
             <div>
               <p className="text-center">Wow, You sure have come far</p>
               <p className="text-center">choose from above servers</p>

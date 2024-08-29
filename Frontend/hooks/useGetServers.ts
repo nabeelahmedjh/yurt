@@ -12,11 +12,16 @@ interface UseGetServersReturn {
   size?: number;
   setSize?: (size: number) => any;
   isReachingEnd?: boolean;
+  noMorePages?: boolean;
 }
+
+let noMorePages = false;
 
 const fetcher = async (params: any) => {
   const data: any = await getServers(params);
-
+  if (data.page && data.totalPages && data.page === data.totalPages) {
+    noMorePages = true;
+  }
   return data.data;
 };
 
@@ -67,6 +72,7 @@ const useGetServers = (
       paginated &&
       swrInfinite.data &&
       swrInfinite.data[swrInfinite.data.length - 1]?.length === 0,
+    noMorePages,
   };
 };
 

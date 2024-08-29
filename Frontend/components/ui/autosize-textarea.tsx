@@ -88,7 +88,7 @@ export const AutosizeTextarea = React.forwardRef<
         value={value}
         ref={textAreaRef}
         className={cn(
-          "flex w-full py-2 pl-4 rounded-3xl outline-none resize-none",
+          "flex w-full pt-1 pl-4 rounded-3xl outline-none resize-none",
           className
         )}
         onChange={(e) => {

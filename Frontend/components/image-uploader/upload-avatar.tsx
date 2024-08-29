@@ -8,9 +8,12 @@ import { UploadIcon, X } from "lucide-react";
 export default function UploadAvatar({
   field,
   maxFileSize,
+  fileRef,
 }: {
   field: any;
   maxFileSize: number;
+  /** Make a ref and pass it, then use it to clear the file input value when submitting the form. */
+  fileRef: any;
 }) {
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [croppedFile, setCroppedFile] = useState<File | undefined>(undefined);
@@ -21,7 +24,7 @@ export default function UploadAvatar({
   return (
     <>
       <input
-        ref={field.ref}
+        ref={fileRef}
         id="serverImage"
         name={field.name}
         onBlur={field.onBlur}
@@ -56,32 +59,38 @@ export default function UploadAvatar({
             onClick={() => {
               setSelectedFile(undefined);
               field.onChange(undefined);
+              if (fileRef.current) {
+                fileRef.current.value = "";
+              }
             }}
-            className="absolute top-2 right-2 p-1 bg-white rounded-full"
+            className="absolute top-1 -right-2 p-1 hover:bg-white/80 border border-gray-100 bg-white rounded-full"
           >
             <X />
           </span>
           <img
             src={croppedFile ? URL.createObjectURL(croppedFile) : ""}
             alt="Server Image"
-            className="object-cover w-full h-[150px] rounded-full border border-neutral-100"
+            className="object-cover w-full h-[96px] rounded-full border border-neutral-100"
           />
         </div>
       ) : (
-        <label htmlFor="serverImage" className="cursor-pointer">
-          <div className="flex flex-col items-center justify-center w-[150px] h-[150px] rounded-full p-1 bg-neutral-100">
+        <label
+          htmlFor="serverImage"
+          className="cursor-pointer inline-block w-fit"
+        >
+          <div className="flex flex-col items-center justify-center w-[96px] h-[96px] rounded-full p-1 bg-neutral-100">
             <UploadIcon />
-            <p className="text-sm text-gray-500 mt-2">Upload Image</p>
           </div>
         </label>
       )}
       {errorMsg && (
-        <p className="text-sm text-red-500 text-nowrap pt-1 -ml-2">
+        <p className="text-xs italic text-red-400 text-nowrap pt-1 -ml-1">
           {errorMsg}
         </p>
       )}
 
       <ImageModal
+        fileInputRef={fileRef}
         field={field}
         isOpen={open}
         setIsOpen={setOpen}
