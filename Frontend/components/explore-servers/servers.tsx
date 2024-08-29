@@ -28,10 +28,10 @@ function ServerCard({ server }: { server: any }) {
   };
 
   return (
-    <div className="border-2 rounded-sm bg-primary relative pt-[350px] mb-6">
+    <div className="border-2 rounded-sm bg-primary flex flex-col relative pt-[350px] mb-6">
       <div className="rounded-t-sm absolute top-0 w-full">
         <Image
-          className="rounded-t-[8px] w-full h-[200px] object-cover"
+          className="rounded-t-[8px] w-full h-[170px] object-cover object-center"
           alt="server banner"
           width={100}
           height={100}
@@ -51,7 +51,7 @@ function ServerCard({ server }: { server: any }) {
         >
           {server.name}
         </p>
-        {server.tags?.length > 0 &&
+        {/* {server.tags?.length > 0 &&
           server.tags?.map((tag: any) => (
             <span
               key={tag._id}
@@ -59,8 +59,12 @@ function ServerCard({ server }: { server: any }) {
             >
               {tag.name}
             </span>
-          ))}
-        <p className="text-slate-500 mt-2"> {server.description} </p>
+          ))} */}
+        <div className="max-h-[100px] h-[70px]">
+          <p className="text-slate-500 break-words mt-2">
+            {server.description}
+          </p>
+        </div>
         <div className="flex items-center w-full justify-between mt-6">
           <div className="flex items-center">
             <span className="bg-gray-400 size-2 rounded-full mr-2"></span>
