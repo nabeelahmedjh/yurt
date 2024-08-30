@@ -78,7 +78,7 @@ const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
 		},
 		{
 			$sort: {
-				createdAt: 1
+				createdAt: -1
 			}
 		}
 	    
