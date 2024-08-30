@@ -74,6 +74,9 @@ const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
 	        },
 	    },
 		{
+			$unwind: "$sentBy", 
+		},
+		{
 			$sort: {
 				createdAt: 1
 			}

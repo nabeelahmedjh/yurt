@@ -1,6 +1,7 @@
 import { serversService, usersService} from "../services/index.js";
 
 
+
 const getUser = async (req, res) => {
     const userId = req.user.user._id;
     console.log(userId);
@@ -94,10 +95,20 @@ const getAllUsers = async (req, res) => {
 };
 
 
+const deleteUser = async (req, res) => {
+    const userId = req.user.user._id;
+
+    const deletedUser = await usersService.deleteUser(userId);
+
+
+}
+
+
 export default{
     getUser,
     updateAvatar,
     updateUser,
-    getAllUsers
+    getAllUsers,
+    deleteUser
     
 };

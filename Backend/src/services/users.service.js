@@ -73,9 +73,15 @@ const getAllUsers = async (username, searchType) => {
 }
 
 
+const deletedUser = async (userId)  => {
+    
+}
+
+
 export default {
     getUser,
     updateAvatar,
     updateUser,
-    getAllUsers
+    getAllUsers,
+    deletedUser
 };
