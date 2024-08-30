@@ -6,26 +6,38 @@ import ChatMessages from "@/components/chat/chat-messages";
 import ChatInput from "@/components/chat/chat-input";
 import useGetMessages from "@/hooks/useGetMessages";
 import { useDebounce } from "use-debounce";
+import { ChevronDownCircleIcon } from "lucide-react";
 
 export default function ChatContent() {
   const { messages, isLoadingMore, isReachingEnd, setSize } = useGetMessages();
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const [debouncedSetSize] = useDebounce((size: any) => setSize(size), 200);
 
   const handleScroll = useCallback(() => {
     const scrollArea = scrollAreaRef.current;
+
+    if (!scrollArea) return;
+
+    console.log("scroll to bottom");
+
+    const isBottom =
+      scrollArea.scrollHeight - scrollArea.scrollTop ===
+      scrollArea.clientHeight;
+
+    setIsAtBottom(isBottom);
+
     if (!scrollArea || isLoadingMore || isReachingEnd) return;
 
-    if (scrollArea.scrollTop <= 0) {
-      console.log("scrollArea.scrollTop", scrollArea.scrollTop);
-
+    if (scrollArea.scrollTop <= 100) {
       debouncedSetSize((prevSize: any) => prevSize + 1);
     }
 
-    const threshold = 0;
+    const threshold = 50;
     if (scrollArea.scrollTop <= threshold) {
       setIsUserScrolling(true);
     } else {
@@ -47,20 +59,38 @@ export default function ChatContent() {
   }, [handleScroll]);
 
   useEffect(() => {
-    if (!isUserScrolling && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    const scrollArea = scrollAreaRef.current;
+    if (!isUserScrolling && initialLoad) {
+      scrollArea?.scrollTo({
+        top: scrollArea.scrollHeight,
+        behavior: "smooth",
+      });
+      setInitialLoad(false);
     }
-  }, [messages, isUserScrolling]);
+  }, [messages, isUserScrolling, initialLoad]);
 
   return (
-    <div className="flex flex-col h-dvh">
+    <div className="flex flex-col h-dvh relative">
       <ChatHeader />
       <ChatMessages
+        messagesEndRef={messagesEndRef}
         isLoadingMore={isLoadingMore}
         scrollAreaRef={scrollAreaRef}
-        messageContainerRef={messagesEndRef}
         messages={messages}
       />
+      {!isAtBottom && (
+        <span
+          onClick={() => {
+            scrollAreaRef.current?.scrollTo({
+              top: scrollAreaRef.current?.scrollHeight,
+              behavior: "smooth",
+            });
+          }}
+          className="bg-primary rounded-full p-1 absolute right-8 bottom-24 cursor-pointer"
+        >
+          <ChevronDownCircleIcon />
+        </span>
+      )}
       <ChatInput scrollToBottomRef={messagesEndRef} />
     </div>
   );

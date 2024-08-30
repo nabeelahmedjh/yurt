@@ -5,30 +5,45 @@ import MessageItem from "@/components/chat/chat-message-item";
 import { PhotoProvider } from "react-photo-view";
 import "@/app/react-photo-view.css";
 import { format, isSameDay } from "date-fns";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 export default function ChatMessages({
   messages,
-  messageContainerRef,
   scrollAreaRef,
   isLoadingMore,
+  messagesEndRef,
 }: {
   messages?: any;
-  messageContainerRef?: any;
   scrollAreaRef?: any;
   isLoadingMore?: boolean;
+  messagesEndRef?: any;
 }) {
   const params = useParams<{ serverID: string; spaceID: string }>();
-
-  if (!params?.serverID || !params?.spaceID) return "";
+  const previousHeightRef = useRef(0);
 
   let previousDate: Date | null = null;
 
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current;
+    if (scrollArea && !isLoadingMore) {
+      const currentScrollHeight = scrollArea.scrollHeight;
+      const scrollTop = scrollArea.scrollTop;
+      const previousHeight = previousHeightRef.current;
+
+      if (scrollTop < 100) {
+        scrollArea.scrollTop += currentScrollHeight - previousHeight;
+      }
+
+      previousHeightRef.current = currentScrollHeight;
+    }
+  }, [messages, isLoadingMore, scrollAreaRef]);
+
+  if (!params?.serverID || !params?.spaceID) return "";
+
   return (
     <PhotoProvider className="h-full" maskOpacity={0.9}>
-      {/* <ScrollArea> */}
-      <div ref={scrollAreaRef} className="p-4 h-full overflow-y-auto">
+      <div ref={scrollAreaRef} className="p-4 h-full overflow-y-auto relative">
         {isLoadingMore && (
           <div className="w-full flex justify-center font-medium p-6">
             <Loader className="animate-spin animate" />
@@ -64,9 +79,9 @@ export default function ChatMessages({
               </li>
             );
           })}
-        <div className="pb-4" ref={messageContainerRef}></div>
+
+        <div className="h-px" ref={messagesEndRef}></div>
       </div>
-      {/* </ScrollArea> */}
     </PhotoProvider>
   );
 }
