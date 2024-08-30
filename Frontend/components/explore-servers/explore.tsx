@@ -27,7 +27,7 @@ export default function Explore() {
   }, [searchParams, mutate]);
 
   return (
-    <div className="h-dvh overflow-auto">
+    <div className="h-dvh overflow-y-scroll">
       <Search />
       <Tags />
       <Servers isLoading={isLoading} servers={data} />
@@ -35,8 +35,19 @@ export default function Explore() {
         <div className="w-full flex justify-center mb-8">
           {isReachingEnd || noMorePages ? (
             <div>
-              <p className="text-center">Wow, You sure have come far</p>
-              <p className="text-center">choose from above servers</p>
+              {data.length > 0 ? (
+                <>
+                  <p className="text-center">Wow, You sure have come far</p>
+                  <p className="text-center">choose from above servers</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-center">Your search is too specific</p>
+                  <p className="text-center">
+                    We do not have any servers with that term
+                  </p>
+                </>
+              )}
             </div>
           ) : (
             <Button

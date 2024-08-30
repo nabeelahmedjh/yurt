@@ -23,7 +23,7 @@ const useGetMessages = () => {
 
   const [messages, setMessages] = useState<object[]>([]);
 
-  const getKey = (pageIndex: number, previousPageData: any) => {
+  const getKey: any = (pageIndex: number, previousPageData: any) => {
     if (!spaceId) return null;
     if (previousPageData && !previousPageData.length) return null;
     return [spaceId, pageIndex];
@@ -37,7 +37,7 @@ const useGetMessages = () => {
   useEffect(() => {
     if (data) {
       const mergedMessages = data ? [].concat(...data) : [];
-      setMessages(mergedMessages);
+      setMessages(mergedMessages.reverse());
     }
   }, [data]);
 
