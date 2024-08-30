@@ -9,8 +9,9 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       unique: false,
-      default: "Username"
-    },
+      default: function() {
+        return `user_${Date.now()}`;
+    }},
     bio:{
       type: String,
       required: false,

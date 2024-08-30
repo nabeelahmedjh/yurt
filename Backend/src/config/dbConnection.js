@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
+import {usersService} from '../services/index.js';
 
 const dbConnection = async () => {
   try {
@@ -8,7 +9,14 @@ const dbConnection = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    try {
+      await usersService.seedDeleteUser();
+      console.log("Seed deleteUser object operation completed successfully");
+    } catch (seedError) {
+      console.error("Error in seedDeleteUser operation:", seedError);
+    }
     console.log("MongoDB connected");
+    
   } catch (error) {
     console.log(error);
   }

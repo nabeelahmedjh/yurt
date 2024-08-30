@@ -1,9 +1,15 @@
 import mongoose from "mongoose";
-import { Server, Space, User, Tag} from "../models/index.js";
+import { Server, Space, User, Tag } from "../models/index.js";
 import Pagination from "../utils/pagination.js";
 
-const createServer = async (name, description, user, banner, serverImage, tags) => {
-
+const createServer = async (
+  name,
+  description,
+  user,
+  banner,
+  serverImage,
+  tags
+) => {
   const newServer = await Server.create({
     name,
     description,
@@ -25,35 +31,33 @@ const getJoinedServers = async (req, res) => {
   const userId = user.user._id;
   const servers = await Server.aggregate([
     {
-      $match:{ members: new mongoose.Types.ObjectId(userId)},
+      $match: { members: new mongoose.Types.ObjectId(userId) },
     },
     {
       $lookup: {
         from: "spaces",
         localField: "spaces",
         foreignField: "_id",
-        as: "spaces"
-      }
+        as: "spaces",
+      },
     },
     {
       $lookup: {
         from: "tags",
         localField: "tags",
         foreignField: "_id",
-        as: "tags"
-      }
-    }
-
-  ])
+        as: "tags",
+      },
+    },
+  ]);
 
   return servers;
 };
 
 const getAllServers = async (userId, search, tags, page, limit, offset) => {
-
   let tagNames = [];
   if (tags && tags.length > 0) {
-    tagNames = tags.split(','); 
+    tagNames = tags.split(",");
   }
 
   const servers = await Server.aggregate([
@@ -61,39 +65,38 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
       $match: {
         name: {
           $regex: search,
-          '$options': "i"
-        }
-
-      }
+          $options: "i",
+        },
+      },
     },
-    ...(tagNames.length > 0 ? [
-      {
-        
-        $lookup: {
-          from: "tags",
-          localField: "tags", 
-          foreignField: "_id",
-          as: "tag"
-        }
-      },
-      {
-        $match: {
-          "tag.name": { $all: tagNames }
-        }
-      },
-    ] : []),
+    ...(tagNames.length > 0
+      ? [
+          {
+            $lookup: {
+              from: "tags",
+              localField: "tags",
+              foreignField: "_id",
+              as: "tag",
+            },
+          },
+          {
+            $match: {
+              "tag.name": { $all: tagNames },
+            },
+          },
+        ]
+      : []),
     {
       $addFields: {
-
         userJoined: {
-          $in: [new mongoose.Types.ObjectId(userId), "$members"]
-        }
-      }
+          $in: [new mongoose.Types.ObjectId(userId), "$members"],
+        },
+      },
     },
     {
       $sort: {
-        userJoined: 1
-      }
+        userJoined: 1,
+      },
     },
     {
       $project: {
@@ -103,85 +106,75 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
         userJoined: 1,
         tags: 1,
         membersCount: {
-          $size: "$members"
+          $size: "$members",
         },
-        _id: 1
-      }
+        _id: 1,
+      },
     },
     {
       $lookup: {
         from: "tags",
         localField: "tags",
         foreignField: "_id",
-        as: "tags"
-      }
-    }
+        as: "tags",
+      },
+    },
   ]);
   return Pagination.paginateArray(page, limit, offset, servers);
-  
-}
-
+};
 
 const getServerById = async (serverId) => {
-
   const server = await Server.aggregate([
     {
-      $match:{_id: new mongoose.Types.ObjectId(serverId)}
+      $match: { _id: new mongoose.Types.ObjectId(serverId) },
     },
     {
-      $lookup:{
-        from : "spaces",
+      $lookup: {
+        from: "spaces",
         localField: "spaces",
         foreignField: "_id",
         as: "spaces",
         pipeline: [
           {
             $addFields: {
-              lowercaseName: { $toLower: "$name" }
-            }
+              lowercaseName: { $toLower: "$name" },
+            },
           },
           {
             $sort: {
-              lowercaseName: 1
-            }
+              lowercaseName: 1,
+            },
           },
           {
             $project: {
-              lowercaseName: 0
-            }
-          }
-        ]
+              lowercaseName: 0,
+            },
+          },
+        ],
       },
-
-      
-    }
-  ])
+    },
+  ]);
 
   return server;
-
-}
+};
 
 const createSpace = async (serverId, name, description, spaceImage, type) => {
-
   let newSpace;
   newSpace = await Space.create({
     name,
     description,
     spaceImage,
     server: serverId,
-    type
+    type,
   });
 
   const server = await Server.findById(serverId);
   server.spaces.push(newSpace._id);
   await server.save();
   return newSpace;
-
 };
 
-
-const getMembersByServerId =async (serverId, page, limit, offset, type) => {
-
+const getMembersByServerId = async (serverId, page, limit, offset, type) => {
   // return response in pagination format
   if (type === "normal") {
     const server = await Server.findById(serverId).populate("members");
@@ -190,8 +183,7 @@ const getMembersByServerId =async (serverId, page, limit, offset, type) => {
     const server = await Server.findById(serverId).populate("admins");
     return Pagination.paginateArray(page, limit, offset, server.admins);
   }
-}
-
+};
 
 export default {
   createServer,

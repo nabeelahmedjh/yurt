@@ -1,5 +1,6 @@
 # File uploads
-uploads/
+uploads/*
+!uploads/dummyUserAvatar/
 
 # Logs
 logs
