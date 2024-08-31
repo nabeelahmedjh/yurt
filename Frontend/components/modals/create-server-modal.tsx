@@ -99,17 +99,20 @@ export default function CreateServerModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (
+      !values.serverImage ||
+      !values.name ||
+      !values.description ||
+      !values.tags
+    )
+      return;
+
     const formData = new FormData();
     formData.append("serverImage", values.serverImage);
     formData.append("name", values.name);
     formData.append("description", values.description);
 
     formData.append("tags", JSON.stringify(values.tags));
-
-    // formData.append(
-    //   "tags",
-    //   JSON.stringify(["66c9af0f61a2b783fe23761b", "66c9af0f61a2b783fe23761d"])
-    // );
 
     const error = await handleCreateServer(formData);
 

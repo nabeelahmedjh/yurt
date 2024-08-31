@@ -3,6 +3,7 @@ import useSWRInfinite from "swr/infinite";
 import { useParams } from "next/navigation";
 import ENDPOINTS from "@/ApiManager/endpoints";
 import { getServers } from "@/ApiManager/apiMethods";
+import { useState, useEffect } from "react";
 
 interface UseGetServersReturn {
   data: any;
@@ -15,14 +16,13 @@ interface UseGetServersReturn {
   noMorePages?: boolean;
 }
 
-let noMorePages = false;
-
 const fetcher = async (params: any) => {
   const data: any = await getServers(params);
-  if (data.page && data.totalPages && data.page === data.totalPages) {
-    noMorePages = true;
-  }
-  return data.data;
+  return {
+    servers: data.data,
+    page: data.page,
+    totalPages: data.totalPages,
+  };
 };
 
 const useGetServers = (
@@ -32,10 +32,12 @@ const useGetServers = (
   const params = useParams<{ serverID: string; spaceID: string }>();
   const serverId = params?.serverID;
 
+  const [noMorePages, setNoMorePages] = useState(false);
+
   const getKey = (pageIndex: number, previousPageData: any) => {
     if (!paginated) return [ENDPOINTS.SERVERS, searchParams];
 
-    if (previousPageData && !previousPageData.length) return null;
+    if (previousPageData && !previousPageData.servers.length) return null;
 
     const paginatedParams = {
       ...searchParams,
@@ -52,10 +54,19 @@ const useGetServers = (
     fetcher(paginatedParams)
   );
 
+  useEffect(() => {
+    if (paginated && swrInfinite.data) {
+      const lastPageData = swrInfinite.data[swrInfinite.data.length - 1];
+      if (lastPageData?.page && lastPageData?.totalPages) {
+        setNoMorePages(lastPageData.page >= lastPageData.totalPages);
+      }
+    }
+  }, [paginated, swrInfinite.data]);
+
   const data =
     paginated && swrInfinite.data
-      ? swrInfinite.data.flatMap((page) => page)
-      : swr.data;
+      ? swrInfinite.data.flatMap((page) => page.servers)
+      : swr.data?.servers;
   const isLoading = paginated
     ? !swrInfinite.error && !swrInfinite.data
     : !swr.error && !swr.data;
@@ -71,7 +82,7 @@ const useGetServers = (
     isReachingEnd:
       paginated &&
       swrInfinite.data &&
-      swrInfinite.data[swrInfinite.data.length - 1]?.length === 0,
+      swrInfinite.data[swrInfinite.data.length - 1]?.servers.length === 0,
     noMorePages,
   };
 };

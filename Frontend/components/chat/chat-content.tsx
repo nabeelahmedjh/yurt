@@ -23,13 +23,16 @@ export default function ChatContent() {
 
     if (!scrollArea) return;
 
-    console.log("scroll to bottom");
+    const showScrollToBottomButton = (scrollArea: HTMLElement) => {
+      const threshold = 200; // in pixels
+      const distanceFromBottom =
+        scrollArea.scrollHeight -
+        (scrollArea.scrollTop + scrollArea.clientHeight);
 
-    const isBottom =
-      scrollArea.scrollHeight - scrollArea.scrollTop ===
-      scrollArea.clientHeight;
+      return distanceFromBottom < threshold;
+    };
 
-    setIsAtBottom(isBottom);
+    setIsAtBottom(showScrollToBottomButton(scrollArea));
 
     if (!scrollArea || isLoadingMore || isReachingEnd) return;
 
