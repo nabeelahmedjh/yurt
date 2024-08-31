@@ -10,7 +10,7 @@ const login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (!user) {
-        return res.status(400).json({
+        return res.status(404).json({
           error: { message: info.message },
         });
       }

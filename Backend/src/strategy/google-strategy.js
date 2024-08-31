@@ -20,10 +20,8 @@ passport.use(new GoogleStrategy({
             console.log("=====HERE=====")
             const newUser = await User.create({
                 googleId: profile.id,
-                username: profile.displayName,
                 email: profile.emails[0].value,
                 password: await generatePassword("12312"),
-                avatar: profile.photos[0].value,
                 verified: true,
             });
 

@@ -1,6 +1,7 @@
 import { Server } from "../models/index.js";
 import { Message } from "../models/index.js";
 import Space from "../models/space.model.js";
+import User from "../models/user.model.js";
 import mongoose from "mongoose";
 import pagination from "../utils/pagination.js";
 
@@ -32,6 +33,7 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
   });
 
   const newMessageObj = newMessage.toObject();
+  newMessageObj.sentBy = await User.findOne({_id : sentBy})
   return newMessageObj;
 };
 
