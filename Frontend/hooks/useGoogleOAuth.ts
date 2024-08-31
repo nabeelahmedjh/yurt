@@ -23,6 +23,8 @@ export default function useGoogleOAuth() {
       const { data } = event;
       setCookie(TOKEN, data.token);
 
+      console.log("Google Oauth Token", data);
+
       try {
         const profileData: any = await getProfile();
         const userId = profileData.data.user._id;
