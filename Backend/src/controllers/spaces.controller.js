@@ -68,7 +68,7 @@ const sendMessageInSpace = async (req, res) => {
       sentBy,
       attachment
     );
-    sentMessage.sentBy = req.user.user;
+    
     global.io.to(spaceId).emit("new message", { message: sentMessage });
     return res.status(201).json({
       data: sentMessage,
