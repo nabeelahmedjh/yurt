@@ -22,6 +22,7 @@ let corsOptions = {
     "http://localhost:3001",
     "http://127.0.0.1:3001",
     "http://inspiron.lan:3001",
+    "http://localhost:5173",
     "*"
   ],
 };
@@ -30,7 +31,7 @@ dbConnection();
 const app = express();
 const socketio = new Server({
   cors: {
-    origin: ["http://localhost:3001", "https://admin.socket.io"],
+    origin: ["http://localhost:3001", "https://admin.socket.io", "http://localhost:5173"],
     credentials: true,
   },
 });

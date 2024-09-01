@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@socket.io/admin-ui": "^0.5.1",
+    "@tldraw/sync": "^2.4.6",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "connect-mongo": "^5.1.0",
@@ -29,6 +30,8 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "socket.io": "^4.7.5",
+    "tldraw": "^2.4.6",
+    "unfurl.js": "^6.4.0",
     "uuid": "^9.0.1"
   }
 }
