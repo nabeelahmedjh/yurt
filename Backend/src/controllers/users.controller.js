@@ -1,8 +1,9 @@
 import { serversService, usersService } from "../services/index.js";
 
-const getUser = async (req, res) => {
+
+const getCurrentUser = async (req, res) => {
   const userId = req.user.user._id;
-  console.log(userId);
+
 
   try {
     const user = await usersService.getUser(userId);
@@ -32,12 +33,11 @@ const updateAvatar = async (req, res) => {
       }
     : null;
 
-  console.log(avatar);
 
   try {
-    const updateAvatar = await usersService.updateAvatar(userId, avatar);
+    const newAvatar = await usersService.updateAvatar(userId, avatar);
     return res.status(200).json({
-      data: updateAvatar,
+      data: newAvatar,
     });
   } catch (error) {
     return res.status(500).json({
@@ -97,7 +97,7 @@ const getAllUsers = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  console.log("controller");
+ 
   const userId = req.user.user._id;
   try {
     const deletedUser = await usersService.deletedUser(userId);
@@ -113,7 +113,7 @@ const deleteUser = async (req, res) => {
 };
 
 export default {
-  getUser,
+  getCurrentUser,
   updateAvatar,
   updateUser,
   getAllUsers,
