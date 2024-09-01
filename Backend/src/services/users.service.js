@@ -18,9 +18,9 @@ const seedDeleteUser = async () => {
     password: passwordHash,
   };
 
-  const existingUser = await User.findOne({ username: userData.username });
+  const existingDummyUser = await User.findOne({ username: userData.username });
 
-  if (!existingUser) {
+  if (!existingDummyUser) {
     const newUser = new User(userData);
     await newUser.save();
     console.log("User created successfully");
@@ -28,17 +28,23 @@ const seedDeleteUser = async () => {
 };
 
 const getUser = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate("interests");
   return user;
 };
 
 const updateAvatar = async (userId, avatar) => {
-  const Avatar = await User.findByIdAndUpdate(userId, { avatar: avatar });
-  console.log(Avatar);
-  return Avatar;
+  const updatedAvatar = await User.findByIdAndUpdate(userId, { avatar: avatar }, {new:true});
+  return updatedAvatar;
 };
 
 const updateUser = async (userId, userData) => {
+
+  if(userData.email){
+    return {
+      statusCode: 403,
+      message: "You can not change email",
+    };
+  }
 
   if (userData.username) {
     const userExist = await User.findOne({
@@ -57,7 +63,7 @@ const updateUser = async (userId, userData) => {
     const updatedUser = await User.findByIdAndUpdate(userId, userData, {
       new: true,
       runValidators: true,
-    });
+    }).populate("interests");
     return updatedUser;
   } catch (error) {
     if (error.name === "CastError") {

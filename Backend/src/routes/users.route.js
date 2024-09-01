@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.get("/", usersController.getAllUsers);
-router.get("/me/profile", usersController.getUser);
+router.get("/me/profile", usersController.getCurrentUser);
 router.put("/me/profile", usersController.updateUser);
 router.patch("/me/profile/avatar", upload.single("avatar"), multerErrorHandler , usersController.updateAvatar);
 router.delete("/me/profile", usersController.deleteUser);
