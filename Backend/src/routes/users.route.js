@@ -7,10 +7,10 @@ const router = express.Router();
 
 
 router.get("/", usersController.getAllUsers);
-router.get("/profile", usersController.getUser);
-router.put("/profile", usersController.updateUser);
-router.patch("/profile/avatar", upload.single("avatar"), multerErrorHandler , usersController.updateAvatar);
-router.delete("/profile", usersController.deleteUser);
+router.get("/me/profile", usersController.getUser);
+router.put("/me/profile", usersController.updateUser);
+router.patch("/me/profile/avatar", upload.single("avatar"), multerErrorHandler , usersController.updateAvatar);
+router.delete("/me/profile", usersController.deleteUser);
 
 
 export default router;
