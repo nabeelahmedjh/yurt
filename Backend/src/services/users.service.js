@@ -27,15 +27,25 @@ const seedDeleteUser = async () => {
   }
 };
 
+
+
+
 const getUser = async (userId) => {
   const user = await User.findById(userId).populate("interests");
   return user;
 };
 
+
+
+
 const updateAvatar = async (userId, avatar) => {
   const updatedAvatar = await User.findByIdAndUpdate(userId, { avatar: avatar }, {new:true});
   return updatedAvatar;
 };
+
+
+
+
 
 const updateUser = async (userId, userData) => {
 

@@ -5,11 +5,11 @@ import User from "../models/user.model.js";
 import mongoose from "mongoose";
 import pagination from "../utils/pagination.js";
 
-const createSpace = async (name, description, spaceBanner, type) => {
+const createSpace = async (name, description, spaceImage, type) => {
   const space = await Space.create({
     name,
     description,
-    spaceBanner,
+    spaceImage,
     type,
   });
   return space;

@@ -10,6 +10,18 @@ const createServer = async (
   serverImage,
   tags
 ) => {
+
+  const serverExist = await Server.findOne({
+    name: name
+  }).collation({ locale: "en", strength: 2 });
+  console.log(serverExist);
+  if (serverExist) {
+    return {
+      statusCode: 409,
+      message: "Server with this name already exists. Please provide another name.",
+    };
+  }
+
   const newServer = await Server.create({
     name,
     description,
@@ -19,12 +31,95 @@ const createServer = async (
     members: [user._id],
     tags: tags,
   });
-
+  
   const logedInUser = await User.findOne({ _id: user._id });
   logedInUser.serversJoined.push(newServer._id);
   await logedInUser.save();
   return await newServer.populate("tags");
 };
+
+
+
+const updateServer = async (
+  userId,
+  serverId,
+  name,
+  description,
+  banner,
+  serverImage,
+  tags
+) => {
+
+  const isAdmin = await Server.findOne({admins: userId});
+  if(!isAdmin){
+    return { message : "Only admin can update the server."}
+  }
+
+
+
+  if (typeof tags === "string") {
+    tags = JSON.parse(tags);
+  }
+
+  console.log(tags)
+  const updateData = {};
+  
+  if(name){
+    const serverExist = await Server.findOne({
+      name: name,
+      _id: { $ne: serverId },
+    }).collation({ locale: "en", strength: 2 });
+    console.log(serverExist);
+    if (serverExist) {
+      return {
+        statusCode: 409,
+        message: "Server with this name already exists. Please provide another name.",
+      };  
+    }
+    else{
+      updateData.name = name;
+    }
+  }
+
+  if(description){
+    updateData.description = description;
+  }
+
+  if(banner){
+    updateData.banner = banner;
+  }
+
+  if(serverImage){
+    updateData.serverImage = serverImage;
+  }
+
+  if(tags){
+    updateData.tags = tags;
+  }
+
+  console.log(updateData);
+
+  try {
+    const updatedServer = await Server.findByIdAndUpdate(serverId, {$set: updateData}, {new: true, runValidators: true}).populate("tags");
+    console.log(updatedServer)
+    if (!updatedServer) {
+      return { message: 'Server not found' };
+    }
+
+    return updatedServer;
+
+  } catch (error) {
+    if (error.name === "CastError") {
+      throw new Error("Invalid user ID");
+    } else if (error.name === "ValidationError") {
+      throw new Error(`Validation failed: ${error.message}`);
+    } else {
+      throw error;
+    }
+  } 
+};
+
+
 
 const getJoinedServers = async (req, res) => {
   const user = req.user;
@@ -187,6 +282,7 @@ const getMembersByServerId = async (serverId, page, limit, offset, type) => {
 
 export default {
   createServer,
+  updateServer,
   getJoinedServers,
   getAllServers,
   getServerById,
