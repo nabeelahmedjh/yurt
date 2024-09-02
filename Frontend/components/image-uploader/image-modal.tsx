@@ -21,6 +21,7 @@ interface ImageModalProps {
   filePreview: string;
   field: any;
   fileInputRef: any;
+  formSubmitter: any;
 }
 
 export default function ImageModal({
@@ -31,6 +32,7 @@ export default function ImageModal({
   filePreview,
   field,
   fileInputRef,
+  formSubmitter,
 }: ImageModalProps) {
   const [crop, setCrop] = useState<Crop>();
   const [croppedResult, setCroppedResult] = useState<File | undefined>(
@@ -172,6 +174,7 @@ export default function ImageModal({
                   setCroppedFile(croppedResult);
                   field.onChange(croppedResult);
                   setIsOpen(false);
+                  formSubmitter && formSubmitter();
                 }
               }}
             >

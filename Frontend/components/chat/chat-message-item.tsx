@@ -29,8 +29,8 @@ export default function MessageItem({
       <div className="p-2 ml-4">
         <div className="flex gap-4">
           <div onClick={() => alert("User Profile")} className="cursor-pointer">
-            <Avatar data-src={img} className="size-10 -mb-6">
-              <AvatarImage src={img} />
+            <Avatar data-src={API_URL + "/" + img} className="size-10 -mb-6">
+              <AvatarImage src={API_URL + "/" + img} />
               <AvatarFallback className="bg-white border">
                 <User className="size-8" />
               </AvatarFallback>

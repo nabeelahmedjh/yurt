@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Dialog,
   DialogContent,
@@ -8,25 +9,196 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRef } from "react";
+import { toast } from "sonner";
+
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
+import useUpdateAvatar from "@/hooks/useUpdateAvatar";
+import useGetProfile from "@/hooks/useGetProfile";
+import { Button } from "../ui/button";
+import ProfileFormModal from "./profile-form-modal";
+import { Trash2Icon } from "lucide-react";
+import { Separator } from "../ui/separator";
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 export default function ProfileSettingModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { handleUpdateAvatar, loading } = useUpdateAvatar();
+  const { data: profileData } = useGetProfile();
+
+  const MAX_FILE_SIZE_MB = 1;
+
+  const formSchema = z.object({
+    avatar: z
+      .union([z.instanceof(File), z.undefined()])
+      .refine((file) => file !== undefined, "avatar is required.")
+      .refine(
+        (file) =>
+          file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
+        {
+          message: `File size must be less than ${MAX_FILE_SIZE_MB}MB.`,
+        }
+      )
+      .refine((file) => file === undefined || file.type.startsWith("image/"), {
+        message: "Only Image is allowed.",
+      }),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      avatar: undefined,
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!values.avatar) return;
+
+    const formData = new FormData();
+    formData.append("avatar", values.avatar);
+
+    const error = await handleUpdateAvatar(formData);
+
+    if (!error) {
+      toast.success("Avatar Updated Successfully");
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      form.reset();
+    } else {
+      toast.error("Something went wrong");
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         OverlayclassName="place-items-start"
-        className="dialog-content-element "
+        className="min-w-[50vw] px-20"
       >
         <DialogHeader className="sr-only">
           <DialogTitle>Your Profile</DialogTitle>
           <DialogDescription>View or Edit your profile</DialogDescription>
         </DialogHeader>
-        <div></div>
+        <div className="mt-16">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="avatar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="sr-only">Avatar</FormLabel>
+                    <FormControl>
+                      <div className="flex flex-col justify-center items-center">
+                        <UploadAvatar
+                          defaultAvatar={profileData?.avatar?.source}
+                          fileRef={fileInputRef}
+                          maxFileSize={MAX_FILE_SIZE_MB}
+                          field={field}
+                          formSubmitter={form.handleSubmit(onSubmit)}
+                          loading={loading}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-center hidden" />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+        <div className="flex flex-col justify-center items-center">
+          <p className="font-semibold text-lg"> {profileData?.username} </p>
+          <p className="text-gray-500"> {profileData?.email} </p>
+        </div>
+        <div className="mt-8">
+          <div>
+            <h3>About Me</h3>
+            <p>{profileData?.bio}</p>
+          </div>
+          <div>
+            <h3>Interests</h3>
+            <div>
+              {profileData?.interests.map((interest: any) => (
+                <span
+                  key={interest._id}
+                  className="bg-gray-200 rounded-full px-2"
+                >
+                  {interest.name}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <ProfileFormModal>
+              <Button className="px-16 h-10 text-base">Edit</Button>
+            </ProfileFormModal>
+          </div>
+          <div className="mt-16">
+            <Accordion type="single" collapsible>
+              <AccordionItem className="border-b-0" value="item-1">
+                <AccordionTrigger className="w-full flex underline hover:no-underline">
+                  <p className="bg-lime-200 px-1 rounded-[4px] text-nowrap mb-4">
+                    Advanced Settings
+                  </p>
+                  <div className="w-full">
+                    <Separator />
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex gap-40 mt-4">
+                    <p className="text-red-500 text-balance">
+                      If you delete your account you will no longer be able to
+                      access any of your joined server or messages in Yurt
+                      platform.
+                    </p>
+                    <div>
+                      <Button
+                        variant="unstyled"
+                        size="unsized"
+                        className="bg-secondary rounded-[4px] py-1 px-2 h-8 space-x-2 hover:underline"
+                      >
+                        <Trash2Icon />
+                        <p>Delete Account</p>
+                      </Button>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

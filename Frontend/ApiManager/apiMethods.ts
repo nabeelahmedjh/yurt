@@ -21,6 +21,11 @@ const updateAvatar = async (data: any) => {
   return APIManager.patch(url, data, {}, true);
 };
 
+const updateProfile = async (data: any) => {
+  const url = ENDPOINTS.PROFILE;
+  return APIManager.put(url, data, {}, true);
+};
+
 const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, params, {}, true);
@@ -56,6 +61,7 @@ export {
   createSpace,
   createMessage,
   updateAvatar,
+  updateProfile,
   getServers,
   getMessages,
   getProfile,
