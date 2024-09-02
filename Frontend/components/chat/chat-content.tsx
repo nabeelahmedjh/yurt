@@ -16,7 +16,7 @@ export default function ChatContent() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [isAtBottom, setIsAtBottom] = useState(true);
 
-  const [debouncedSetSize] = useDebounce((size: any) => setSize(size), 200);
+  const [debouncedSetSize] = useDebounce(setSize, 200);
 
   const handleScroll = useCallback(() => {
     const scrollArea = scrollAreaRef.current;
