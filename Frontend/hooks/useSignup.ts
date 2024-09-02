@@ -20,7 +20,7 @@ const useSignup = () => {
           setCookie(TOKEN, response.token);
 
           const data: any = await getProfile();
-          const userId = data.data.user._id;
+          const userId = data.data._id;
           setCookie(USER_ID, userId);
 
           router.refresh();

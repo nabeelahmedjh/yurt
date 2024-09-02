@@ -67,7 +67,7 @@ export default function ChatMessages({
                 )}
                 <MessageItem
                   currentDate={currentDate}
-                  img={message.img}
+                  img={message.sentBy.avatar}
                   content={message.content}
                   attachment={message.attachment}
                   name={

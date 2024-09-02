@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   Form,
@@ -47,8 +48,11 @@ export default function CreateSpaceModal({
   const { handleCreateSpace } = useCreateSpace();
 
   const formSchema = z.object({
-    name: z.string().min(2).max(50),
-    description: z.string().min(2).max(100),
+    name: z.string().min(2, "Name is too short").max(50, "Name is too long"),
+    description: z
+      .string()
+      .min(2, "Description is too short")
+      .max(100, "Description is too long"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,12 +92,12 @@ export default function CreateSpaceModal({
             Enter required details to create a space.
           </DialogDescription>
         </DialogHeader>
-        <div>
+        <div className="py-4">
           <Form {...form}>
             <form
               id="create-space"
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2"
+              className="space-y-4"
             >
               <FormField
                 control={form.control}
@@ -102,12 +106,16 @@ export default function CreateSpaceModal({
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Space name" {...field} />
+                      <Input
+                        placeholder="Space name, keep it fresh"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="description"
@@ -115,7 +123,10 @@ export default function CreateSpaceModal({
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Space description" {...field} />
+                      <Textarea
+                        placeholder="Drop a cool description..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -9,8 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MultiSelect } from "@/components/ui/multi-select";
 
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
 import {
   Form,
   FormControl,
@@ -162,102 +160,99 @@ export default function CreateServerModal({
           }
         }}
       >
-        <ScrollArea className="max-h-[90dvh] px-4">
-          <ScrollBar />
-          <DialogHeader>
-            <DialogTitle>Create Server</DialogTitle>
-            <DialogDescription>
-              Enter required details to create a server.
-            </DialogDescription>
-          </DialogHeader>
-          <div>
-            <Form {...form}>
-              <form
-                id="create-server"
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-3 px-1"
-              >
-                <FormField
-                  control={form.control}
-                  name="serverImage"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col items-center">
-                      <FormControl>
-                        <div className="mt-4 flex flex-col items-center">
-                          <UploadAvatar
-                            fileRef={fileInputRef}
-                            maxFileSize={MAX_FILE_SIZE_MB}
-                            field={field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <DialogHeader>
+          <DialogTitle>Create Server</DialogTitle>
+          <DialogDescription>
+            Enter required details to create a server.
+          </DialogDescription>
+        </DialogHeader>
+        <div>
+          <Form {...form}>
+            <form
+              id="create-server"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-3 px-1"
+            >
+              <FormField
+                control={form.control}
+                name="serverImage"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center">
+                    <FormControl>
+                      <div className="mt-4 flex flex-col items-center">
+                        <UploadAvatar
+                          fileRef={fileInputRef}
+                          maxFileSize={MAX_FILE_SIZE_MB}
+                          field={field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="placeholder:text-gray-400"
-                          placeholder="Wizards"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="A cool place for wizards..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Interest Tags</FormLabel>
-                      <FormControl ref={MultiSelectConatinerRef}>
-                        <MultiSelect
-                          popoverPortalContainerRef={MultiSelectConatinerRef}
-                          modalPopover={true}
-                          options={tagsList}
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          placeholder="Select Tags"
-                          variant="inverted"
-                          animation={2}
-                          maxCount={3}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="p-1"></div>
-                <Button type="submit">Create Server</Button>
-              </form>
-            </Form>
-          </div>
-        </ScrollArea>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="placeholder:text-gray-400"
+                        placeholder="Wizards"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="A cool place for wizards..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Interest Tags</FormLabel>
+                    <FormControl ref={MultiSelectConatinerRef}>
+                      <MultiSelect
+                        popoverPortalContainerRef={MultiSelectConatinerRef}
+                        modalPopover={true}
+                        options={tagsList}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select Tags"
+                        variant="inverted"
+                        animation={2}
+                        maxCount={3}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="p-1"></div>
+              <Button type="submit">Create Server</Button>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

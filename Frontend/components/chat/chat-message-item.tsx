@@ -28,8 +28,8 @@ export default function MessageItem({
     <>
       <div className="p-2 ml-4">
         <div className="flex gap-4">
-          <div>
-            <Avatar className="size-10 -mb-6">
+          <div onClick={() => alert("User Profile")} className="cursor-pointer">
+            <Avatar data-src={img} className="size-10 -mb-6">
               <AvatarImage src={img} />
               <AvatarFallback className="bg-white border">
                 <User className="size-8" />
@@ -39,8 +39,7 @@ export default function MessageItem({
           <div className="flex gap-4">
             <p className="text-[1rem] self-center font-medium">{name}</p>
             <p className="text-sm self-center text-gray-600">
-              {" "}
-              {format(currentDate, "p")}{" "}
+              {format(currentDate, "p")}
             </p>
           </div>
         </div>
