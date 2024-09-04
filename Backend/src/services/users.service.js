@@ -58,7 +58,7 @@ const updateUser = async (userId, userData) => {
   }
 
   if(userData.username.toLowerCase() === "deleted" || userData.username.toLowerCase() === "delete"){
-    throw new ForbiddenError("please choose an other name.")
+    throw new ConflictError("User with this name already exists.")
   }
 
   if (userData.username) {
@@ -69,7 +69,7 @@ const updateUser = async (userId, userData) => {
     console.log(userExist);
 
     if (userExist) {
-      throw new ConflictError("User with this name already exists")
+      throw new ConflictError("User with this name already exists.")
     }
   }
   
