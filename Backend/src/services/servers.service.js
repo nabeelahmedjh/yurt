@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Server, Space, User, Tag } from "../models/index.js";
 import Pagination from "../utils/pagination.js";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
 const createServer = async (
   name,
@@ -10,33 +11,44 @@ const createServer = async (
   serverImage,
   tags
 ) => {
+  try {
+    const serverExist = await Server.findOne({
+      name: name
+    }).collation({ locale: "en", strength: 2 });
+  
+    if (serverExist) {
+      throw new ConflictError("Server with this name already exist");
+    }
+  
+    const newServer = await Server.create({
+      name,
+      description,
+      banner,
+      serverImage,
+      admins: [user._id],
+      members: [user._id],
+      tags: tags,
+    });
 
-  const serverExist = await Server.findOne({
-    name: name
-  }).collation({ locale: "en", strength: 2 });
-  console.log(serverExist);
-  if (serverExist) {
-    return {
-      statusCode: 409,
-      message: "Server with this name already exists. Please provide another name.",
-    };
+
+  
+    const logedInUser = await User.findOne({ _id: user._id });
+    logedInUser.serversJoined.push(newServer._id);
+    await logedInUser.save();
+    return await newServer.populate("tags");
+
+
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to create server');
+    
   }
 
-  const newServer = await Server.create({
-    name,
-    description,
-    banner,
-    serverImage,
-    admins: [user._id],
-    members: [user._id],
-    tags: tags,
-  });
   
-  const logedInUser = await User.findOne({ _id: user._id });
-  logedInUser.serversJoined.push(newServer._id);
-  await logedInUser.save();
-  return await newServer.populate("tags");
-};
+  };
+
 
 
 

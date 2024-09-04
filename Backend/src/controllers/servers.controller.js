@@ -3,8 +3,7 @@ import { serversService } from "../services/index.js";
 import mongoose from "mongoose";
 
 
-
-const createServer = async (req, res) => {
+const createServer = async (req, res, next) => {
   const { name, description } = req.body;
   let tags = req.body.tags ?? [];
   const user = req.user.user;
@@ -55,15 +54,14 @@ const createServer = async (req, res) => {
       tags
     );
 
+    
+    console.log(newServer)
     return res.status(201).json({
-      data: newServer,
+      data: newServer
     });
+  
   } catch (error) {
-    return res.status(500).json({
-      error: {
-        message: error.message,
-      },
-    });
+    next(error);
   }
 };
 

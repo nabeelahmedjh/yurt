@@ -4,6 +4,7 @@ import Space from "../models/space.model.js";
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
 import pagination from "../utils/pagination.js";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
 const createSpace = async (name, description, spaceImage, type) => {
   const space = await Space.create({

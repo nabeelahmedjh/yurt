@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Message, User } from "../models/index.js";
 import { generatePassword } from "../utils/generate-pass.utils.js";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
 const seedDeleteUser = async () => {
   const passwordHash = await generatePassword("EnglishOrSpanish");
@@ -49,11 +50,15 @@ const updateAvatar = async (userId, avatar) => {
 
 const updateUser = async (userId, userData) => {
 
+
+  try {
+
   if(userData.email){
-    return {
-      statusCode: 403,
-      message: "You can not change email",
-    };
+    throw new ForbiddenError("You can not change email.")
+  }
+
+  if(userData.username.toLowerCase() === "deleted" || userData.username.toLowerCase() === "delete"){
+    throw new ForbiddenError("please choose an other name.")
   }
 
   if (userData.username) {
@@ -62,21 +67,23 @@ const updateUser = async (userId, userData) => {
       _id: { $ne: userId },
     }).collation({ locale: "en", strength: 2 });
     console.log(userExist);
+
     if (userExist) {
-      return {
-        statusCode: 409,
-        message: "Username already exists",
-      };
+      throw new ConflictError("User with this name already exists")
     }
   }
-  try {
+  
     const updatedUser = await User.findByIdAndUpdate(userId, userData, {
       new: true,
       runValidators: true,
     }).populate("interests");
+
     return updatedUser;
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    else if (error.name === "CastError") {
       throw new Error("Invalid user ID");
     } else if (error.name === "ValidationError") {
       throw new Error(`Validation failed: ${error.message}`);
@@ -90,7 +97,12 @@ const getAllUsers = async (username, searchType) => {
   let matchCondition;
 
   if (searchType === "strict") {
-    matchCondition = { username: username };
+    matchCondition = {
+      username: {
+        $regex: `^${username}$`, // 
+        $options: "i",            
+      },
+    };
   } else if (searchType === "contain") {
     matchCondition = {
       username: {
@@ -105,6 +117,11 @@ const getAllUsers = async (username, searchType) => {
   const allUsers = await User.aggregate([
     {
       $match: matchCondition,
+    },
+    {
+      $match: {
+        username: { $ne: "Deleted" }, // Exclude user with username "Deleted"
+      },
     },
     {
       $project: {
