@@ -16,6 +16,7 @@ import passport from "passport";
 import "./strategy/jwt-strategy.js";
 import "./strategy/local-strategy.js";
 import routes from "./routes/index.js";
+import { routeErrorHandler } from "./utils/routeErrorHandler.js";
 
 let corsOptions = {
   origin: [
@@ -61,7 +62,9 @@ app.use(passport.session());
 app.use(cors(corsOptions));
 
 app.use("/", routes);
+app.use(routeErrorHandler);
 app.use("/uploads", express.static("./uploads"));
+
 
 const server = http.createServer(app);
 global.io = socketio.listen(server);

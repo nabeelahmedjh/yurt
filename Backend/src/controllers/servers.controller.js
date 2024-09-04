@@ -1,7 +1,9 @@
 import { Server, User } from "../models/index.js";
 import { serversService } from "../services/index.js";
 import mongoose from "mongoose";
-const createServer = async (req, res) => {
+
+
+const createServer = async (req, res, next) => {
   const { name, description } = req.body;
   let tags = req.body.tags ?? [];
   const user = req.user.user;
@@ -52,23 +54,89 @@ const createServer = async (req, res) => {
       tags
     );
 
+    
+    console.log(newServer)
     return res.status(201).json({
-      data: newServer,
+      data: newServer
     });
+  
   } catch (error) {
-    return res.status(500).json({
+    next(error);
+  }
+};
+
+
+
+
+
+
+const updateServer = async (req, res) => {
+  const { serverId } = req.params;
+  let tags = req.body.tags ?? null;
+  const { name , description } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(serverId)) {
+    return res.status(400).json({
       error: {
-        message: error.message,
+        message: "Invalid server id",
       },
     });
   }
+
+  const userId = req.user.user._id;
+
+  const banner =
+    req.files["banner"] && req.files?.["banner"]?.[0]
+      ? {
+          name: req.files["banner"][0].originalname,
+          size: req.files["banner"][0].size,
+          type: req.files["banner"][0].mimetype,
+          source: req.files["banner"][0].path,
+        }
+      : null;
+
+  const serverImage =
+    req.files["serverImage"] && req.files?.["serverImage"]?.[0]
+      ? {
+          name: req.files["serverImage"][0].originalname,
+          size: req.files["serverImage"][0].size,
+          type: req.files["serverImage"][0].mimetype,
+          source: req.files["serverImage"][0].path,
+        }
+      : null;
+
+
+  try {
+    const updatedServer = await serversService.updateServer(
+      userId,
+      serverId,
+      name,
+      description,
+      banner,
+      serverImage,
+      tags
+    );
+    return res.status(200).json({
+      data: updatedServer,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: { message: error.message },
+    });
+  }
 };
+
+
+
+
+
+
 
 const getServers = async (req, res) => {
   const type = req.query.type ?? "";
   const search = req.query.search ?? "";
   let tags = req.query.tags ?? [];
-  console.log(req.query);
+  
 
   try {
     if (!type || type === "joined") {
@@ -111,6 +179,11 @@ const getServers = async (req, res) => {
   }
 };
 
+
+
+
+
+
 const getServer = async (req, res) => {
   const { serverId } = req.params;
 
@@ -133,13 +206,17 @@ const getServer = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
 const createSpace = async (req, res) => {
   const { serverId } = req.params;
   const name = req.body.name;
   const description = req.body.description;
   const type = req.body.type ?? "chat";
-  console.log(req.body);
-  console.log(serverId);
 
   const spaceImage = req.file
     ? {
@@ -281,6 +358,7 @@ const getMembers = async (req, res) => {
 
 export default {
   createServer,
+  updateServer,
   getServers,
   getServer,
   createSpace,

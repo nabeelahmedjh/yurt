@@ -46,7 +46,7 @@ const updateAvatar = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   const userId = req.user.user._id;
   const userData = req.body;
 
@@ -60,17 +60,7 @@ const updateUser = async (req, res) => {
       data: updatedUser,
     });
   } catch (error) {
-    if (error.code === 11000 && error.keyValue && error.keyValue.username) {
-      return res.status(409).json({
-        error: {
-          message: "Username already exists. Please use a different username.",
-        },
-      });
-    } else {
-      return res.status(500).json({
-        error: { message: error.message },
-      });
-    }
+    next(error); 
   }
 };
 

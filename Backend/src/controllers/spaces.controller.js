@@ -4,7 +4,16 @@ import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
 
 const createSpace = async (req, res) => {
-  const { name, description, spaceBanner, type } = req.body;
+  const { name, description, type } = req.body;
+
+  const spaceImage = req.file
+    ? {
+        name: req.file.originalname,
+        size: req.file.size,
+        type: req.file.mimetype,
+        source: req.file.path,
+      }
+    : null;
 
   if (!name) {
     return res.status(400).json({
@@ -22,7 +31,7 @@ const createSpace = async (req, res) => {
     const newSpace = await spacesService.createSpace(
       name,
       description,
-      spaceBanner,
+      spaceImage,
       type
     );
     res.status(201).json({
@@ -34,6 +43,7 @@ const createSpace = async (req, res) => {
     });
   }
 };
+
 
 const sendMessageInSpace = async (req, res) => {
   const { content } = req.body;
