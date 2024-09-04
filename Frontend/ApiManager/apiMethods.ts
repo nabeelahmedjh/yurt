@@ -36,6 +36,11 @@ const getMessages = async (spaceId: string, params: {}) => {
   return APIManager.get(url, params, {}, true);
 };
 
+const getUsers = async (params: {}) => {
+  const url = ENDPOINTS.USERS;
+  return APIManager.get(url, params, {}, true);
+};
+
 const getProfile = async () => {
   const url = ENDPOINTS.PROFILE;
   return APIManager.get(url, {}, {}, true);
@@ -64,6 +69,7 @@ export {
   updateProfile,
   getServers,
   getMessages,
+  getUsers,
   getProfile,
   getTags,
   login,

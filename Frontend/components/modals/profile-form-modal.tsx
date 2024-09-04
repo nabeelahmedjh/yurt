@@ -12,7 +12,6 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,7 +33,8 @@ import { toast } from "sonner";
 import useGetTags from "@/hooks/useGetTags";
 import useGetProfile from "@/hooks/useGetProfile";
 import useUpdateProfile from "@/hooks/useUpdateProfile";
-
+import { getUsers } from "@/ApiManager/apiMethods";
+import { Loader } from "lucide-react";
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ export default function ProfileFormModal({
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const { handleUpdateProfile } = useUpdateProfile();
+  const { handleUpdateProfile, loading } = useUpdateProfile();
 
   const { data: profileData } = useGetProfile();
   const { data: tagsOptions } = useGetTags();
@@ -61,12 +61,32 @@ export default function ProfileFormModal({
       label: `${tag.name}  (${tag.usageCount})`,
     }));
 
+  const checkUsernameUnique = async (username: string) => {
+    // console.log("username", username);
+    try {
+      await getUsers({
+        searchType: "strict",
+        username: username,
+      });
+    } catch (e: any) {
+      if (e.response.status === 404) {
+        // console.log(e.response.status);
+        return true;
+      }
+    }
+    return false;
+  };
+
   const formSchema = z.object({
     username: z
       .string()
       .min(2, "Username is too short")
-      .max(50, "Username is too long"),
-    bio: z.string().min(2, "Bio is too short").max(100, "Bio is too long"),
+      .max(50, "Username is too long")
+      .refine(async (value: any) => {
+        const isUnique = await checkUsernameUnique(value);
+        return isUnique;
+      }, "Username already exists."),
+    bio: z.string().min(100, "Bio is too short").max(400, "Bio is too long"),
     interests: z
       .string()
       .array()
@@ -114,7 +134,7 @@ export default function ProfileFormModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        OverlayclassName="place-items-start"
+        OverlayclassName="place-items-center"
         onPointerDownOutside={(e) => {
           const popover = document.querySelector<HTMLElement>(
             ".popover-container-multi-select"
@@ -156,12 +176,12 @@ export default function ProfileFormModal({
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="tribelord" {...field} />
+                      <Input
+                        autoComplete="off"
+                        placeholder="tribelord"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription className="text-gray-700">
-                      Your username should be unique (add check with api
-                      endpoint)
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -174,6 +194,7 @@ export default function ProfileFormModal({
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea
+                        className="h-40"
                         placeholder="I am the lord of this tribe"
                         {...field}
                       />
@@ -206,7 +227,15 @@ export default function ProfileFormModal({
                 )}
               />
               <div className="p-1"></div>
-              <Button type="submit">Update Profile</Button>
+              <Button disabled={loading} type="submit">
+                {loading ? (
+                  <span className="min-w-24 flex justify-center">
+                    <Loader className="animate-spin" />
+                  </span>
+                ) : (
+                  <p>Update Profile</p>
+                )}
+              </Button>
             </form>
           </Form>
         </div>

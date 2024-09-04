@@ -7,6 +7,7 @@ const ENDPOINTS = {
   LOGIN: `/auth/login`,
   SIGNUP: `/auth/signup`,
   TAGS: `/tags`,
+  USERS: `/users`,
 };
 
 export default ENDPOINTS;
