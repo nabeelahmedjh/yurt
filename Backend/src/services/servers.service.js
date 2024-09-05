@@ -62,9 +62,18 @@ const updateServer = async (
   tags
 ) => {
   try {
-  const isAdmin = await Server.findOne({admins: userId});
-  if(!isAdmin){
-    return { message : "Only admin can update the server."}
+   
+
+  const server = await Server.findById({ _id: serverId });
+
+  if (!server) {
+    throw new NotFoundError("server not found");
+  }
+  
+  const isAdmin = server.admins.includes(userId);
+  
+  if (!isAdmin) {
+    throw new ForbiddenError("User is not the admin of the server");
   }
 
   if (typeof tags === "string") {
@@ -104,9 +113,6 @@ const updateServer = async (
     updateData.tags = tags;
   }
 
-
-
-  
     const updatedServer = await Server.findByIdAndUpdate(serverId, {$set: updateData}, {new: true, runValidators: true}).populate("tags");
   
     if (!updatedServer) {
@@ -292,6 +298,14 @@ const getServerById = async (serverId) => {
           },
         ],
       },
+    },
+    {
+      $lookup: {
+      from: "tags",
+      localField: "tags",
+      foreignField: "_id",
+      as: "tags",
+      }
     },
   ]);
 

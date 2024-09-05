@@ -25,9 +25,10 @@ const updateSpace = async (spaceId, userId, name, description, spaceImage) => {
     if (!server) {
       throw new NotFoundError("server not found");
     }
+  
 
     const isAdmin = server.admins.includes(userId);
-
+    
     if (!isAdmin) {
       throw new ForbiddenError("User is not the admin of the server");
     }

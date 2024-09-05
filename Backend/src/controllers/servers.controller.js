@@ -127,13 +127,10 @@ const updateServer = async (req, res, next) => {
 
 
 
-
-
-
 const getServers = async (req, res, next) => {
-  const type = req.query.type ?? "";
+  const type = req.query.type ?? "all";
   const searchtype = req.query.searchType ?? "";
-  const servername = req.query.servername ?? "";
+  const servername = req.query.search ?? "";
   let tags = req.query.tags ?? [];
   
 

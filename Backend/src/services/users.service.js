@@ -32,7 +32,7 @@ const seedDeleteUser = async () => {
 
 
 const getUser = async (userId) => {
-  const user = await User.findById(userId).populate("interests");
+  const user = await User.findById(userId).populate("interests").select("-serversJoined");
   return user;
 };
 
@@ -66,7 +66,7 @@ const updateUser = async (userId, userData) => {
       username: userData.username,
       _id: { $ne: userId },
     }).collation({ locale: "en", strength: 2 });
-    console.log(userExist);
+  
 
     if (userExist) {
       throw new ConflictError("User with this name already exists.")
@@ -140,7 +140,7 @@ const getAllUsers = async (username, searchType) => {
 };
 
 const deletedUser = async (userId) => {
-  console.log("service");
+
   try {
     const dummyUser = await User.findOne({ username: "Deleted" });
     const updatedDummy = await Message.updateMany(

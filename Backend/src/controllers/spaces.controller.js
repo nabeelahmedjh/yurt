@@ -72,7 +72,7 @@ const updateSpace = async (req, res, next) => {
 
     const updatedSpace = await spacesService.updateSpace(spaceId, userId, name, description, spaceImage);
     
-    return res.status(201).json({
+    return res.status(200).json({
       data: updatedSpace,
     });
   } catch (error) {
