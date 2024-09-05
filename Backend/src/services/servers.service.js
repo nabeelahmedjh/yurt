@@ -13,7 +13,7 @@ const createServer = async (
 ) => {
   try {
     const serverExist = await Server.findOne({
-      name: name
+      name: name 
     }).collation({ locale: "en", strength: 2 });
   
     if (serverExist) {
@@ -61,19 +61,17 @@ const updateServer = async (
   serverImage,
   tags
 ) => {
-
+  try {
   const isAdmin = await Server.findOne({admins: userId});
   if(!isAdmin){
     return { message : "Only admin can update the server."}
   }
 
-
-
   if (typeof tags === "string") {
     tags = JSON.parse(tags);
   }
 
-  console.log(tags)
+ 
   const updateData = {};
   
   if(name){
@@ -81,12 +79,9 @@ const updateServer = async (
       name: name,
       _id: { $ne: serverId },
     }).collation({ locale: "en", strength: 2 });
-    console.log(serverExist);
+  
     if (serverExist) {
-      return {
-        statusCode: 409,
-        message: "Server with this name already exists. Please provide another name.",
-      };  
+      throw new ConflictError("Server wth this name already exists");
     }
     else{
       updateData.name = name;
@@ -109,11 +104,11 @@ const updateServer = async (
     updateData.tags = tags;
   }
 
-  console.log(updateData);
 
-  try {
+
+  
     const updatedServer = await Server.findByIdAndUpdate(serverId, {$set: updateData}, {new: true, runValidators: true}).populate("tags");
-    console.log(updatedServer)
+  
     if (!updatedServer) {
       return { message: 'Server not found' };
     }
@@ -121,7 +116,10 @@ const updateServer = async (
     return updatedServer;
 
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    else if (error.name === "CastError") {
       throw new Error("Invalid user ID");
     } else if (error.name === "ValidationError") {
       throw new Error(`Validation failed: ${error.message}`);
@@ -161,20 +159,43 @@ const getJoinedServers = async (req, res) => {
   return servers;
 };
 
-const getAllServers = async (userId, search, tags, page, limit, offset) => {
+
+const getAllServers = async (
+  userId,
+  servername,
+  searchtype,
+  tags,
+  page,
+  limit,
+  offset
+) => 
+    {
   let tagNames = [];
   if (tags && tags.length > 0) {
     tagNames = tags.split(",");
   }
+  try {
+    let matchCondition;
+if (searchtype === "strict") {
+  matchCondition = {
+    name: {
+      $regex: `^${servername}$`, // 
+      $options: "i",            
+    },
+  };
+} else{
+  matchCondition = {
+    name: {
+      $regex: servername,
+      $options: "i",
+    },
+  };
+}
+
 
   const servers = await Server.aggregate([
     {
-      $match: {
-        name: {
-          $regex: search,
-          $options: "i",
-        },
-      },
+      $match: matchCondition,
     },
     ...(tagNames.length > 0
       ? [
@@ -183,7 +204,7 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
               from: "tags",
               localField: "tags",
               foreignField: "_id",
-              as: "tag",
+              as: "tags",
             },
           },
           {
@@ -227,7 +248,19 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
       },
     },
   ]);
+  if(!servers.length > 0){
+    throw new NotFoundError("Server not found")
+  }
   return Pagination.paginateArray(page, limit, offset, servers);
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('something went wrong');
+
+  }
+
+
 };
 
 const getServerById = async (serverId) => {

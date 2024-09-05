@@ -70,7 +70,7 @@ const createServer = async (req, res, next) => {
 
 
 
-const updateServer = async (req, res) => {
+const updateServer = async (req, res, next) => {
   const { serverId } = req.params;
   let tags = req.body.tags ?? null;
   const { name , description } = req.body;
@@ -120,9 +120,7 @@ const updateServer = async (req, res) => {
       data: updatedServer,
     });
   } catch (error) {
-    return res.status(500).json({
-      error: { message: error.message },
-    });
+    next(error)
   }
 };
 
@@ -132,9 +130,10 @@ const updateServer = async (req, res) => {
 
 
 
-const getServers = async (req, res) => {
+const getServers = async (req, res, next) => {
   const type = req.query.type ?? "";
-  const search = req.query.search ?? "";
+  const searchtype = req.query.searchType ?? "";
+  const servername = req.query.servername ?? "";
   let tags = req.query.tags ?? [];
   
 
@@ -153,7 +152,8 @@ const getServers = async (req, res) => {
 
       const servers = await serversService.getAllServers(
         userId,
-        search,
+        servername,
+        searchtype,
         tags,
         page,
         limit,
@@ -173,9 +173,7 @@ const getServers = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      error: { message: error.message },
-    });
+    next(error)
   }
 };
 

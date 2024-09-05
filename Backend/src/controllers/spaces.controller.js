@@ -34,7 +34,7 @@ const createSpace = async (req, res) => {
       spaceImage,
       type
     );
-    res.status(201).json({
+    return res.status(201).json({
       data: newSpace,
     });
   } catch (error) {
@@ -43,6 +43,43 @@ const createSpace = async (req, res) => {
     });
   }
 };
+
+
+const updateSpace = async (req, res, next) => {
+  const { spaceId } = req.params;
+  const { name, description } = req.body;
+  const userId = req.user.user._id
+
+  const spaceImage = req.file
+    ? {
+        name: req.file.originalname,
+        size: req.file.size,
+        type: req.file.mimetype,
+        source: req.file.path,
+      }
+    : null;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+      return res.status(400).json({
+        error: {
+          message: "Invalid server id",
+        },
+      });
+    }
+
+
+
+    const updatedSpace = await spacesService.updateSpace(spaceId, userId, name, description, spaceImage);
+    
+    return res.status(201).json({
+      data: updatedSpace,
+    });
+  } catch (error) {
+    next(error) 
+  }
+}
+
 
 
 const sendMessageInSpace = async (req, res) => {
@@ -130,6 +167,8 @@ const getMessagesInSpace = async (req, res) => {
 
 export default {
   createSpace,
+  updateSpace,
   sendMessageInSpace,
   getMessagesInSpace,
 };
+ 

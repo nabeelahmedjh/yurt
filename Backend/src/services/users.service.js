@@ -94,6 +94,12 @@ const updateUser = async (userId, userData) => {
 };
 
 const getAllUsers = async (username, searchType) => {
+
+  if(username.toLowerCase() === "delete" || username.toLowerCase() === "deleted"){
+    throw new ConflictError("user exits");
+  }
+
+
   let matchCondition;
 
   if (searchType === "strict") {
@@ -117,11 +123,6 @@ const getAllUsers = async (username, searchType) => {
   const allUsers = await User.aggregate([
     {
       $match: matchCondition,
-    },
-    {
-      $match: {
-        username: { $ne: "Deleted" }, // Exclude user with username "Deleted"
-      },
     },
     {
       $project: {
