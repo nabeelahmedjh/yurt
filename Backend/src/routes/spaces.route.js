@@ -9,7 +9,8 @@ router.get("/", (req, res) => {
   res.send("Hello from space route");
 });
 
-router.post("/", spacesController.createSpace);
-router.post("/:spaceId/messages", upload.array("attachment", 5),multerErrorHandler, spacesController.sendMessageInSpace);
+router.post("/",upload.single("spaceImage"), multerErrorHandler, spacesController.createSpace);
+router.put("/:spaceId", upload.single("spaceImage"), multerErrorHandler, spacesController.updateSpace)
+router.post("/:spaceId/messages", upload.array("attachment", 5), multerErrorHandler, spacesController.sendMessageInSpace);
 router.get("/:spaceId/messages", spacesController.getMessagesInSpace);
 export default router;

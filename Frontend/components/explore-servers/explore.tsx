@@ -33,7 +33,7 @@ export default function Explore() {
       <Servers isLoading={isLoading} servers={data} />
       {!isLoading && (
         <div className="w-full flex justify-center mb-8">
-          {isReachingEnd || noMorePages ? (
+          {noMorePages ? (
             <div>
               {data.length > 0 ? (
                 <>

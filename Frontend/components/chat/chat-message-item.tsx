@@ -5,6 +5,7 @@ import { File, User } from "lucide-react";
 import { PhotoView } from "react-photo-view";
 import { format } from "date-fns";
 import { formatFileSize } from "@/lib/utils";
+import ProfileModal from "../modals/profile-modal";
 
 export default function MessageItem({
   img,
@@ -12,6 +13,7 @@ export default function MessageItem({
   content,
   currentDate,
   attachment,
+  sentBy,
 }: {
   img?: string;
   name: string;
@@ -23,24 +25,27 @@ export default function MessageItem({
     source: string;
     type: string;
   }[];
+  sentBy: any;
 }) {
   return (
     <>
       <div className="p-2 ml-4">
         <div className="flex gap-4">
-          <div>
-            <Avatar className="size-10 -mb-6">
-              <AvatarImage src={img} />
-              <AvatarFallback className="bg-white border">
-                <User className="size-8" />
-              </AvatarFallback>
-            </Avatar>
-          </div>
+          <ProfileModal profileData={sentBy}>
+            <div className="cursor-pointer">
+              <Avatar data-src={API_URL + "/" + img} className="size-10 -mb-6">
+                <AvatarImage src={API_URL + "/" + img} />
+                <AvatarFallback className="bg-white border">
+                  <User className="size-8" />
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          </ProfileModal>
+
           <div className="flex gap-4">
             <p className="text-[1rem] self-center font-medium">{name}</p>
             <p className="text-sm self-center text-gray-600">
-              {" "}
-              {format(currentDate, "p")}{" "}
+              {format(currentDate, "p")}
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
-import moongose from "mongoose";
+import mongose from "mongoose";
 import Tag from "./tag.model.js";
 
-const serverSchema = new moongose.Schema(
+const serverSchema = new mongose.Schema(
   {
     name: {
       type: String,
@@ -23,26 +23,27 @@ const serverSchema = new moongose.Schema(
     },
     tags: [
       {
-        type: moongose.Schema.Types.ObjectId,
+        type: mongose.Schema.Types.ObjectId,
         ref: "Tag",
         default: [],
+        
       },
     ],
     spaces: [
       {
-        type: moongose.Schema.Types.ObjectId,
+        type: mongose.Schema.Types.ObjectId,
         ref: "Space",
       },
     ],
     admins: [
       {
-        type: moongose.Schema.Types.ObjectId,
+        type: mongose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
     members: [
       {
-        type: moongose.Schema.Types.ObjectId,
+        type: mongose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
@@ -63,7 +64,7 @@ serverSchema.pre('save', async function (next) {
 });
 
 
-serverSchema.pre('findOneAndUpdate', async function (next) {
+serverSchema.pre('findByIdAndUpdate', async function (next) {
 
   const oldTags = this.getQuery().tags;
   const newTags = this.getUpdate().$set.tags;
@@ -78,7 +79,7 @@ serverSchema.pre('findOneAndUpdate', async function (next) {
   }
 
   if (addedTags > 0) {
-    removedTags.forEach(async (tag) => {
+    addedTags.forEach(async (tag) => {
       await Tag.findByIdAndUpdate(tag, { $inc: { usageCount: 1 } })
     });
   }
@@ -93,7 +94,10 @@ serverSchema.pre("deleteOne", async function (next) {
       await Tag.findByIdAndUpdate(tag, { $inc: { usageCount: -1 } });
     });
   }
+  next();
 });
 
-const Server = moongose.model("Server", serverSchema);
+
+
+const Server = mongose.model("Server", serverSchema);
 export default Server;

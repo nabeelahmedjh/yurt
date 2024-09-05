@@ -44,7 +44,6 @@ export default function Signup() {
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
     },
@@ -86,22 +85,6 @@ export default function Signup() {
                           placeholder="Email"
                           {...field}
                           leftIcon={<Mail strokeWidth={1.5} />}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          placeholder="Username"
-                          {...field}
-                          leftIcon={<UserRound strokeWidth={1.5} />}
                         />
                       </FormControl>
                       <FormMessage />

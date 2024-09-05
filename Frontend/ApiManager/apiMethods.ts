@@ -16,6 +16,16 @@ const createMessage = async (spaceId: string, data: any) => {
   return APIManager.post(url, data, {}, true);
 };
 
+const updateAvatar = async (data: any) => {
+  const url = ENDPOINTS.PROFILE_AVATAR;
+  return APIManager.patch(url, data, {}, true);
+};
+
+const updateProfile = async (data: any) => {
+  const url = ENDPOINTS.PROFILE;
+  return APIManager.put(url, data, {}, true);
+};
+
 const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, params, {}, true);
@@ -23,6 +33,11 @@ const getServers = async (params: {}) => {
 
 const getMessages = async (spaceId: string, params: {}) => {
   const url = ENDPOINTS.MESSAGES(spaceId);
+  return APIManager.get(url, params, {}, true);
+};
+
+const getUsers = async (params: {}) => {
+  const url = ENDPOINTS.USERS;
   return APIManager.get(url, params, {}, true);
 };
 
@@ -50,8 +65,11 @@ export {
   createServer,
   createSpace,
   createMessage,
+  updateAvatar,
+  updateProfile,
   getServers,
   getMessages,
+  getUsers,
   getProfile,
   getTags,
   login,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,103 +30,98 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import useCreateServer from "@/hooks/useCreateServer";
-import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useGetTags from "@/hooks/useGetTags";
-
+import useGetProfile from "@/hooks/useGetProfile";
+import useUpdateProfile from "@/hooks/useUpdateProfile";
+import { getUsers } from "@/ApiManager/apiMethods";
+import { Loader } from "lucide-react";
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-export default function CreateServerModal({
+export default function ProfileFormModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const MultiSelectConatinerRef = useRef(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { handleCreateServer } = useCreateServer();
 
-  const { data: tagsData, isLoading: tagsLoading } = useGetTags();
+  const { handleUpdateProfile, loading } = useUpdateProfile();
 
-  const tagsList = tagsData
+  const { data: profileData } = useGetProfile();
+  const { data: tagsOptions } = useGetTags();
+
+  const tagsList = tagsOptions
     ?.sort((a: any, b: any) => b.usageCount - a.usageCount)
     .map((tag: any) => ({
       value: tag._id,
       label: `${tag.name}  (${tag.usageCount})`,
     }));
 
-  const MAX_FILE_SIZE_MB = 1;
+  const checkUsernameUnique = async (username: string) => {
+    // console.log("username", username);
+    try {
+      await getUsers({
+        searchType: "strict",
+        username: username,
+      });
+    } catch (e: any) {
+      if (e.response.status === 404) {
+        // console.log(e.response.status);
+        return true;
+      }
+    }
+    return false;
+  };
+
   const formSchema = z.object({
-    serverImage: z
-      .union([z.instanceof(File), z.undefined()])
-      .refine((file) => file !== undefined, "Server Image is required.")
-      .refine(
-        (file) =>
-          file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
-        {
-          message: `File size must be less than ${MAX_FILE_SIZE_MB}MB.`,
-        }
-      )
-      .refine((file) => file === undefined || file.type.startsWith("image/"), {
-        message: "Only Image files are allowed.",
-      }),
-    name: z.string().min(2, "Name is too short").max(50, "Name is too long"),
-    description: z
+    username: z
       .string()
-      .min(2, "Description is too short")
-      .max(100, "Description is too long"),
-    tags: z
+      .min(2, "Username is too short")
+      .max(50, "Username is too long")
+      .refine(async (value: any) => {
+        const isUnique = await checkUsernameUnique(value);
+        return isUnique;
+      }, "Username already exists."),
+    bio: z.string().min(100, "Bio is too short").max(400, "Bio is too long"),
+    interests: z
       .string()
       .array()
-      .max(5, "Maximum 5 tags allowed.")
-      .min(1, "Minimum 1 tag required."),
+      .max(5, "Maximum 5 interests allowed.")
+      .min(1, "Minimum 1 interest required."),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      serverImage: undefined,
-      name: "",
-      description: "",
-      tags: [],
+      username: "",
+      bio: "",
+      interests: [],
     },
   });
 
+  useEffect(() => {
+    const defaultTags = profileData?.interests.map((tag: any) => tag._id);
+
+    if (profileData && defaultTags) {
+      form.reset({
+        username: profileData.username,
+        bio: profileData.bio,
+        interests: defaultTags,
+      });
+    }
+  }, [profileData, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (
-      !values.serverImage ||
-      !values.name ||
-      !values.description ||
-      !values.tags
-    )
-      return;
-
-    const formData = new FormData();
-    formData.append("serverImage", values.serverImage);
-    formData.append("name", values.name);
-    formData.append("description", values.description);
-
-    formData.append("tags", JSON.stringify(values.tags));
-
-    const error = await handleCreateServer(formData);
+    const error = await handleUpdateProfile(values);
 
     if (!error) {
-      // router.push(`/servers/${data?._id}`);
-
-      // router refresh is required so that identity event emits again and the new
-      // server is added in to the room
-
       router.refresh();
 
-      toast.success("Server Created Successfully");
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      toast.success("Profile Updated Successfully");
 
       form.reset();
       setOpen(false);
@@ -135,14 +130,11 @@ export default function CreateServerModal({
     }
   }
 
-  if (tagsLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
+        OverlayclassName="place-items-center"
         onPointerDownOutside={(e) => {
           const popover = document.querySelector<HTMLElement>(
             ".popover-container-multi-select"
@@ -161,47 +153,32 @@ export default function CreateServerModal({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Create Server</DialogTitle>
-          <DialogDescription>
-            Enter required details to create a server.
+          <div className="mt-3 ml-8">
+            <DialogTitle className="bg-lime-100 w-fit px-2 py-1 rounded-[8px] font-medium">
+              Update Profile
+            </DialogTitle>
+          </div>
+          <DialogDescription className="sr-only">
+            Update your profile information
           </DialogDescription>
         </DialogHeader>
-        <div>
+        <div className="mt-8 px-8">
           <Form {...form}>
             <form
-              id="create-server"
+              id="update-profile-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-3 px-1"
             >
               <FormField
                 control={form.control}
-                name="serverImage"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-center">
-                    <FormControl>
-                      <div className="mt-4 flex flex-col items-center">
-                        <UploadAvatar
-                          fileRef={fileInputRef}
-                          maxFileSize={MAX_FILE_SIZE_MB}
-                          field={field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="name"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input
-                        className="placeholder:text-gray-400"
-                        placeholder="Wizards"
+                        autoComplete="off"
+                        placeholder="tribelord"
                         {...field}
                       />
                     </FormControl>
@@ -211,13 +188,14 @@ export default function CreateServerModal({
               />
               <FormField
                 control={form.control}
-                name="description"
+                name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="A cool place for wizards..."
+                        className="h-40"
+                        placeholder="I am the lord of this tribe"
                         {...field}
                       />
                     </FormControl>
@@ -227,10 +205,10 @@ export default function CreateServerModal({
               />
               <FormField
                 control={form.control}
-                name="tags"
+                name="interests"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Interest Tags</FormLabel>
+                    <FormLabel>Interests</FormLabel>
                     <FormControl ref={MultiSelectConatinerRef}>
                       <MultiSelect
                         popoverPortalContainerRef={MultiSelectConatinerRef}
@@ -238,10 +216,10 @@ export default function CreateServerModal({
                         options={tagsList}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        placeholder="Select Tags"
+                        placeholder="Select Interests"
                         variant="inverted"
                         animation={2}
-                        maxCount={3}
+                        maxCount={2}
                       />
                     </FormControl>
                     <FormMessage />
@@ -249,7 +227,15 @@ export default function CreateServerModal({
                 )}
               />
               <div className="p-1"></div>
-              <Button type="submit">Create Server</Button>
+              <Button disabled={loading} type="submit">
+                {loading ? (
+                  <span className="min-w-24 flex justify-center">
+                    <Loader className="animate-spin" />
+                  </span>
+                ) : (
+                  <p>Update Profile</p>
+                )}
+              </Button>
             </form>
           </Form>
         </div>

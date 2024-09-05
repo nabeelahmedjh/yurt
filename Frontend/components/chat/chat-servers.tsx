@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { CircleUserRoundIcon, CompassIcon, Plus, User2 } from "lucide-react";
+import { CircleUserRoundIcon, CompassIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateServerModal from "@/components/modals/create-server-modal";
 import LogoutButton from "@/components/logout-button";
@@ -16,6 +16,7 @@ import useGetServers from "@/hooks/useGetServers";
 import yurt_logo from "@/public/yurt_logo.svg";
 import Image from "next/image";
 import { PROXY_API_URL } from "@/constants";
+import ProfileSettingModal from "@/components/modals/profile-setting-modal";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();
@@ -99,22 +100,22 @@ export default function ChatServers() {
           </div>
           <div>
             <div>
-              <CreateServerModal>
-                <div className="flex justify-center mt-2">
-                  <TooltipProvider delayDuration={50}>
-                    <Tooltip>
+              <div className="flex justify-center mt-2">
+                <TooltipProvider delayDuration={50}>
+                  <Tooltip>
+                    <CreateServerModal>
                       <TooltipTrigger>
                         <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
                           <Plus />
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent side="right" sideOffset={10}>
-                        <p>Create Server</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </CreateServerModal>
+                    </CreateServerModal>
+                    <TooltipContent side="right" sideOffset={10}>
+                      <p>Create Server</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
 
             <div className="flex justify-center mt-1">
@@ -145,11 +146,16 @@ export default function ChatServers() {
             <div>
               <TooltipProvider delayDuration={150}>
                 <Tooltip>
-                  <TooltipTrigger>
-                    <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
-                      <CircleUserRoundIcon strokeWidth={1} className="size-6" />
-                    </div>
-                  </TooltipTrigger>
+                  <ProfileSettingModal>
+                    <TooltipTrigger>
+                      <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
+                        <CircleUserRoundIcon
+                          strokeWidth={1}
+                          className="size-6"
+                        />
+                      </div>
+                    </TooltipTrigger>
+                  </ProfileSettingModal>
                   <TooltipContent side="right" sideOffset={10}>
                     <p>Profile</p>
                   </TooltipContent>

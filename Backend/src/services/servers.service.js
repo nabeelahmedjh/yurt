@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Server, Space, User, Tag } from "../models/index.js";
 import Pagination from "../utils/pagination.js";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
 const createServer = async (
   name,
@@ -10,21 +11,131 @@ const createServer = async (
   serverImage,
   tags
 ) => {
-  const newServer = await Server.create({
-    name,
-    description,
-    banner,
-    serverImage,
-    admins: [user._id],
-    members: [user._id],
-    tags: tags,
-  });
+  try {
+    const serverExist = await Server.findOne({
+      name: name 
+    }).collation({ locale: "en", strength: 2 });
+  
+    if (serverExist) {
+      throw new ConflictError("Server with this name already exist");
+    }
+  
+    const newServer = await Server.create({
+      name,
+      description,
+      banner,
+      serverImage,
+      admins: [user._id],
+      members: [user._id],
+      tags: tags,
+    });
 
-  const logedInUser = await User.findOne({ _id: user._id });
-  logedInUser.serversJoined.push(newServer._id);
-  await logedInUser.save();
-  return await newServer.populate("tags");
+
+  
+    const logedInUser = await User.findOne({ _id: user._id });
+    logedInUser.serversJoined.push(newServer._id);
+    await logedInUser.save();
+    return await newServer.populate("tags");
+
+
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to create server');
+    
+  }
+
+  
+  };
+
+
+
+
+const updateServer = async (
+  userId,
+  serverId,
+  name,
+  description,
+  banner,
+  serverImage,
+  tags
+) => {
+  try {
+   
+
+  const server = await Server.findById({ _id: serverId });
+
+  if (!server) {
+    throw new NotFoundError("server not found");
+  }
+  
+  const isAdmin = server.admins.includes(userId);
+  
+  if (!isAdmin) {
+    throw new ForbiddenError("User is not the admin of the server");
+  }
+
+  if (typeof tags === "string") {
+    tags = JSON.parse(tags);
+  }
+
+ 
+  const updateData = {};
+  
+  if(name){
+    const serverExist = await Server.findOne({
+      name: name,
+      _id: { $ne: serverId },
+    }).collation({ locale: "en", strength: 2 });
+  
+    if (serverExist) {
+      throw new ConflictError("Server wth this name already exists");
+    }
+    else{
+      updateData.name = name;
+    }
+  }
+
+  if(description){
+    updateData.description = description;
+  }
+
+  if(banner){
+    updateData.banner = banner;
+  }
+
+  if(serverImage){
+    updateData.serverImage = serverImage;
+  }
+
+  if(tags){
+    updateData.tags = tags;
+  }
+
+    const updatedServer = await Server.findByIdAndUpdate(serverId, {$set: updateData}, {new: true, runValidators: true}).populate("tags");
+  
+    if (!updatedServer) {
+      return { message: 'Server not found' };
+    }
+
+    return updatedServer;
+
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    else if (error.name === "CastError") {
+      throw new Error("Invalid user ID");
+    } else if (error.name === "ValidationError") {
+      throw new Error(`Validation failed: ${error.message}`);
+    } else {
+      throw error;
+    }
+  } 
 };
+
+
 
 const getJoinedServers = async (req, res) => {
   const user = req.user;
@@ -54,20 +165,43 @@ const getJoinedServers = async (req, res) => {
   return servers;
 };
 
-const getAllServers = async (userId, search, tags, page, limit, offset) => {
+
+const getAllServers = async (
+  userId,
+  servername,
+  searchtype,
+  tags,
+  page,
+  limit,
+  offset
+) => 
+    {
   let tagNames = [];
   if (tags && tags.length > 0) {
     tagNames = tags.split(",");
   }
+  try {
+    let matchCondition;
+if (searchtype === "strict") {
+  matchCondition = {
+    name: {
+      $regex: `^${servername}$`, // 
+      $options: "i",            
+    },
+  };
+} else{
+  matchCondition = {
+    name: {
+      $regex: servername,
+      $options: "i",
+    },
+  };
+}
+
 
   const servers = await Server.aggregate([
     {
-      $match: {
-        name: {
-          $regex: search,
-          $options: "i",
-        },
-      },
+      $match: matchCondition,
     },
     ...(tagNames.length > 0
       ? [
@@ -76,7 +210,7 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
               from: "tags",
               localField: "tags",
               foreignField: "_id",
-              as: "tag",
+              as: "tags",
             },
           },
           {
@@ -120,7 +254,19 @@ const getAllServers = async (userId, search, tags, page, limit, offset) => {
       },
     },
   ]);
+  if(!servers.length > 0){
+    throw new NotFoundError("Server not found")
+  }
   return Pagination.paginateArray(page, limit, offset, servers);
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('something went wrong');
+
+  }
+
+
 };
 
 const getServerById = async (serverId) => {
@@ -152,6 +298,14 @@ const getServerById = async (serverId) => {
           },
         ],
       },
+    },
+    {
+      $lookup: {
+      from: "tags",
+      localField: "tags",
+      foreignField: "_id",
+      as: "tags",
+      }
     },
   ]);
 
@@ -187,6 +341,7 @@ const getMembersByServerId = async (serverId, page, limit, offset, type) => {
 
 export default {
   createServer,
+  updateServer,
   getJoinedServers,
   getAllServers,
   getServerById,

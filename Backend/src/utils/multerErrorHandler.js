@@ -25,7 +25,7 @@ function multerErrorHandler(err, req, res, next)
                 errorMessage = "Too many fields in the request.";
                 break;
             case 'LIMIT_UNEXPECTED_FILE':
-                errorMessage = `Unexpected file field "${err.field}". Expected field is "attachment".`;
+                errorMessage = `Unexpected file field "${err.field}". Expected field is "${err.field}".`;
                 break;
             case 'MISSING_FIELD_NAME':
                 errorMessage = "Field name is missing.";

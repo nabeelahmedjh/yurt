@@ -16,20 +16,23 @@ export default function ChatContent() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [isAtBottom, setIsAtBottom] = useState(true);
 
-  const [debouncedSetSize] = useDebounce((size: any) => setSize(size), 200);
+  const [debouncedSetSize] = useDebounce(setSize, 200);
 
   const handleScroll = useCallback(() => {
     const scrollArea = scrollAreaRef.current;
 
     if (!scrollArea) return;
 
-    console.log("scroll to bottom");
+    const showScrollToBottomButton = (scrollArea: HTMLElement) => {
+      const threshold = 200; // in pixels
+      const distanceFromBottom =
+        scrollArea.scrollHeight -
+        (scrollArea.scrollTop + scrollArea.clientHeight);
 
-    const isBottom =
-      scrollArea.scrollHeight - scrollArea.scrollTop ===
-      scrollArea.clientHeight;
+      return distanceFromBottom < threshold;
+    };
 
-    setIsAtBottom(isBottom);
+    setIsAtBottom(showScrollToBottomButton(scrollArea));
 
     if (!scrollArea || isLoadingMore || isReachingEnd) return;
 

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Message, User } from "../models/index.js";
 import { generatePassword } from "../utils/generate-pass.utils.js";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
 const seedDeleteUser = async () => {
   const passwordHash = await generatePassword("EnglishOrSpanish");
@@ -27,23 +28,37 @@ const seedDeleteUser = async () => {
   }
 };
 
+
+
+
 const getUser = async (userId) => {
-  const user = await User.findById(userId).populate("interests");
+  const user = await User.findById(userId).populate("interests").select("-serversJoined");
   return user;
 };
+
+
+
 
 const updateAvatar = async (userId, avatar) => {
   const updatedAvatar = await User.findByIdAndUpdate(userId, { avatar: avatar }, {new:true});
   return updatedAvatar;
 };
 
+
+
+
+
 const updateUser = async (userId, userData) => {
 
+
+  try {
+
   if(userData.email){
-    return {
-      statusCode: 403,
-      message: "You can not change email",
-    };
+    throw new ForbiddenError("You can not change email.")
+  }
+
+  if(userData.username.toLowerCase() === "deleted" || userData.username.toLowerCase() === "delete"){
+    throw new ConflictError("User with this name already exists.")
   }
 
   if (userData.username) {
@@ -51,22 +66,24 @@ const updateUser = async (userId, userData) => {
       username: userData.username,
       _id: { $ne: userId },
     }).collation({ locale: "en", strength: 2 });
-    console.log(userExist);
+  
+
     if (userExist) {
-      return {
-        statusCode: 409,
-        message: "Username already exists",
-      };
+      throw new ConflictError("User with this name already exists.")
     }
   }
-  try {
+  
     const updatedUser = await User.findByIdAndUpdate(userId, userData, {
       new: true,
       runValidators: true,
     }).populate("interests");
+
     return updatedUser;
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    else if (error.name === "CastError") {
       throw new Error("Invalid user ID");
     } else if (error.name === "ValidationError") {
       throw new Error(`Validation failed: ${error.message}`);
@@ -77,10 +94,21 @@ const updateUser = async (userId, userData) => {
 };
 
 const getAllUsers = async (username, searchType) => {
+
+  if(username.toLowerCase() === "delete" || username.toLowerCase() === "deleted"){
+    throw new ConflictError("user exits");
+  }
+
+
   let matchCondition;
 
   if (searchType === "strict") {
-    matchCondition = { username: username };
+    matchCondition = {
+      username: {
+        $regex: `^${username}$`, // 
+        $options: "i",            
+      },
+    };
   } else if (searchType === "contain") {
     matchCondition = {
       username: {
@@ -112,7 +140,7 @@ const getAllUsers = async (username, searchType) => {
 };
 
 const deletedUser = async (userId) => {
-  console.log("service");
+
   try {
     const dummyUser = await User.findOne({ username: "Deleted" });
     const updatedDummy = await Message.updateMany(

@@ -4,16 +4,66 @@ import Space from "../models/space.model.js";
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
 import pagination from "../utils/pagination.js";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
-const createSpace = async (name, description, spaceBanner, type) => {
+const createSpace = async (name, description, spaceImage, type) => {
   const space = await Space.create({
     name,
     description,
-    spaceBanner,
+    spaceImage,
     type,
   });
   return space;
 };
+
+const updateSpace = async (spaceId, userId, name, description, spaceImage) => {
+  
+  try {
+    
+    const server = await Server.findOne({ spaces: spaceId });
+
+    if (!server) {
+      throw new NotFoundError("server not found");
+    }
+  
+
+    const isAdmin = server.admins.includes(userId);
+    
+    if (!isAdmin) {
+      throw new ForbiddenError("User is not the admin of the server");
+    }
+
+    const spaceData = {};
+
+    if(name){
+      spaceData.name = name
+    }
+
+    if(description){
+      spaceData.description = description;
+    }
+    if(spaceImage){
+      spaceData.spaceImage = spaceImage;
+    }
+
+    
+    const updatedSpace = await Space.findByIdAndUpdate(spaceId, {$set: spaceData}, {new: true, runValidators: true} ) 
+    return updatedSpace;
+
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    else if (error.name === "CastError") {
+      throw new Error("Invalid user ID");
+    } else if (error.name === "ValidationError") {
+      throw new Error(`Validation failed: ${error.message}`);
+    } else {
+      throw error;
+    }
+  }
+}
+
 
 const getJoinedSpacesIds = async (userId) => {
   const servers = await Server.find({ members: userId });
@@ -33,7 +83,7 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
   });
 
   const newMessageObj = newMessage.toObject();
-  newMessageObj.sentBy = await User.findOne({_id : sentBy})
+  newMessageObj.sentBy = await User.findOne({_id : sentBy}).populate("interests");
   return newMessageObj;
 };
 
@@ -91,4 +141,5 @@ export default {
   sendMessageInSpace,
   getAllMessageInSpace,
   createSpace,
+  updateSpace,
 };

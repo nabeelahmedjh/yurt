@@ -25,7 +25,7 @@ class APIManager {
   }
 
   public async request<T>(
-    method: "get" | "post" | "put" | "delete",
+    method: "get" | "post" | "put" | "delete" | "patch",
     url: string,
     params: any = {},
     data: any = null,
@@ -84,6 +84,15 @@ class APIManager {
     requiresAuth: boolean = false
   ): Promise<T> {
     return this.request<T>("put", url, {}, data, headers, requiresAuth);
+  }
+
+  public async patch<T>(
+    url: string,
+    data: any,
+    headers: AxiosRequestConfig["headers"] = {},
+    requiresAuth: boolean = false
+  ): Promise<T> {
+    return this.request<T>("patch", url, {}, data, headers, requiresAuth);
   }
 
   public async delete<T>(
