@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { Server, Space, User, Tag } from "../models/index.js";
+
+import { Server, Space, User, Tag , InviteCode} from "../models/index.js";
 import Pagination from "../utils/pagination.js";
 import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
@@ -7,6 +8,7 @@ const createServer = async (
   name,
   description,
   user,
+  isPublic,
   banner,
   serverImage,
   tags
@@ -28,16 +30,13 @@ const createServer = async (
       admins: [user._id],
       members: [user._id],
       tags: tags,
+      isPublic,
     });
 
-
-  
     const logedInUser = await User.findOne({ _id: user._id });
     logedInUser.serversJoined.push(newServer._id);
     await logedInUser.save();
     return await newServer.populate("tags");
-
-
   } catch (error) {
     if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
       throw error;
@@ -45,11 +44,9 @@ const createServer = async (
     throw new InternalServerError('Failed to create server');
     
   }
-
-  
   };
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 const updateServer = async (
@@ -63,7 +60,6 @@ const updateServer = async (
 ) => {
   try {
    
-
   const server = await Server.findById({ _id: serverId });
 
   if (!server) {
@@ -80,7 +76,6 @@ const updateServer = async (
     tags = JSON.parse(tags);
   }
 
- 
   const updateData = {};
   
   if(name){
@@ -136,6 +131,8 @@ const updateServer = async (
 };
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const getJoinedServers = async (req, res) => {
   const user = req.user;
@@ -165,6 +162,8 @@ const getJoinedServers = async (req, res) => {
   return servers;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const getAllServers = async (
   userId,
@@ -182,26 +181,28 @@ const getAllServers = async (
   }
   try {
     let matchCondition;
-if (searchtype === "strict") {
-  matchCondition = {
-    name: {
-      $regex: `^${servername}$`, // 
-      $options: "i",            
-    },
-  };
-} else{
-  matchCondition = {
-    name: {
-      $regex: servername,
-      $options: "i",
-    },
-  };
-}
-
+    if (searchtype === "strict") {
+      matchCondition = {
+        name: {
+          $regex: `^${servername}$`, // 
+          $options: "i",            
+        },
+      };
+    } else{
+      matchCondition = {
+        name: {
+          $regex: servername,
+          $options: "i",
+        },
+      };
+    }
 
   const servers = await Server.aggregate([
     {
-      $match: matchCondition,
+      $match: {
+        ...matchCondition,
+        isPublic: true,  
+      },
     },
     ...(tagNames.length > 0
       ? [
@@ -254,20 +255,17 @@ if (searchtype === "strict") {
       },
     },
   ]);
-  if(!servers.length > 0){
-    throw new NotFoundError("Server not found")
-  }
   return Pagination.paginateArray(page, limit, offset, servers);
   } catch (error) {
     if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
       throw error;
     }
     throw new InternalServerError('something went wrong');
-
   }
-
-
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const getServerById = async (serverId) => {
   const server = await Server.aggregate([
@@ -312,6 +310,174 @@ const getServerById = async (serverId) => {
   return server;
 };
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+const joinPublicServer = async (serverId, userId) => {
+
+  try {
+    const server = await Server.findById(serverId);
+    if (!server) {
+      throw new NotFoundError('Server not found');
+    }
+    if (!server.isPublic) {
+      throw new ValidationError('This server is private');
+    }
+    if (server.members.includes(userId)) {
+      throw new ValidationError('You are already a member of this server');
+    }
+  
+    server.members.push(userId);
+    await server.save();
+
+    await User.findByIdAndUpdate(userId, { $push: { serversJoined: server._id } });
+    
+    return server.populate([{path: "spaces"}, {path: "tags"}]);
+  } catch (error) {
+
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to join server'); 
+  }
+  
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+const leaveServer = async (serverId, userId) => {
+  try {
+    const server = await Server.findById(serverId);
+    if (!server) {
+      throw new NotFoundError('Server not found');
+    }
+
+    if (!server.members.includes(userId)) {
+      throw new ValidationError('You are not a member of this server');
+    }
+
+    
+    server.members = server.members.filter(memberId => memberId.toString() !== userId);
+    await server.save();
+
+    await User.findByIdAndUpdate(userId, { $pull: { serversJoined: server._id } });
+
+    return server.populate([{path: "spaces"}, {path: "tags"}]);
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to leave server');
+  }
+
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+const generateInviteCode = async (serverId, userId, expiresIn, usageLimit) => {
+  try {
+    const server = await Server.findById(serverId);
+    if (!server) {
+      throw new NotFoundError('Server not found');
+    }
+ 
+    if (!server.admins.includes(userId)) {
+      throw new ForbiddenError('Only admins can generate invite links');
+    }
+ 
+    const code = await generateUniqueInviteCode();
+    const expiresAt = new Date(Date.now() + expiresIn * 1000); 
+    console.log(code)
+    console.log("we are here")
+    const newInviteCode = await InviteCode.create({
+      server: serverId,
+      code,
+      expiresAt,
+      usageLimit
+    });
+ 
+    server.inviteCodes.push(newInviteCode._id);
+    await server.save();
+ 
+    return newInviteCode;
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError || error instanceof ForbiddenError) {
+      throw error;
+    }
+    console.error('Error in generateInviteCode:', error);
+    throw new InternalServerError('Failed to generate invite code');
+  }
+};
+
+async function generateUniqueInviteCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let code;
+  do {
+    code = Array.from({length: 8}, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+  } while (await Server.findOne({ inviteCode: code }));
+  return code;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const joinServerWithInviteCode = async (inviteCode, userId) => {
+  try {
+    const ExistingInviteCode = await InviteCode.findOne({ code : inviteCode });
+    console.log(ExistingInviteCode)
+    if (!ExistingInviteCode) {
+      throw new ValidationError('Invalid invite code');
+    }
+    
+    if (ExistingInviteCode.expiresAt < new Date()) {
+      throw new ValidationError('Invite link has expired');
+    }
+    console.log(userId)
+    if (ExistingInviteCode.usageCount >= ExistingInviteCode.usageLimit) {
+      throw new ValidationError('Invite link usage limit reached');
+    }
+    
+    const server = await Server.findById(ExistingInviteCode.server);
+    if (!server) {
+      throw new NotFoundError('Server not found');
+    }
+    console.log(server)
+    if (server.members.includes(userId)) {
+      throw new ValidationError('You are already a member of this server');
+    }
+    
+    server.members.push(userId);
+
+    ExistingInviteCode.usageCount += 1;
+    
+    await Promise.all([
+      server.save(),
+      ExistingInviteCode.save(),
+      User.findByIdAndUpdate(userId, { $push: { serversJoined: server._id } })
+    ]);
+    
+    return server.populate([{path: "spaces"}, {path: "tags"}]);
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError || error instanceof ForbiddenError) {
+      throw error;
+    }
+    console.error('Error in generateInviteCode:', error);
+    throw new InternalServerError('Failed to generate invite code');
+    
+  }
+};
+
+
+
+
+
+
+
 const createSpace = async (serverId, name, description, spaceImage, type) => {
   let newSpace;
   newSpace = await Space.create({
@@ -327,6 +493,10 @@ const createSpace = async (serverId, name, description, spaceImage, type) => {
   await server.save();
   return newSpace;
 };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const getMembersByServerId = async (serverId, page, limit, offset, type) => {
   // return response in pagination format
@@ -346,5 +516,9 @@ export default {
   getAllServers,
   getServerById,
   createSpace,
+  joinPublicServer,
   getMembersByServerId,
+  leaveServer,
+  generateInviteCode,
+  joinServerWithInviteCode,
 };

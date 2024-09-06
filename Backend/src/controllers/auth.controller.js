@@ -61,6 +61,17 @@ const signUp = async (req, res) => {
     });
   }
   try {
+
+    const emailExist = await User.findOne({
+      email: email,
+    }).collation({ locale: "en", strength: 2 });
+
+    if (emailExist) {
+      return res.status(400).json({
+        error: { message: " Email already exists. Please use a different email address" },
+      });
+    }
+
     const passwordHash = await generatePassword(password);
     const user = await User.create({
       email,
@@ -69,20 +80,12 @@ const signUp = async (req, res) => {
     const token = jwt.sign({ user: user }, process.env.JWT_SECRET);
     return res.status(200).json({ token });
   } catch (error) {
-    if (error.code === 11000 && error.keyValue && error.keyValue.email) {
-      return res.status(409).json({
-        error: {
-          message:
-            "Email already exists. Please use a different email address.",
-        },
-      });
-    } else {
-      return res.status(500).json({
-        error: { message: error.message },
-      });
+    return res.status(500).json({
+      error: { message: error.message },
+    }); 
     }
   }
-};
+
 
 const updateUser = async (req, res) => {
   const { id } = req.params;

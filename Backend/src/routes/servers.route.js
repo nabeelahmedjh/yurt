@@ -11,6 +11,10 @@ router.put("/:serverId", upload.fields([{name: 'banner', maxCount: 1}, {name: 's
 router.get("/:serverId",serversController.getServer);
 router.post("/:serverId/spaces", upload.single("spaceImage"), multerErrorHandler , serversController.createSpace);
 router.put("/:serverId/join", serversController.joinServer);
+router.put("/join/:inviteCode", serversController.joinServerWithInviteCode);
+router.put("/:serverId/leave", serversController.leaveServer);
+router.post("/:serverId/invite", serversController.generateInviteCode);
+
 router.get("/:serverId/members", serversController.getMembers);
 
 export default router;
