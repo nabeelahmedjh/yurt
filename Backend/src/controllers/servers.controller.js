@@ -314,9 +314,7 @@ const generateInviteCode = async (req, res, next) => {
   const usageLimit  = req.body.usageLimit ?? 60;
   const expiresIn = req.body.expiresIn ?? 7*24*60*60;
 
-  console.log(serverId);
-  console.log(usageLimit);
-  console.log(expiresIn);
+  
 
   try {
     const inviteCode = await serversService.generateInviteCode(serverId, userId, expiresIn, usageLimit);
@@ -391,6 +389,28 @@ const getMembers = async (req, res) => {
   });
 };
 
+
+
+export const deleteServer = async (req, res, next) => {
+  const { serverId } = req.params;
+  const userId = req.user.user._id; 
+
+  try {
+    const deletedServer = await serversService.deleteServerById(serverId, userId);
+    return res.status(200).json({
+      data: deletedServer
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+
+
 export default {
   createServer,
   updateServer,
@@ -402,4 +422,5 @@ export default {
   getMembers,
   generateInviteCode,
   joinServerWithInviteCode,
+  deleteServer,
 };

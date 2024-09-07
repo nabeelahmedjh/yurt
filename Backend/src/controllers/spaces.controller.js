@@ -2,6 +2,7 @@ import Space from "../models/space.model.js";
 import Message from "../models/message.model.js";
 import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
+import spacesController from "./spaces.controller.js";
 
 const createSpace = async (req, res) => {
   const { name, description, type } = req.body;
@@ -165,10 +166,38 @@ const getMessagesInSpace = async (req, res) => {
   }
 };
 
+
+const deleteSpace = async (req, res, next) => {
+  const { spaceId } = req.params;
+  const userId = req.user.user._id;
+  console.log(userId)
+    
+  if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid space id",
+      },
+    });
+  }
+  try {
+    const deletedSpace = await spacesService.deleteSpaceById(spaceId, userId);
+    return res.status(200).json({
+      data: deletedSpace
+    });
+  } catch (error) {
+    next(error)
+  }
+
+}
+
+
+
+
 export default {
   createSpace,
   updateSpace,
   sendMessageInSpace,
   getMessagesInSpace,
+  deleteSpace,
 };
  

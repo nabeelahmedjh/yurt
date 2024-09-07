@@ -5,6 +5,12 @@ import User from "../models/user.model.js";
 import mongoose from "mongoose";
 import pagination from "../utils/pagination.js";
 import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
+import fs from 'fs/promises';
+import path from "path"
+
+
+
+
 
 const createSpace = async (name, description, spaceImage, type) => {
   const space = await Space.create({
@@ -136,10 +142,63 @@ const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
   return pagination.paginateArray(page, limit, offset, messages);
 };
 
+
+const deleteSpaceById = async (spaceId, userId) => {
+  try {
+
+    const space = await Space.findById(spaceId);
+   
+    if(!space){
+      throw new NotFoundError("space does not exists")
+    }
+    const server = await Server.findOne({spaces : spaceId});
+   
+    if(!server){
+      throw new NotFoundError("Space does not belong to any server"); 
+    }
+   
+    
+    if(!server.members.includes(userId)){
+      throw new ForbiddenError("You are not authorized to delete this space")
+    }
+ 
+
+    const removedSpace = await Server.findByIdAndUpdate(server._id, {$pull: { spaces: spaceId }})
+    console.log(removedSpace)
+    const deletedSpace = await Space.findByIdAndDelete(spaceId);
+    
+    if (!deletedSpace) {
+      throw new NotFoundError("Space not found in the database");
+    }
+    await Message.deleteMany({ spaceId: spaceId });
+
+
+    const messagePath = path.join(process.cwd(), 'uploads', server._id.toString(), spaceId);
+    try {
+      await fs.rm(messagePath, { recursive: true, force: true });
+    } catch (error) {
+      console.error('Error deleting message files:', error);
+      
+    }
+
+    await server.save();
+    return server.populate([{path: "spaces"}, {path: "tags"}]);
+
+  } catch (error) {
+    if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to delete space');
+    
+  }
+}
+
+
 export default {
   getJoinedSpacesIds,
   sendMessageInSpace,
   getAllMessageInSpace,
   createSpace,
   updateSpace,
+  deleteSpaceById,
 };

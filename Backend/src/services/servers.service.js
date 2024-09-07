@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import path from "path";
+import fs from "fs/promises";
 
-import { Server, Space, User, Tag , InviteCode} from "../models/index.js";
+import { Server, Space, User, Tag , InviteCode, Message } from "../models/index.js";
 import Pagination from "../utils/pagination.js";
 import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
@@ -509,6 +511,75 @@ const getMembersByServerId = async (serverId, page, limit, offset, type) => {
   }
 };
 
+
+const deleteServerById = async (serverId, userId) => {
+  try {
+   
+    const server = await Server.findById(serverId);
+    if (!server) {
+      throw new NotFoundError("Server not found");
+    }
+
+   
+    if (!server.admins.includes(userId)) {
+      throw new ForbiddenError("You are not authorized to delete this server");
+    }
+
+    
+    for (const spaceId of server.spaces) {
+      
+      await Message.deleteMany({ spaceId });
+
+      
+      await Space.findByIdAndDelete(spaceId);
+
+    
+      const spacePath = path.join(process.cwd(), 'uploads', serverId, spaceId.toString());
+      try {
+        await fs.rm(spacePath, { recursive: true, force: true });
+      } catch (error) {
+        console.error(`Error deleting space files for space ${spaceId}:`, error);
+        
+      }
+    }
+
+   
+    await InviteCode.deleteMany({ _id: { $in: server.inviteCodes } });
+
+    
+    await User.updateMany(
+      { _id: { $in: server.members } },
+      { $pull: { serversJoined: serverId } }
+    );
+
+    
+    const serverPath = path.join(process.cwd(), 'uploads', serverId);
+    try {
+      await fs.rm(serverPath, { recursive: true, force: true });
+    } catch (error) {
+      console.error('Error deleting server directory:', error);
+      
+    }
+
+    
+    await Server.findByIdAndDelete(serverId);
+
+    return { message: 'Server and all associated data deleted successfully' };
+  } catch (error) {
+    console.error('Error in deleteServerById:', error);
+    if (error instanceof NotFoundError || error instanceof ForbiddenError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to delete server');
+  }
+};
+
+
+
+
+
+
+
 export default {
   createServer,
   updateServer,
@@ -521,4 +592,5 @@ export default {
   leaveServer,
   generateInviteCode,
   joinServerWithInviteCode,
+  deleteServerById,
 };
