@@ -29,16 +29,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRef } from "react";
 import { toast } from "sonner";
+import { Trash2Icon } from "lucide-react";
 
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
-import ProfileFormModal from "@/components/modals/profile/profile-form-modal";
-import { Trash2Icon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 
-import useUpdateAvatar from "@/hooks/user/useUpdateAvatar";
-import useGetProfile from "@/hooks/user/useGetProfile";
 import useGetServerById from "@/hooks/server/useGetServerById";
+import useUpdateServer from "@/hooks/server/useUpdateServer";
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -51,15 +50,14 @@ export default function ServerSettingModal({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { handleUpdateAvatar, loading } = useUpdateAvatar();
-  const { data: profileData } = useGetProfile();
   const { data: serverData } = useGetServerById();
+  const { handleUpdateServer, loading } = useUpdateServer();
   const MAX_FILE_SIZE_MB = 1;
 
   const formSchema = z.object({
-    avatar: z
+    serverImage: z
       .union([z.instanceof(File), z.undefined()])
-      .refine((file) => file !== undefined, "avatar is required.")
+      .refine((file) => file !== undefined, "Server Image is required.")
       .refine(
         (file) =>
           file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
@@ -75,20 +73,20 @@ export default function ServerSettingModal({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      avatar: undefined,
+      serverImage: undefined,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!values.avatar) return;
+    if (!values.serverImage) return;
 
     const formData = new FormData();
-    formData.append("avatar", values.avatar);
+    formData.append("serverImage", values.serverImage);
 
-    const error = await handleUpdateAvatar(formData);
+    const error = await handleUpdateServer(formData);
 
     if (!error) {
-      toast.success("Avatar Updated Successfully");
+      toast.success("Server Image Updated Successfully");
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -122,14 +120,15 @@ export default function ServerSettingModal({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="avatar"
+                name="serverImage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="sr-only">Avatar</FormLabel>
+                    <FormLabel className="sr-only">Server Image</FormLabel>
                     <FormControl>
-                      <div className="flex flex-col">
+                      <div className="w-20">
                         <UploadAvatar
-                          defaultAvatar={profileData?.avatar?.source}
+                          className="h-auto w-auto rounded-full border-b-4"
+                          defaultAvatar={serverData?.[0].serverImage?.source}
                           fileRef={fileInputRef}
                           maxFileSize={MAX_FILE_SIZE_MB}
                           field={field}

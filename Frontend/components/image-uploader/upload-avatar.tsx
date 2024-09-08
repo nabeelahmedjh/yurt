@@ -5,6 +5,7 @@ import { useState } from "react";
 import ImageModal from "./image-modal";
 import { CameraIcon, UploadIcon, X } from "lucide-react";
 import { PROXY_API_URL } from "@/constants";
+import { cn } from "@/lib/utils";
 
 export default function UploadAvatar({
   field,
@@ -13,6 +14,7 @@ export default function UploadAvatar({
   formSubmitter,
   loading,
   defaultAvatar,
+  className,
 }: {
   field: any;
   maxFileSize: number;
@@ -22,6 +24,7 @@ export default function UploadAvatar({
   formSubmitter?: any;
   loading?: boolean;
   defaultAvatar?: string;
+  className?: string;
 }) {
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [croppedFile, setCroppedFile] = useState<File | undefined>(undefined);
@@ -80,7 +83,11 @@ export default function UploadAvatar({
             <img
               src={croppedFile ? URL.createObjectURL(croppedFile) : ""}
               alt="Server Image"
-              className="object-cover w-full h-[96px] rounded-full border border-neutral-100"
+              // className="object-cover w-full h-[96px] rounded-full border border-neutral-100"
+              className={cn(
+                "object-cover w-full h-[96px] rounded-full border border-neutral-100",
+                className
+              )}
             />
           </div>
         ) : (
@@ -109,7 +116,7 @@ export default function UploadAvatar({
                     fileRef.current.value = "";
                   }
                 }}
-                className="absolute bottom-1 -right-2 p-1 shadow-lg hover:cursor-pointer border border-black bg-secondary rounded-full"
+                className="absolute bottom-1 -right-1 p-1 shadow-lg hover:cursor-pointer border border-black bg-secondary rounded-full"
               >
                 <CameraIconCustom />
               </span>
@@ -120,7 +127,11 @@ export default function UploadAvatar({
             <img
               src={PROXY_API_URL + "/" + defaultAvatar}
               alt="File Upload"
-              className="object-cover w-full h-[96px] rounded-[40px] border-2 border-b-8"
+              // className="object-cover w-full h-[96px] rounded-[40px] border-2 border-b-8"
+              className={cn(
+                "object-cover w-full h-[96px] rounded-[40px] border-2 border-b-8",
+                className
+              )}
             />
           </div>
         ) : (
