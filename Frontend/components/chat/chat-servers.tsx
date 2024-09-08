@@ -10,13 +10,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { CircleUserRoundIcon, CompassIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import CreateServerModal from "@/components/modals/create-server-modal";
+import CreateServerModal from "@/components/modals/server/create-server-modal";
 import LogoutButton from "@/components/logout-button";
 import useGetServers from "@/hooks/useGetServers";
 import yurt_logo from "@/public/yurt_logo.svg";
 import Image from "next/image";
 import { PROXY_API_URL } from "@/constants";
-import ProfileSettingModal from "@/components/modals/profile-setting-modal";
+import ProfileSettingModal from "@/components/modals/profile/profile-setting-modal";
 
 export default function ChatServers() {
   const params = useParams<{ serverID: string; spaceID: string }>();

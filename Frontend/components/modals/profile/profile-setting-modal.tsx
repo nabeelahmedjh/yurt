@@ -33,10 +33,10 @@ import { toast } from "sonner";
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useUpdateAvatar from "@/hooks/useUpdateAvatar";
 import useGetProfile from "@/hooks/useGetProfile";
-import { Button } from "../ui/button";
-import ProfileFormModal from "./profile-form-modal";
+import ProfileFormModal from "@/components/modals/profile/profile-form-modal";
 import { Trash2Icon } from "lucide-react";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

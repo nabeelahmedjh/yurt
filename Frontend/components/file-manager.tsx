@@ -42,7 +42,6 @@ export default function FileManager({ serverId, role }: FileManagerProps) {
         downloadUrl: host_URL + "/Download",
         uploadUrl: host_URL + "/Upload",
         getImageUrl: host_URL + "/GetImage",
-        // getImageUrl = "http://localhost:{port}/GetImage",
       }}
     >
       <Inject services={[NavigationPane, DetailsView, Toolbar]} />

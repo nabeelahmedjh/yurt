@@ -1,12 +1,5 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-
 import { DialogComponent } from "@syncfusion/ej2-react-popups";
 
 import FileManager from "@/components/file-manager";
@@ -28,15 +21,6 @@ export default function FileManagerModal() {
   const role: role = "admin";
 
   return (
-    // <Dialog>
-    //   <DialogTrigger className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors">
-    //     File Manager
-    //   </DialogTrigger>
-    //   <DialogContent className=" p-0 sm:rounded-none max-w-[90vw] [&>button]:hidden">
-    //     <FileManager serverId={serverId} role={role} />
-    //   </DialogContent>
-    // </Dialog>
-
     <div>
       <div
         className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors cursor-pointer"

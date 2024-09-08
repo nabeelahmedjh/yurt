@@ -5,7 +5,7 @@ import { File, User } from "lucide-react";
 import { PhotoView } from "react-photo-view";
 import { format } from "date-fns";
 import { formatFileSize } from "@/lib/utils";
-import ProfileModal from "../modals/profile-modal";
+import ProfileModal from "@/components/modals/profile/profile-modal";
 
 export default function MessageItem({
   img,
