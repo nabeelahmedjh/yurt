@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { PencilLineIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateSpaceModal from "@/components/modals/create-space-modal";
-import useGetServers from "@/hooks/useGetServers";
+import useGetServers from "@/hooks/server/useGetServers";
 import FileManagerModal from "../modals/file-manager-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
@@ -19,6 +19,7 @@ import { PROXY_API_URL } from "@/constants";
 
 import SpaceFallbackImage from "@/public/space.png";
 import ServerFallbackImage from "@/public/server.png";
+import ServerSettingModal from "../modals/server/server-setting-modal";
 
 export default function ChatSpaces() {
   const params = useParams<{ serverID: string; spaceID: string }>();
@@ -36,52 +37,53 @@ export default function ChatSpaces() {
         params.serverID && data?.length > 0 && "bg-primary"
       } h-dvh p-0 w-full flex flex-col has-[.server-settings:hover]:bg-primary/50`}
     >
-      <div
-        onClick={() => window.alert("server setting")}
-        className="server-settings flex flex-col relative py-4 items-center justify-center px-1 [&_.pencil-icon]:hover:inline hover:cursor-pointer transition-[background-color]"
-      >
-        {params.serverID && data?.length > 0 && (
-          <div className="flex gap-4 items-center justify-center">
-            <span className="pencil-icon absolute hidden right-2 top-2">
-              <PencilLineIcon className="size-4" />
-            </span>
-            <div>
-              <Avatar className="size-8">
-                <AvatarImage
-                  className="rounded-full"
-                  src={
-                    PROXY_API_URL +
-                    "/" +
-                    data?.filter(
-                      (server: any) => params.serverID === server._id
-                    )[0]?.serverImage?.source
-                  }
-                />
-
-                <AvatarFallback className="bg-white">
-                  <Image
+      <ServerSettingModal>
+        <div className="server-settings flex flex-col relative py-4 items-center justify-center px-1 [&_.pencil-icon]:hover:inline hover:cursor-pointer transition-[background-color]">
+          {params.serverID && data?.length > 0 && (
+            <div className="flex gap-4 items-center justify-center">
+              <span className="pencil-icon absolute hidden right-2 top-2">
+                <PencilLineIcon className="size-4" />
+              </span>
+              <div>
+                <Avatar className="size-8">
+                  <AvatarImage
                     className="rounded-full"
-                    alt="server image"
-                    src={ServerFallbackImage}
+                    src={
+                      PROXY_API_URL +
+                      "/" +
+                      data?.filter(
+                        (server: any) => params.serverID === server._id
+                      )[0]?.serverImage?.source
+                    }
                   />
-                </AvatarFallback>
-              </Avatar>
+
+                  <AvatarFallback className="bg-white">
+                    <Image
+                      className="rounded-full"
+                      alt="server image"
+                      src={ServerFallbackImage}
+                    />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <p
+                title={
+                  data?.filter(
+                    (server: any) => params.serverID === server._id
+                  )[0]?.name
+                }
+                className="font-semibold max-w-32 whitespace-nowrap text-ellipsis overflow-x-hidden"
+              >
+                {
+                  data?.filter(
+                    (server: any) => params.serverID === server._id
+                  )[0]?.name
+                }
+              </p>
             </div>
-            <p
-              title={
-                data?.filter((server: any) => params.serverID === server._id)[0]
-                  ?.name
-              }
-              className="font-semibold max-w-32 whitespace-nowrap text-ellipsis overflow-x-hidden"
-            >
-              {
-                data?.filter((server: any) => params.serverID === server._id)[0]
-                  ?.name
-              }
-            </p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </ServerSettingModal>
       {params.serverID && data?.length > 0 && (
         <div className="rounded-t-lg justify-between h-full overflow-y-auto flex flex-col bg-white">
           <div className="flex flex-col overflow-y-auto pl-2 pr-[2px]">

@@ -31,8 +31,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import useGetTags from "@/hooks/useGetTags";
-import useGetProfile from "@/hooks/useGetProfile";
-import useUpdateProfile from "@/hooks/useUpdateProfile";
+import useGetProfile from "@/hooks/user/useGetProfile";
+import useUpdateProfile from "@/hooks/user/useUpdateProfile";
 import { getUsers } from "@/ApiManager/apiMethods";
 import { Loader } from "lucide-react";
 /////////////////////////////////////////////////////////////////////

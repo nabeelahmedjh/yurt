@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createServer } from "@/ApiManager/apiMethods";
-import useGetServers from "@/hooks/useGetServers";
+import useGetServers from "@/hooks/server/useGetServers";
 
 const useCreateServer = () => {
   const [loading, setLoading] = useState(false);

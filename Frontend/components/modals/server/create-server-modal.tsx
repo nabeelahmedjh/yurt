@@ -30,7 +30,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import useCreateServer from "@/hooks/useCreateServer";
+import useCreateServer from "@/hooks/server/useCreateServer";
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useGetTags from "@/hooks/useGetTags";
 
@@ -77,8 +77,8 @@ export default function CreateServerModal({
     name: z.string().min(2, "Name is too short").max(50, "Name is too long"),
     description: z
       .string()
-      .min(2, "Description is too short")
-      .max(100, "Description is too long"),
+      .min(100, "Description is too short")
+      .max(300, "Description is too long"),
     tags: z
       .string()
       .array()

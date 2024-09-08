@@ -30,8 +30,8 @@ import {
   Mail,
 } from "lucide-react";
 import { loginSchema } from "./schema";
-import useGoogleOAuth from "@/hooks/useGoogleOAuth";
-import useLogin from "@/hooks/useLogin";
+import useGoogleOAuth from "@/hooks/auth/useGoogleOAuth";
+import useLogin from "@/hooks/auth/useLogin";
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

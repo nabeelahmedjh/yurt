@@ -31,8 +31,8 @@ import { useRef } from "react";
 import { toast } from "sonner";
 
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
-import useUpdateAvatar from "@/hooks/useUpdateAvatar";
-import useGetProfile from "@/hooks/useGetProfile";
+import useUpdateAvatar from "@/hooks/user/useUpdateAvatar";
+import useGetProfile from "@/hooks/user/useGetProfile";
 import ProfileFormModal from "@/components/modals/profile/profile-form-modal";
 import { Trash2Icon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createSpace } from "@/ApiManager/apiMethods";
-import useGetServers from "@/hooks/useGetServers";
+import useGetServers from "@/hooks/server/useGetServers";
 
 interface SpaceData {
   name: string;

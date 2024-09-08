@@ -12,7 +12,7 @@ import { CircleUserRoundIcon, CompassIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateServerModal from "@/components/modals/server/create-server-modal";
 import LogoutButton from "@/components/logout-button";
-import useGetServers from "@/hooks/useGetServers";
+import useGetServers from "@/hooks/server/useGetServers";
 import yurt_logo from "@/public/yurt_logo.svg";
 import Image from "next/image";
 import { PROXY_API_URL } from "@/constants";

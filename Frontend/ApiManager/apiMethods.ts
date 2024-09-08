@@ -26,9 +26,19 @@ const updateProfile = async (data: any) => {
   return APIManager.put(url, data, {}, true);
 };
 
+const updateServer = async (serverId: string, data: any) => {
+  const url = ENDPOINTS.SERVER(serverId);
+  return APIManager.put(url, data, {}, true);
+};
+
 const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, params, {}, true);
+};
+
+const getServerById = async (serverId: string) => {
+  const url = ENDPOINTS.SERVER(serverId);
+  return APIManager.get(url, {}, {}, true);
 };
 
 const getMessages = async (spaceId: string, params: {}) => {
@@ -67,7 +77,9 @@ export {
   createMessage,
   updateAvatar,
   updateProfile,
+  updateServer,
   getServers,
+  getServerById,
   getMessages,
   getUsers,
   getProfile,

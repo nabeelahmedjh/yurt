@@ -1,5 +1,6 @@
 const ENDPOINTS = {
   SERVERS: `/servers`,
+  SERVER: (serverId: string) => `/servers/${serverId}`,
   SPACES: (serverId: string) => `/servers/${serverId}/spaces`,
   MESSAGES: (spaceId: string) => `/spaces/${spaceId}/messages`,
   PROFILE: `/users/me/profile`,

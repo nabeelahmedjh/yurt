@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { updateAvatar } from "@/ApiManager/apiMethods";
-import useGetProfile from "@/hooks/useGetProfile";
+import useGetProfile from "@/hooks/user/useGetProfile";
 
 const useUpdateAvatar = () => {
   const [loading, setLoading] = useState(false);

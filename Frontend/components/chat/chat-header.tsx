@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import useGetServers from "@/hooks/useGetServers";
+import useGetServers from "@/hooks/server/useGetServers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 

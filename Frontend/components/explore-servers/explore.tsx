@@ -3,7 +3,7 @@
 import Search from "@/components/explore-servers/search";
 import Tags from "@/components/explore-servers/tags";
 import Servers from "@/components/explore-servers/servers";
-import useGetServers from "@/hooks/useGetServers";
+import useGetServers from "@/hooks/server/useGetServers";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
