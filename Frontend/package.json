@@ -23,6 +23,7 @@
     "@syncfusion/ej2-base": "^26.2.5",
     "@syncfusion/ej2-react-filemanager": "^26.2.7",
     "@syncfusion/ej2-react-popups": "^26.2.8",
+    "@tldraw/sync": "^2.4.6",
     "autoprefixer": "^10.4.20",
     "axios": "^1.6.8",
     "bufferutil": "^4.0.8",
@@ -52,6 +53,7 @@
     "tailwindcss-animated": "^1.1.2",
     "tldraw": "^2.3.0",
     "use-debounce": "^10.0.3",
+    "usehooks-ts": "^3.1.0",
     "utf-8-validate": "^5.0.10",
     "ws": "^8.18.0",
     "zod": "^3.23.7"

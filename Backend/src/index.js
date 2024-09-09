@@ -16,30 +16,23 @@ import passport from "passport";
 import "./strategy/jwt-strategy.js";
 import "./strategy/local-strategy.js";
 import routes from "./routes/index.js";
-import { routeErrorHandler } from "./utils/routeErrorHandler.js";
+import expressWs from 'express-ws';
+import { makeOrLoadRoom } from './whiteboard/rooms.js';
 
 let corsOptions = {
   origin: [
     "http://localhost:3001",
     "http://127.0.0.1:3001",
     "http://inspiron.lan:3001",
+    "http://localhost:5173",
     "*"
   ],
 };
 
 dbConnection();
 const app = express();
-const socketio = new Server({
-  cors: {
-    origin: ["http://localhost:3001", "https://admin.socket.io"],
-    credentials: true,
-  },
-});
-
-instrument(socketio, {
-  auth: false,
-  mode: "development",
-});
+const server = http.createServer(app);
+expressWs(app, server); // Attach expressWs to both app and server
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
@@ -61,18 +54,41 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors(corsOptions));
 
+// WebSocket endpoint for whiteboard
+app.ws('/whiteboard/:roomId', async (ws, req) => {
+  console.log("Websocket connection established");
+  const roomId = req.params.roomId;
+  const sessionId = req.query.sessionId;
+
+  try {
+    const room = await makeOrLoadRoom(roomId);
+    room.handleSocketConnect({ sessionId, socket: ws });
+  } catch (error) {
+    console.error('Error handling socket connection:', error);
+    ws.close();
+  }
+});
+
+// Regular routes
 app.use("/", routes);
-app.use(routeErrorHandler);
 app.use("/uploads", express.static("./uploads"));
 
+const socketio = new Server({
+  cors: {
+    origin: ["http://localhost:3001", "https://admin.socket.io", "http://localhost:5173"],
+    credentials: true,
+  },
+});
 
-const server = http.createServer(app);
+instrument(socketio, {
+  auth: false,
+  mode: "development",
+});
+
 global.io = socketio.listen(server);
 global.io.on("connection", WebSockets.connection);
-server.listen(process.env.PORT || 3000);
-/** Event listener for HTTP server "listening" event. */
-server.on("listening", () => {
-  console.log(
-    `Listening on port:: http://localhost:${process.env.PORT || 3000}/`
-  );
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Listening on port:: http://localhost:${PORT}/`);
 });

@@ -1,4 +1,5 @@
 import { spacesService } from "../services/index.js";
+import { makeOrLoadRoom } from "../whiteboard/rooms.js";
 class WebSockets {
   users = [];
   connection = (socket) => {
@@ -51,6 +52,30 @@ class WebSockets {
     socket.on("logout", (userId) => {
       this.users = this.users.filter((user) => user.userId !== userId);
     });
+
+
+    // ----------------- Whiteboard -----------------
+    // Handle the /connect/:roomId WebSocket connection
+    socket.on("join-room", async ({ roomId, sessionId }) => {
+      try {
+        if (!roomId || !sessionId) {
+          socket.emit("error", { message: "Invalid roomId or sessionId" });
+          return;
+        }
+  
+        // Create or load room
+        const room = await makeOrLoadRoom(roomId);
+        // Connect socket to the room
+        room.handleSocketConnect({ sessionId, socket });
+  
+        console.log(`User with sessionId ${sessionId} joined room ${roomId}`);
+        // Emit a success response or room data
+        socket.emit("joined-room", { roomId, sessionId });
+      } catch (error) {
+        console.error("Error joining room:", error);
+        socket.emit("error", { message: "Failed to join the room" });
+      }
+    });
   }
 
   subscribeToSpacesOfJoinedServers = async (userId) => {
@@ -76,6 +101,10 @@ class WebSockets {
       }
     });
   }
+
+
+
+
 
 
   // subscribeOtherUser(room, otherUserId) {

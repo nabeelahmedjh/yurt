@@ -11,11 +11,11 @@ import {
 import ChatSidebar from "@/components/chat/chat-sidebar";
 import ChatContent from "@/components/chat/chat-content";
 import ChatRightbar from "@/components/chat/chat-rightbar";
-import Whiteboard from "@/components/whiteboard";
 import ServerGreeting from "@/components/server-greeting";
 import SplashScreen from "@/components/splash-screen";
 import Explore from "@/components/explore-servers/explore";
 import { useViewportWidth } from "@/lib/viewport-width";
+import WhiteboardLayout from "@/components/whiteboard/whiteboard-layout";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ export default function ChatLayout() {
         />
 
         <ResizablePanel defaultSize={65}>
-          {isWhiteboardOpen && <Whiteboard />}
+          {isWhiteboardOpen && <WhiteboardLayout />}
           {params?.spaceID && <ChatContent />}
           {isGreetingOpen && <ServerGreeting />}
           {isExploreOpen && <Explore />}
