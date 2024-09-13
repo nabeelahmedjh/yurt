@@ -30,7 +30,9 @@ export default function ChatHeader() {
           <div className="flex w-full gap-6 ml-[5%]">
             <span className="self-center">
               <Avatar className="size-8">
-                <AvatarImage src={PROXY_API_URL + "/" + space?.spaceBanner} />
+                <AvatarImage
+                  src={PROXY_API_URL + "/" + space?.spaceImage?.source}
+                />
 
                 <AvatarFallback className="bg-transparent">
                   <Image alt="space image" src={SpaceFallbackImage} />

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
@@ -29,7 +30,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRef } from "react";
 import { toast } from "sonner";
-import { Trash2Icon } from "lucide-react";
+import {
+  ImageUpIcon,
+  Pencil,
+  PencilIcon,
+  Trash,
+  Trash2Icon,
+} from "lucide-react";
 
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import { Separator } from "@/components/ui/separator";
@@ -37,6 +44,10 @@ import { Button } from "@/components/ui/button";
 
 import useGetServerById from "@/hooks/server/useGetServerById";
 import useUpdateServer from "@/hooks/server/useUpdateServer";
+import { API_URL } from "@/constants";
+import ServerUpdateModal from "./server-update-modal";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import UpdateSpaceModal from "../space/update-space-modal";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,6 +60,7 @@ export default function ServerSettingModal({
   children: React.ReactNode;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const BannerInputRef = useRef<HTMLInputElement>(null);
 
   const { data: serverData } = useGetServerById();
   const { handleUpdateServer, loading } = useUpdateServer();
@@ -98,16 +110,43 @@ export default function ServerSettingModal({
     }
   }
 
+  async function submitBanner(banner: File) {
+    if (!banner) return;
+
+    if (banner.size > 1024 * 1024 * 1) {
+      toast.error("File size must be less than 1MB.");
+      if (BannerInputRef.current) {
+        BannerInputRef.current.value = "";
+      }
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("banner", banner);
+
+    const error = await handleUpdateServer(formData);
+
+    if (!error) {
+      toast.success("Server Banner Updated Successfully");
+
+      if (BannerInputRef.current) {
+        BannerInputRef.current.value = "";
+      }
+    } else {
+      toast.error("Something went wrong");
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         OverlayclassName="place-items-start"
-        className="min-w-[50vw] px-20"
+        className="min-w-[50vw] px-0"
       >
-        <DialogHeader>
+        <DialogHeader className="px-10">
           <div>
-            <DialogTitle className="bg-lime-100 w-fit px-2 py-1 rounded-[8px] font-medium text-2xl">
+            <DialogTitle className="w-fit px-2 py-1 rounded-[8px] font-medium text-gray-700 text-xl">
               Server Overview
             </DialogTitle>
           </div>
@@ -115,7 +154,40 @@ export default function ServerSettingModal({
             View & Edit Server Settings
           </DialogDescription>
         </DialogHeader>
-        <div>
+        <div className="bg-primary rounded-t-[40px] relative">
+          <form>
+            <input
+              className="hidden"
+              type="file"
+              name="banner"
+              ref={BannerInputRef}
+              onChange={(e) =>
+                e.target.files && submitBanner(e.target.files[0])
+              }
+            />
+          </form>
+
+          <button
+            autoFocus={false}
+            onClick={() => BannerInputRef.current?.click()}
+            type="button"
+            className="absolute right-2 bottom-2 bg-white/95 hover:scale-105 transition rounded-full px-2 py-1 flex gap-1"
+          >
+            <ImageUpIcon strokeWidth={1.5} className="text-black/70" /> Change
+            Banner
+          </button>
+
+          <img
+            className="border rounded-t-[40px] h-[120px] w-full object-cover object-bottom"
+            src={
+              serverData?.[0].banner
+                ? API_URL + "/" + serverData?.[0].banner.source
+                : "/server_banner_placeholder.png"
+            }
+            alt="Server Banner"
+          />
+        </div>
+        <div className="px-10 -mt-24">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
@@ -125,7 +197,7 @@ export default function ServerSettingModal({
                   <FormItem>
                     <FormLabel className="sr-only">Server Image</FormLabel>
                     <FormControl>
-                      <div className="w-20">
+                      <div className="w-24">
                         <UploadAvatar
                           className="h-auto w-auto rounded-full border-b-4"
                           defaultAvatar={serverData?.[0].serverImage?.source}
@@ -144,11 +216,16 @@ export default function ServerSettingModal({
             </form>
           </Form>
         </div>
-        <div className="flex flex-col">
+        <div className="w-full justify-between items-center flex px-10">
           <p className="font-semibold text-lg"> {serverData?.[0].name} </p>
+          <ServerUpdateModal>
+            <button className="rounded-full bg-neutral-100 p-2 hover:bg-neutral-200">
+              <PencilIcon />
+            </button>
+          </ServerUpdateModal>
         </div>
-        <div className="mt-8">
-          <div className="min-h-44 mb-8 w-full">
+        <div className="px-10 w-full overflow-hidden">
+          <div className="min-h-28 mb-1 w-full bg-neutral-100 px-2 py-6 rounded-sm">
             <p className="break-words">{serverData?.[0].description}</p>
           </div>
           <div className="mb-8">
@@ -163,6 +240,46 @@ export default function ServerSettingModal({
               ))}
             </div>
           </div>
+
+          <div className="bg-neutral-100 rounded-sm pl-4 py-2">
+            <h3 className="font-medium rounded-[8px] px-2 mb-2 bg-lime-200 w-fit">
+              Spaces
+            </h3>
+            <ScrollArea>
+              <ul className="py-2 mr-4 mb-2 flex flex-wrap gap-2 max-h-56">
+                {serverData?.[0].spaces.map((space: any) => (
+                  <li
+                    key={space._id}
+                    className="w-full rounded-sm border bg-white flex px-4 py-1 justify-between"
+                  >
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={
+                          space.spaceImage
+                            ? API_URL + "/" + space.spaceImage.source
+                            : "/space.png"
+                        }
+                        alt={space.name}
+                        className="h-8 rounded-full"
+                      />
+                      <p className="font-medium">{space.name}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <UpdateSpaceModal spaceData={space}>
+                        <button className="rounded-full p-2 bg-neutral-100 hover:bg-neutral-200">
+                          <Pencil />
+                        </button>
+                      </UpdateSpaceModal>
+                      <button className="rounded-full p-2 bg-neutral-100 hover:bg-neutral-200">
+                        <Trash className="text-red-500" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </div>
+
           <div className="mt-16">
             <Accordion type="single" collapsible>
               <AccordionItem className="border-b-0" value="item-1">
@@ -175,11 +292,10 @@ export default function ServerSettingModal({
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="flex gap-40 mt-4">
+                  <div className="flex gap-20 mt-4">
                     <p className="text-red-500 text-balance">
-                      If you delete your account you will no longer be able to
-                      access any of your joined server or messages in Yurt
-                      platform.
+                      If you delete this server, you will no longer be able to
+                      access the server.
                     </p>
                     <div>
                       <Button
@@ -188,7 +304,7 @@ export default function ServerSettingModal({
                         className="bg-secondary rounded-[4px] py-1 px-2 h-8 space-x-2 hover:underline"
                       >
                         <Trash2Icon />
-                        <p>Delete Account</p>
+                        <p>Delete Server</p>
                       </Button>
                     </div>
                   </div>

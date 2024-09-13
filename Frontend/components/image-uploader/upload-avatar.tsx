@@ -36,9 +36,10 @@ export default function UploadAvatar({
     <>
       <input
         ref={fileRef}
-        id="fileUpload"
+        id={field.name}
         name={field.name}
         onBlur={field.onBlur}
+        onClick={() => console.log(field)}
         onChange={(e) => {
           const file = e.target?.files?.[0];
 
@@ -92,7 +93,7 @@ export default function UploadAvatar({
           </div>
         ) : (
           <label
-            htmlFor="fileUpload"
+            htmlFor={field.name}
             className="cursor-pointer inline-block w-fit"
           >
             <div className="flex flex-col items-center justify-center w-[96px] h-[96px] rounded-full p-1 bg-neutral-100">
@@ -105,7 +106,7 @@ export default function UploadAvatar({
         (defaultAvatar ? (
           <div className="relative">
             <label
-              htmlFor="fileUpload"
+              htmlFor={field.name}
               className="cursor-pointer inline-block w-fit"
             >
               <span
@@ -135,10 +136,7 @@ export default function UploadAvatar({
             />
           </div>
         ) : (
-          <label
-            htmlFor="fileUpload"
-            className="cursor-pointer inline-block w-fit"
-          >
+          <label className="cursor-pointer inline-block w-fit">
             <div className="flex flex-col items-center justify-center w-[96px] h-[96px] rounded-full p-1 bg-neutral-100">
               <UploadIcon />
             </div>

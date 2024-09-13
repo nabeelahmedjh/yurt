@@ -9,7 +9,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { PencilLineIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import CreateSpaceModal from "@/components/modals/create-space-modal";
+import CreateSpaceModal from "@/components/modals/space/create-space-modal";
 import useGetServers from "@/hooks/server/useGetServers";
 import FileManagerModal from "../modals/file-manager-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -140,7 +140,11 @@ export default function ChatSpaces() {
                             <span>
                               <Avatar className="size-6">
                                 <AvatarImage
-                                  src={PROXY_API_URL + "/" + space.spaceBanner}
+                                  src={
+                                    PROXY_API_URL +
+                                    "/" +
+                                    space.spaceImage?.source
+                                  }
                                 />
 
                                 <AvatarFallback className="bg-transparent">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,52 +29,62 @@ import {
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
-import useCreateServer from "@/hooks/server/useCreateServer";
-import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useGetTags from "@/hooks/useGetTags";
+import useGetServerById from "@/hooks/server/useGetServerById";
+
+import useUpdateServer from "@/hooks/server/useUpdateServer";
+
+import { getServers } from "@/ApiManager/apiMethods";
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-export default function CreateServerModal({
+export default function ServerUpdateModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const MultiSelectConatinerRef = useRef(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { handleCreateServer } = useCreateServer();
 
-  const { data: tagsData, isLoading: tagsLoading } = useGetTags();
+  const { handleUpdateServer, loading } = useUpdateServer();
 
-  const tagsList = tagsData
+  const { data: serverData } = useGetServerById();
+  const { data: tagsOptions } = useGetTags();
+
+  const tagsList = tagsOptions
     ?.sort((a: any, b: any) => b.usageCount - a.usageCount)
     .map((tag: any) => ({
       value: tag._id,
       label: `${tag.name}  (${tag.usageCount})`,
     }));
 
-  const MAX_FILE_SIZE_MB = 1;
+  const checkServerUnique = async (name: string) => {
+    const data: any = await getServers({
+      searchType: "strict",
+      search: name,
+    });
+    if (data.data.length === 0 || data.data[0].name === serverData[0].name) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const formSchema = z.object({
-    serverImage: z
-      .union([z.instanceof(File), z.undefined()])
-      .refine((file) => file !== undefined, "Server Image is required.")
-      .refine(
-        (file) =>
-          file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
-        {
-          message: `File size must be less than ${MAX_FILE_SIZE_MB}MB.`,
-        }
-      )
-      .refine((file) => file === undefined || file.type.startsWith("image/"), {
-        message: "Only Image files are allowed.",
-      }),
-    name: z.string().min(2, "Name is too short").max(50, "Name is too long"),
+    name: z
+      .string()
+      .min(2, "Name is too short")
+      .max(50, "Name is too long")
+      .refine(async (value: any) => {
+        const isUnique = await checkServerUnique(value);
+        return isUnique;
+      }, "Server with this name already exists."),
     description: z
       .string()
       .min(100, "Description is too short")
@@ -89,44 +99,38 @@ export default function CreateServerModal({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      serverImage: undefined,
       name: "",
       description: "",
       tags: [],
     },
   });
 
+  useEffect(() => {
+    const defaultTags = serverData?.[0].tags.map((tag: any) => tag._id);
+
+    if (serverData && defaultTags) {
+      form.reset({
+        name: serverData?.[0].name,
+        description: serverData?.[0].description,
+        tags: defaultTags,
+      });
+    }
+  }, [serverData, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (
-      !values.serverImage ||
-      !values.name ||
-      !values.description ||
-      !values.tags
-    )
-      return;
+    if (!values.name || !values.description || !values.tags) return;
 
     const formData = new FormData();
-    formData.append("serverImage", values.serverImage);
     formData.append("name", values.name);
     formData.append("description", values.description);
-
     formData.append("tags", JSON.stringify(values.tags));
 
-    const error = await handleCreateServer(formData);
+    const error = await handleUpdateServer(formData);
 
     if (!error) {
-      // router.push(`/servers/${data?._id}`);
-
-      // router refresh is required so that identity event emits again and the new
-      // server is added in to the room
-
       router.refresh();
 
-      toast.success("Server Created Successfully");
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      toast.success("Server Updated Successfully");
 
       form.reset();
       setOpen(false);
@@ -135,14 +139,11 @@ export default function CreateServerModal({
     }
   }
 
-  if (tagsLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
+        OverlayclassName="place-items-center"
         onPointerDownOutside={(e) => {
           const popover = document.querySelector<HTMLElement>(
             ".popover-container-multi-select"
@@ -161,37 +162,22 @@ export default function CreateServerModal({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Create Server</DialogTitle>
-          <DialogDescription>
-            Enter required details to create a server.
+          <div className="mt-3 ml-8">
+            <DialogTitle className="bg-lime-100 w-fit px-2 py-1 rounded-[8px] font-medium">
+              Update Server
+            </DialogTitle>
+          </div>
+          <DialogDescription className="sr-only">
+            Update the server information
           </DialogDescription>
         </DialogHeader>
-        <div>
+        <div className="mt-8 px-8">
           <Form {...form}>
             <form
-              id="create-server"
+              id="update-server-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-3 px-1"
             >
-              <FormField
-                control={form.control}
-                name="serverImage"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-center">
-                    <FormControl>
-                      <div className="mt-4 flex flex-col items-center">
-                        <UploadAvatar
-                          fileRef={fileInputRef}
-                          maxFileSize={MAX_FILE_SIZE_MB}
-                          field={field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="name"
@@ -200,8 +186,8 @@ export default function CreateServerModal({
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
-                        className="placeholder:text-gray-400"
-                        placeholder="Wizards"
+                        autoComplete="off"
+                        placeholder="tribelord"
                         {...field}
                       />
                     </FormControl>
@@ -217,7 +203,8 @@ export default function CreateServerModal({
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="A cool place for wizards..."
+                        className="h-40"
+                        placeholder="I am the lord of this tribe"
                         {...field}
                       />
                     </FormControl>
@@ -230,7 +217,7 @@ export default function CreateServerModal({
                 name="tags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Interest Tags</FormLabel>
+                    <FormLabel>Tags</FormLabel>
                     <FormControl ref={MultiSelectConatinerRef}>
                       <MultiSelect
                         popoverPortalContainerRef={MultiSelectConatinerRef}
@@ -241,7 +228,7 @@ export default function CreateServerModal({
                         placeholder="Select Tags"
                         variant="inverted"
                         animation={2}
-                        maxCount={3}
+                        maxCount={2}
                       />
                     </FormControl>
                     <FormMessage />
@@ -249,7 +236,15 @@ export default function CreateServerModal({
                 )}
               />
               <div className="p-1"></div>
-              <Button type="submit">Create Server</Button>
+              <Button disabled={loading} type="submit">
+                {loading ? (
+                  <span className="min-w-24 flex justify-center">
+                    <Loader className="animate-spin" />
+                  </span>
+                ) : (
+                  <p>Update Server</p>
+                )}
+              </Button>
             </form>
           </Form>
         </div>

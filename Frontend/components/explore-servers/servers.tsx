@@ -28,7 +28,7 @@ function ServerCard({ server }: { server: any }) {
   };
 
   return (
-    <div className="border-2 rounded-sm bg-primary flex flex-col relative pt-[350px] mb-6">
+    <div className="border-2 rounded-sm bg-primary flex flex-col relative pt-[400px] mb-6">
       <div className="rounded-t-sm absolute top-0 w-full">
         <Image
           className="rounded-t-[8px] w-full h-[170px] object-cover object-center"
@@ -60,7 +60,7 @@ function ServerCard({ server }: { server: any }) {
               {tag.name}
             </span>
           ))} */}
-        <div className="max-h-[100px] h-[70px]">
+        <div className="h-[150px]">
           <p className="text-slate-500 break-words mt-2">
             {server.description}
           </p>

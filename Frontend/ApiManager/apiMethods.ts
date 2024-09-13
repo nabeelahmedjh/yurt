@@ -31,6 +31,11 @@ const updateServer = async (serverId: string, data: any) => {
   return APIManager.put(url, data, {}, true);
 };
 
+const updateSpace = async (spaceId: string, data: any) => {
+  const url = ENDPOINTS.SPACE(spaceId);
+  return APIManager.put(url, data, {}, true);
+};
+
 const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, params, {}, true);
@@ -78,6 +83,7 @@ export {
   updateAvatar,
   updateProfile,
   updateServer,
+  updateSpace,
   getServers,
   getServerById,
   getMessages,
