@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Message, User } from "../models/index.js";
+import { Message, Server, User, Space } from "../models/index.js";
 import { generatePassword } from "../utils/generate-pass.utils.js";
 import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 
@@ -147,10 +147,23 @@ const deletedUser = async (userId) => {
       { sentBy: userId },
       { $set: { sentBy: dummyUser._id } }
     );
+    const server = await Server.findOne({admins : userId})
+    if(!server || server.admins > 1) {
+      const deleteResult = await User.deleteOne({ _id: userId });
+      return {message : "User deleted successfully"}
+    }
 
+    for (const spaceId of server.spaces) {
+      
+      await Message.deleteMany({ spaceId });
+
+      await Space.findByIdAndDelete(spaceId);
+
+      const spacePath = path.join(process.cwd(), 'uploads', server._id.toString(), spaceId.toString());
+
+    }
     const deleteResult = await User.deleteOne({ _id: userId });
-
-    return { updatedDummy, deleteResult };
+    return { message : "Admin user deleted"  };
   } catch (error) {
     console.log("ErrorMessage", error);
   }

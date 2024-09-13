@@ -18,6 +18,7 @@ import "./strategy/local-strategy.js";
 import routes from "./routes/index.js";
 import expressWs from 'express-ws';
 import { makeOrLoadRoom } from './whiteboard/rooms.js';
+import { routeErrorHandler } from "./utils/routeErrorHandler.js";
 
 let corsOptions = {
   origin: [
@@ -71,6 +72,7 @@ app.ws('/whiteboard/:roomId', async (ws, req) => {
 
 // Regular routes
 app.use("/", routes);
+app.use(routeErrorHandler);
 app.use("/uploads", express.static("./uploads"));
 
 const socketio = new Server({
