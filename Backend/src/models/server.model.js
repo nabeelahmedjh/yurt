@@ -1,7 +1,9 @@
-import mongose from "mongoose";
+import mongoose from "mongoose";
 import Tag from "./tag.model.js";
 
-const serverSchema = new mongose.Schema(
+
+
+const serverSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -23,7 +25,7 @@ const serverSchema = new mongose.Schema(
     },
     tags: [
       {
-        type: mongose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Tag",
         default: [],
         
@@ -31,29 +33,42 @@ const serverSchema = new mongose.Schema(
     ],
     spaces: [
       {
-        type: mongose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Space",
       },
     ],
     admins: [
       {
-        type: mongose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
     members: [
       {
-        type: mongose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
+    inviteCodes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "InviteCode",
       },
     ],
   },
   { timestamps: true }
 );
 
+
+
 serverSchema.pre('save', async function (next) {
-  console.log(this)
+  
   const tags = this.tags;
+
 
   if (tags.length > 0) {
     tags.forEach(async (tag) => {
@@ -98,6 +113,18 @@ serverSchema.pre("deleteOne", async function (next) {
 });
 
 
+async function generateUniqueInviteCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let code;
+  do {
+    code = Array.from({length: 8}, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+  } while (await Server.findOne({ inviteCode: code }));
+  
+  return code;
+}
+  
 
-const Server = mongose.model("Server", serverSchema);
+
+
+const Server = mongoose.model("Server", serverSchema);
 export default Server;

@@ -13,4 +13,5 @@ router.post("/",upload.single("spaceImage"), multerErrorHandler, spacesControlle
 router.put("/:spaceId", upload.single("spaceImage"), multerErrorHandler, spacesController.updateSpace)
 router.post("/:spaceId/messages", upload.array("attachment", 5), multerErrorHandler, spacesController.sendMessageInSpace);
 router.get("/:spaceId/messages", spacesController.getMessagesInSpace);
+router.delete("/:spaceId", spacesController.deleteSpace);
 export default router;

@@ -4,9 +4,10 @@ import mongoose from "mongoose";
 
 
 const createServer = async (req, res, next) => {
-  const { name, description } = req.body;
+  const { name, description, isPublic } = req.body;
   let tags = req.body.tags ?? [];
   const user = req.user.user;
+
 
   const banner =
     req.files["banner"] && req.files?.["banner"]?.[0]
@@ -49,13 +50,14 @@ const createServer = async (req, res, next) => {
       name,
       description,
       user,
+      isPublic,
       banner,
       serverImage,
       tags
     );
 
     
-    console.log(newServer)
+    
     return res.status(201).json({
       data: newServer
     });
@@ -258,48 +260,84 @@ const createSpace = async (req, res) => {
   }
 };
 
-const joinServer = async (req, res) => {
-  try {
-    const { serverId } = req.params;
-    const user = req.user.user;
-    const server = await Server.findOne({
-      _id: serverId,
-    });
 
-    if (!server || server.length === 0) {
-      return res.status(404).json({
-        error: { message: "Server not found" },
-      });
-    }
 
-    if (server.members.includes(user._id)) {
-      return res.status(400).json({
-        error: { message: "User already in server" },
-      });
-    }
-
-    server.members.push(user._id);
-    await server.save();
-
-    try {
-      const currentUser = await User.findOne({ _id: user._id });
-      currentUser.serversJoined.push(server._id);
-      await currentUser.save();
-    } catch (error) {
-      return res.status(500).json({
-        error: { message: error.message },
-      });
-    }
-
-    return res.status(201).json({
-      data: server,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      error: { message: error.message },
+const joinServer = async (req, res, next) => {
+  const { serverId }= req.params
+  const userId = req.user.user._id;
+ 
+  if (!mongoose.Types.ObjectId.isValid(serverId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid server id",
+      },
     });
   }
+
+  try {
+    const server = await serversService.joinPublicServer(serverId, userId);
+    return res.status(200).json({
+      data: server
+    });
+  } catch (error) {
+    next(error)
+  }
 };
+
+
+const leaveServer = async (req, res, next) => {
+  const { serverId }= req.params
+  const userId = req.user.user._id;
+ 
+  if (!mongoose.Types.ObjectId.isValid(serverId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid server id",
+      },
+    });
+  }
+  try {
+    const server = await serversService.leaveServer(serverId, userId);
+    return res.status(200).json({
+      data: server
+    });
+  } catch (error) {
+    next(error)
+  }
+};
+
+
+
+const generateInviteCode = async (req, res, next) => {
+  const { serverId }= req.params
+  const userId = req.user.user._id;
+  const usageLimit  = req.body.usageLimit ?? 60;
+  const expiresIn = req.body.expiresIn ?? 7*24*60*60;
+
+  
+
+  try {
+    const inviteCode = await serversService.generateInviteCode(serverId, userId, expiresIn, usageLimit);
+    res.json({ data: inviteCode });
+  } catch (error) {
+    next(error)
+  }
+};
+
+
+
+
+const joinServerWithInviteCode = async (req, res, next) => {
+  const { inviteCode } = req.params
+  const userId = req.user.user._id
+  try {
+    const server = await serversService.joinServerWithInviteCode(inviteCode, userId);
+    res.json({ message: 'Joined server successfully', server });
+  } catch (error) {
+    next(error)
+  }
+};
+
 
 const getMembers = async (req, res) => {
   const { serverId } = req.params;
@@ -351,6 +389,28 @@ const getMembers = async (req, res) => {
   });
 };
 
+
+
+export const deleteServer = async (req, res, next) => {
+  const { serverId } = req.params;
+  const userId = req.user.user._id; 
+
+  try {
+    const deletedServer = await serversService.deleteServerById(serverId, userId);
+    return res.status(200).json({
+      data: deletedServer
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+
+
 export default {
   createServer,
   updateServer,
@@ -358,5 +418,9 @@ export default {
   getServer,
   createSpace,
   joinServer,
+  leaveServer,
   getMembers,
+  generateInviteCode,
+  joinServerWithInviteCode,
+  deleteServer,
 };
