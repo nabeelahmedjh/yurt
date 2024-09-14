@@ -17,6 +17,6 @@ router.use("/spaces", passport.authenticate("jwt", { session: false }), spacesRo
 router.use("/servers", passport.authenticate("jwt", { session: false }), serversRoute);
 router.use("/users", passport.authenticate("jwt", { session: false }), usersRoute);
 router.use("/tags", passport.authenticate("jwt", { session: false }), tagsRoute);
-router.use("/whiteboard", passport.authenticate("jwt", { session: false }), whiteBoardRoute);
+router.use("/whiteboard", whiteBoardRoute);
 
 export default router;
