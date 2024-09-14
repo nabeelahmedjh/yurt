@@ -36,6 +36,16 @@ const updateSpace = async (spaceId: string, data: any) => {
   return APIManager.put(url, data, {}, true);
 };
 
+const deleteSpace = async (spaceId: string) => {
+  const url = ENDPOINTS.SPACE(spaceId);
+  return APIManager.delete(url, {}, {}, true);
+};
+
+const deleteServer = async (serverId: string) => {
+  const url = ENDPOINTS.SERVER(serverId);
+  return APIManager.delete(url, {}, {}, true);
+};
+
 const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, params, {}, true);
@@ -84,6 +94,8 @@ export {
   updateProfile,
   updateServer,
   updateSpace,
+  deleteSpace,
+  deleteServer,
   getServers,
   getServerById,
   getMessages,

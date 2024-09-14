@@ -32,6 +32,7 @@ import { useRef } from "react";
 import { toast } from "sonner";
 import {
   ImageUpIcon,
+  Loader,
   Pencil,
   PencilIcon,
   Trash,
@@ -41,13 +42,18 @@ import {
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import ConfirmAlert from "@/components/confirm-alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+import { API_URL } from "@/constants";
+
+import UpdateSpaceModal from "@/components/modals/space/update-space-modal";
+import ServerUpdateModal from "@/components/modals/server/server-update-modal";
 
 import useGetServerById from "@/hooks/server/useGetServerById";
 import useUpdateServer from "@/hooks/server/useUpdateServer";
-import { API_URL } from "@/constants";
-import ServerUpdateModal from "./server-update-modal";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import UpdateSpaceModal from "../space/update-space-modal";
+import useDeleteSpace from "@/hooks/space/useDeleteSpace";
+import useDeleteServer from "@/hooks/server/useDeleteServer";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,6 +70,9 @@ export default function ServerSettingModal({
 
   const { data: serverData } = useGetServerById();
   const { handleUpdateServer, loading } = useUpdateServer();
+  const { handleDeleteSpace, loading: deleteSpaceLoading } = useDeleteSpace();
+  const { handleDeleteServer } = useDeleteServer();
+
   const MAX_FILE_SIZE_MB = 1;
 
   const formSchema = z.object({
@@ -262,7 +271,12 @@ export default function ServerSettingModal({
                         alt={space.name}
                         className="h-8 rounded-full"
                       />
-                      <p className="font-medium">{space.name}</p>
+                      <p
+                        title={space.name}
+                        className="font-medium text-ellipsis overflow-hidden mr-4"
+                      >
+                        {space.name}
+                      </p>
                     </div>
                     <div className="flex items-center gap-4">
                       <UpdateSpaceModal spaceData={space}>
@@ -270,9 +284,26 @@ export default function ServerSettingModal({
                           <Pencil />
                         </button>
                       </UpdateSpaceModal>
-                      <button className="rounded-full p-2 bg-neutral-100 hover:bg-neutral-200">
-                        <Trash className="text-red-500" />
-                      </button>
+                      <ConfirmAlert
+                        title="Delete Space"
+                        descripton="Are you sure you want to delete this space?"
+                        action={async () => {
+                          await handleDeleteSpace(space._id);
+                        }}
+                        actionLabel="Delete"
+                        actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
+                      >
+                        <button
+                          disabled={deleteSpaceLoading}
+                          className="rounded-full p-2 bg-neutral-100 hover:bg-neutral-200"
+                        >
+                          {deleteSpaceLoading ? (
+                            <Loader className="animate-spin" />
+                          ) : (
+                            <Trash className="text-red-500" />
+                          )}
+                        </button>
+                      </ConfirmAlert>
                     </div>
                   </li>
                 ))}
@@ -298,14 +329,24 @@ export default function ServerSettingModal({
                       access the server.
                     </p>
                     <div>
-                      <Button
-                        variant="unstyled"
-                        size="unsized"
-                        className="bg-secondary rounded-[4px] py-1 px-2 h-8 space-x-2 hover:underline"
+                      <ConfirmAlert
+                        title="Delete Server"
+                        descripton="Are you sure you want to delete this server?"
+                        action={async () => {
+                          await handleDeleteServer();
+                        }}
+                        actionLabel="Delete"
+                        actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
                       >
-                        <Trash2Icon />
-                        <p>Delete Server</p>
-                      </Button>
+                        <Button
+                          variant="unstyled"
+                          size="unsized"
+                          className="bg-secondary rounded-[4px] py-1 px-2 h-8 space-x-2 hover:underline"
+                        >
+                          <Trash2Icon />
+                          <p>Delete Server</p>
+                        </Button>
+                      </ConfirmAlert>
                     </div>
                   </div>
                 </AccordionContent>

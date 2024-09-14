@@ -66,7 +66,7 @@ export default function UploadAvatar({
       />
 
       {!formSubmitter &&
-        (selectedFile && croppedFile ? (
+        ((selectedFile && croppedFile) || defaultAvatar ? (
           <div className="relative">
             <span
               onClick={() => {
@@ -74,15 +74,22 @@ export default function UploadAvatar({
                 field.onChange(undefined);
                 if (fileRef.current) {
                   fileRef.current.value = "";
+                  defaultAvatar && fileRef.current.click();
                 }
               }}
               className="absolute top-1 -right-2 p-1 hover:bg-white/80 border border-gray-100 bg-white rounded-full"
             >
-              <X />
+              {defaultAvatar ? <CameraIconCustom /> : <X />}
             </span>
 
             <img
-              src={croppedFile ? URL.createObjectURL(croppedFile) : ""}
+              src={
+                croppedFile
+                  ? URL.createObjectURL(croppedFile)
+                  : defaultAvatar
+                  ? PROXY_API_URL + "/" + defaultAvatar
+                  : ""
+              }
               alt="Server Image"
               // className="object-cover w-full h-[96px] rounded-full border border-neutral-100"
               className={cn(
