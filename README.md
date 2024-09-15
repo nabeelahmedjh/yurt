@@ -5,16 +5,16 @@
 ### Installation
 
 ```bash
-# Navigate to the Filemanager module directory
-cd Filemanager/node_modules/@syncfusion/ej2-filemanager-node-filesystem
+# Navigate to the Filemanager directory
+cd Filemanager
 
 # Install necessary dependencies
-npm i
+npm run install-dependencies
 ```
 
-### Set the PORT and run the filesystem server
+### For normal running
 
 ```bash
-# inside the ej2-filemanager-node-filesystem run
-set PORT=3000 && node filesystem-server.js -d {path_to_the_repo}/Filemanager/directory/
+# At the Filemanager root directory (Filemanager)
+npm run start
 ```
