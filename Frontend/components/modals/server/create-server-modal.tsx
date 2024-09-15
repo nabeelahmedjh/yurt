@@ -100,6 +100,10 @@ export default function CreateServerModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!values.serverImage) {
+      return toast.error("Server Image is required.");
+    }
+
     const formData = new FormData();
     formData.append("serverImage", values.serverImage);
     formData.append("name", values.name);
