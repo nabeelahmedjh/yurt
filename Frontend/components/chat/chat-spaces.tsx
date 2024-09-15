@@ -15,13 +15,20 @@ import FileManagerModal from "../modals/file-manager-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { PROXY_API_URL } from "@/constants";
+import { PROXY_API_URL, USER_ID } from "@/constants";
 
 import SpaceFallbackImage from "@/public/space.png";
-import ServerFallbackImage from "@/public/server.png";
 import ServerSettingModal from "../modals/server/server-setting-modal";
 
+import useGetServerById from "@/hooks/server/useGetServerById";
+
+import { getCookie } from "cookies-next";
+import { useState } from "react";
+
 export default function ChatSpaces() {
+  const [isServerSettingModalOpen, setIsServerSettingModalOpen] =
+    useState(false);
+
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
@@ -30,60 +37,63 @@ export default function ChatSpaces() {
   };
 
   const { data } = useGetServers(searchParam);
+  const { data: selectedServerData } = useGetServerById();
+  const userId = getCookie(USER_ID);
+  const isAdmin = selectedServerData?.[0].admins.includes(userId);
+
+  const serverImage = selectedServerData?.[0].serverImage?.source;
 
   return (
     <div
       className={`${
         params.serverID && data?.length > 0 && "bg-primary"
-      } h-dvh p-0 w-full flex flex-col has-[.server-settings:hover]:bg-primary/50`}
+      } h-dvh p-0 w-full flex flex-col ${
+        isAdmin ? "has-[.server-settings:hover]:bg-primary/50" : ""
+      }`}
     >
-      <ServerSettingModal>
-        <div className="server-settings flex flex-col relative py-4 items-center justify-center px-1 [&_.pencil-icon]:hover:inline hover:cursor-pointer transition-[background-color]">
-          {params.serverID && data?.length > 0 && (
-            <div className="flex gap-4 items-center justify-center">
-              <span className="pencil-icon absolute hidden right-2 top-2">
-                <PencilLineIcon className="size-4" />
-              </span>
-              <div>
-                <Avatar className="size-8">
-                  <AvatarImage
-                    className="rounded-full"
-                    src={
-                      PROXY_API_URL +
-                      "/" +
-                      data?.filter(
-                        (server: any) => params.serverID === server._id
-                      )[0]?.serverImage?.source
-                    }
-                  />
-
-                  <AvatarFallback className="bg-white">
-                    <Image
-                      className="rounded-full"
-                      alt="server image"
-                      src={ServerFallbackImage}
-                    />
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <p
-                title={
-                  data?.filter(
-                    (server: any) => params.serverID === server._id
-                  )[0]?.name
+      <ServerSettingModal
+        setIsOpen={setIsServerSettingModalOpen}
+        isOpen={isServerSettingModalOpen}
+      />
+      <div
+        onClick={() => isAdmin && setIsServerSettingModalOpen(true)}
+        className={`server-settings flex flex-col relative py-4 items-center justify-center px-1  transition-[background-color] ${
+          isAdmin ? "[&_.pencil-icon]:hover:inline hover:cursor-pointer" : ""
+        }`}
+      >
+        {params.serverID && data?.length > 0 && (
+          <div className="flex gap-4 items-center justify-center">
+            <span className="pencil-icon absolute hidden right-2 top-2">
+              <PencilLineIcon className="size-4" />
+            </span>
+            <div>
+              <Image
+                width={32}
+                height={32}
+                className="rounded-full size-8 object-cover"
+                alt="server image"
+                src={
+                  serverImage
+                    ? PROXY_API_URL + "/" + serverImage
+                    : "/server.png"
                 }
-                className="font-semibold max-w-32 whitespace-nowrap text-ellipsis overflow-x-hidden"
-              >
-                {
-                  data?.filter(
-                    (server: any) => params.serverID === server._id
-                  )[0]?.name
-                }
-              </p>
+              />
             </div>
-          )}
-        </div>
-      </ServerSettingModal>
+            <p
+              title={
+                data?.filter((server: any) => params.serverID === server._id)[0]
+                  ?.name
+              }
+              className="font-semibold max-w-32 whitespace-nowrap text-ellipsis overflow-x-hidden"
+            >
+              {
+                data?.filter((server: any) => params.serverID === server._id)[0]
+                  ?.name
+              }
+            </p>
+          </div>
+        )}
+      </div>
       {params.serverID && data?.length > 0 && (
         <div className="rounded-t-lg justify-between h-full overflow-y-auto flex flex-col bg-white">
           <div className="flex flex-col overflow-y-auto pl-2 pr-[2px]">
@@ -170,7 +180,9 @@ export default function ChatSpaces() {
             </div>
           </div>
           <div>
-            <FileManagerModal />
+            {isAdmin !== undefined && (
+              <FileManagerModal role={isAdmin ? "admin" : "member"} />
+            )}
           </div>
         </div>
       )}

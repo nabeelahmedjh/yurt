@@ -10,15 +10,11 @@ import { FolderTreeIcon } from "lucide-react";
 
 type role = "admin" | "member";
 
-export default function FileManagerModal() {
+export default function FileManagerModal({ role }: { role: role }) {
   const [visibility, setDialogVisibility] = useState(false);
 
   const params = useParams<{ serverID: string; spaceID: string }>();
   const serverId = params.serverID;
-
-  // calculate role from api endopoint
-
-  const role: role = "admin";
 
   return (
     <div>

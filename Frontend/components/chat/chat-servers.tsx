@@ -36,11 +36,13 @@ export default function ChatServers() {
             <TooltipProvider delayDuration={50}>
               <Tooltip>
                 <TooltipTrigger>
-                  <Image
-                    className="object-cover max-w-10"
-                    alt="yurt logo"
-                    src={yurt_logo}
-                  />
+                  <a href="/servers">
+                    <Image
+                      className="object-cover max-w-10"
+                      alt="yurt logo"
+                      src={yurt_logo}
+                    />
+                  </a>
                 </TooltipTrigger>
                 <TooltipContent
                   className="rounded-[24px]"
@@ -48,7 +50,7 @@ export default function ChatServers() {
                   sideOffset={10}
                 >
                   <span className="flex items-center">
-                    <p className="self-end ms-1">Direct Messages</p>
+                    <p className="self-end ms-1">Home</p>
                   </span>
                 </TooltipContent>
               </Tooltip>

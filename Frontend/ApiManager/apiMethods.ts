@@ -31,6 +31,11 @@ const updateServer = async (serverId: string, data: any) => {
   return APIManager.put(url, data, {}, true);
 };
 
+const joinServer = async (serverId: string) => {
+  const url = ENDPOINTS.JOIN_SERVER(serverId);
+  return APIManager.put(url, {}, {}, true);
+};
+
 const updateSpace = async (spaceId: string, data: any) => {
   const url = ENDPOINTS.SPACE(spaceId);
   return APIManager.put(url, data, {}, true);
@@ -93,6 +98,7 @@ export {
   updateAvatar,
   updateProfile,
   updateServer,
+  joinServer,
   updateSpace,
   deleteSpace,
   deleteServer,

@@ -29,12 +29,12 @@ import {
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 import useGetTags from "@/hooks/useGetTags";
 import useGetProfile from "@/hooks/user/useGetProfile";
 import useUpdateProfile from "@/hooks/user/useUpdateProfile";
 import { getUsers } from "@/ApiManager/apiMethods";
-import { Loader } from "lucide-react";
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -63,18 +63,18 @@ export default function ProfileFormModal({
 
   const checkUsernameUnique = async (username: string) => {
     // console.log("username", username);
-    try {
-      await getUsers({
-        searchType: "strict",
-        username: username,
-      });
-    } catch (e: any) {
-      if (e.response.status === 404) {
-        // console.log(e.response.status);
-        return true;
-      }
+    const data: any = await getUsers({
+      searchType: "strict",
+      username: username,
+    });
+    if (
+      data.data.length === 0 ||
+      data.data[0].username === profileData?.username
+    ) {
+      return true;
+    } else {
+      return false;
     }
-    return false;
   };
 
   const formSchema = z.object({

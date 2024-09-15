@@ -1,6 +1,11 @@
+"use client";
+
 import { PROXY_API_URL } from "@/constants";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { joinServer } from "@/ApiManager/apiMethods";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Servers({
   servers,
@@ -23,8 +28,14 @@ export default function Servers({
 }
 
 function ServerCard({ server }: { server: any }) {
-  const handleJoinServer = () => {
-    alert(`Demo Joining server \n ${server.name} - ${server._id}`);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleJoinServer = async () => {
+    setIsLoading(true);
+    const data: any = await joinServer(server._id);
+    router.push(`/servers/${data.data._id}`);
+    setIsLoading(false);
   };
 
   return (
@@ -73,6 +84,7 @@ function ServerCard({ server }: { server: any }) {
             </p>
           </div>
           <Button
+            disabled={isLoading}
             onClick={server.userJoined ? undefined : handleJoinServer}
             variant="unstyled"
             size="unsized"
@@ -82,7 +94,7 @@ function ServerCard({ server }: { server: any }) {
                 : "border-primary hover:bg-primary"
             }`}
           >
-            {server.userJoined ? "Joined" : "Join"}
+            {isLoading ? "Loading" : server.userJoined ? "Joined" : "Join"}
           </Button>
         </div>
       </div>

@@ -34,6 +34,7 @@ import useCreateServer from "@/hooks/server/useCreateServer";
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useGetTags from "@/hooks/useGetTags";
 import { Switch } from "@/components/ui/switch";
+import { getServers } from "@/ApiManager/apiMethods";
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -60,6 +61,18 @@ export default function CreateServerModal({
       label: `${tag.name}  (${tag.usageCount})`,
     }));
 
+  const checkServerUnique = async (name: string) => {
+    const data: any = await getServers({
+      searchType: "strict",
+      search: name,
+    });
+    if (data.data.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const MAX_FILE_SIZE_MB = 1;
   const formSchema = z.object({
     serverImage: z
@@ -75,7 +88,14 @@ export default function CreateServerModal({
       .refine((file) => file === undefined || file.type.startsWith("image/"), {
         message: "Only Image files are allowed.",
       }),
-    name: z.string().min(2, "Name is too short").max(50, "Name is too long"),
+    name: z
+      .string()
+      .min(2, "Name is too short")
+      .max(50, "Name is too long")
+      .refine(async (value: any) => {
+        const isUnique = await checkServerUnique(value);
+        return isUnique;
+      }, "Server with this name already exists."),
     description: z
       .string()
       .min(100, "Description is too short")

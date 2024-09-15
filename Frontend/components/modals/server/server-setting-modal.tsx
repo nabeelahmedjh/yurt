@@ -61,13 +61,14 @@ import useDeleteServer from "@/hooks/server/useDeleteServer";
 ///////////////////////////////////////////////////////////////////////////////
 
 export default function ServerSettingModal({
-  children,
+  isOpen,
+  setIsOpen,
 }: {
-  children: React.ReactNode;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const BannerInputRef = useRef<HTMLInputElement>(null);
-
   const { data: serverData } = useGetServerById();
   const { handleUpdateServer, loading } = useUpdateServer();
   const { handleDeleteSpace, loading: deleteSpaceLoading } = useDeleteSpace();
@@ -147,8 +148,7 @@ export default function ServerSettingModal({
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         OverlayclassName="place-items-start"
         className="min-w-[50vw] px-0"

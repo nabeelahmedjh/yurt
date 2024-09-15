@@ -23,6 +23,7 @@ import "@/node_modules/@syncfusion/ej2-react-filemanager/styles/tailwind.css";
 import "@/node_modules/@syncfusion/ej2-react-popups/styles/tailwind.css";
 
 import { FILEMANAGER_HOST, FILEMANAGER_LISCENCE_KEY } from "@/constants";
+import { useEffect } from "react";
 
 interface FileManagerProps {
   serverId: string;
@@ -34,6 +35,12 @@ registerLicense(FILEMANAGER_LISCENCE_KEY as string);
 export default function FileManager({ serverId, role }: FileManagerProps) {
   const host_URL = FILEMANAGER_HOST;
   const rootPath = "/servers/" + serverId;
+
+  useEffect(() => {
+    console.log("Rerendeing File manager");
+    console.log("Server ID: ", serverId);
+    console.log("Role: ", role);
+  }, [serverId, role]);
 
   return (
     <FileManagerComponent
