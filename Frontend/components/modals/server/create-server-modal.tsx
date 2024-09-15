@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import useCreateServer from "@/hooks/server/useCreateServer";
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useGetTags from "@/hooks/useGetTags";
+import { Switch } from "@/components/ui/switch";
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -84,6 +85,7 @@ export default function CreateServerModal({
       .array()
       .max(5, "Maximum 5 tags allowed.")
       .min(1, "Minimum 1 tag required."),
+    isPublic: z.boolean().default(true),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -93,24 +95,18 @@ export default function CreateServerModal({
       name: "",
       description: "",
       tags: [],
+      isPublic: true,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (
-      !values.serverImage ||
-      !values.name ||
-      !values.description ||
-      !values.tags
-    )
-      return;
-
     const formData = new FormData();
     formData.append("serverImage", values.serverImage);
     formData.append("name", values.name);
     formData.append("description", values.description);
 
     formData.append("tags", JSON.stringify(values.tags));
+    formData.append("isPublic", values.isPublic.toString());
 
     const error = await handleCreateServer(formData);
 
@@ -248,6 +244,26 @@ export default function CreateServerModal({
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center justify-between rounded-md border px-4 py-3 mb-2 mt-6 bg-[#f3f3f3]">
+                      Public Server
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormLabel>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="p-1"></div>
               <Button type="submit">Create Server</Button>
             </form>

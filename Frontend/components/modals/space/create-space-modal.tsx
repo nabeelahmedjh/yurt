@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import useCreateSpace from "@/hooks/space/useCreateSpace";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -53,6 +54,7 @@ export default function CreateSpaceModal({
       .string()
       .min(2, "Description is too short")
       .max(100, "Description is too long"),
+    type: z.enum(["CHAT", "VOICE"]),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,6 +62,7 @@ export default function CreateSpaceModal({
     defaultValues: {
       name: "",
       description: "",
+      type: "CHAT",
     },
   });
 
@@ -127,6 +130,58 @@ export default function CreateSpaceModal({
                         placeholder="Drop a cool description..."
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormLabel
+                            className={`border font-normal py-3 px-4 rounded-md bg-[#f3f3f3] flex items-center justify-between w-full ${
+                              field.value === "CHAT" ? "bg-secondary" : ""
+                            }`}
+                          >
+                            <span className="flex gap-1">
+                              Text Chat{" "}
+                              <p className="text-gray-400">
+                                (messages, images, and more)
+                              </p>
+                            </span>
+                            <FormControl>
+                              <RadioGroupItem value="CHAT" />
+                            </FormControl>
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormLabel
+                            className={`border font-normal py-3 px-4 rounded-md bg-[#f3f3f3] flex items-center justify-between w-full ${
+                              field.value === "VOICE" ? "bg-secondary" : ""
+                            }`}
+                          >
+                            <span className="flex gap-1">
+                              Voice Chat{" "}
+                              <p className="text-gray-400">
+                                (voice, video, and more)
+                              </p>
+                            </span>
+                            <FormControl>
+                              <RadioGroupItem value="VOICE" />
+                            </FormControl>
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
