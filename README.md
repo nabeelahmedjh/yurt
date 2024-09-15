@@ -11,8 +11,8 @@ cd Filemanager
 # Install dependencies
 npm i
 
-# Go to the Filemanager Backend module directory
-cd Backend/node_modules/@syncfusion/ej2-filemanager-node-filesystem
+# Go to the Filemanager module directory
+cd node_modules/@syncfusion/ej2-filemanager-node-filesystem
 
 # Install necessary dependencies
 npm i
