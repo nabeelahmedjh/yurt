@@ -37,6 +37,8 @@ import ProfileFormModal from "@/components/modals/profile/profile-form-modal";
 import { Trash2Icon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import ConfirmAlert from "@/components/confirm-alert";
+import useDeleteProfile from "@/hooks/user/useDeleteProfile";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,6 +54,8 @@ export default function ProfileSettingModal({
 
   const { handleUpdateAvatar, loading } = useUpdateAvatar();
   const { data: profileData } = useGetProfile();
+  const { handleDeleteProfile, loading: loadingDeleteProfile } =
+    useDeleteProfile();
 
   const MAX_FILE_SIZE_MB = 1;
 
@@ -205,14 +209,28 @@ export default function ProfileSettingModal({
                       platform.
                     </p>
                     <div>
-                      <Button
-                        variant="unstyled"
-                        size="unsized"
-                        className="bg-secondary rounded-[4px] py-1 px-2 h-8 space-x-2 hover:underline"
+                      <ConfirmAlert
+                        title="Delete Account"
+                        descripton="Are you sure you want to delete your account?"
+                        action={async () => {
+                          await handleDeleteProfile();
+                        }}
+                        actionLabel="Delete"
+                        actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
                       >
-                        <Trash2Icon />
-                        <p>Delete Account</p>
-                      </Button>
+                        <Button
+                          variant="unstyled"
+                          size="unsized"
+                          className="bg-secondary rounded-[4px] py-1 px-2 h-8 space-x-2 hover:underline"
+                        >
+                          <Trash2Icon />
+                          <p>
+                            {loadingDeleteProfile
+                              ? "Deleting..."
+                              : "Delete Account"}
+                          </p>
+                        </Button>
+                      </ConfirmAlert>
                     </div>
                   </div>
                 </AccordionContent>

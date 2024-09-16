@@ -61,6 +61,11 @@ const deleteServer = async (serverId: string) => {
   return APIManager.delete(url, {}, {}, true);
 };
 
+const deleteProfile = async () => {
+  const url = ENDPOINTS.PROFILE;
+  return APIManager.delete(url, {}, {}, true);
+};
+
 const getServers = async (params: {}) => {
   const url = ENDPOINTS.SERVERS;
   return APIManager.get(url, params, {}, true);
@@ -114,6 +119,7 @@ export {
   updateSpace,
   deleteSpace,
   deleteServer,
+  deleteProfile,
   getServers,
   getServerById,
   getMessages,
