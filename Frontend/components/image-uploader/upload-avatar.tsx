@@ -143,7 +143,10 @@ export default function UploadAvatar({
             />
           </div>
         ) : (
-          <label className="cursor-pointer inline-block w-fit">
+          <label
+            htmlFor={field.name}
+            className="cursor-pointer inline-block w-fit"
+          >
             <div className="flex flex-col items-center justify-center w-[96px] h-[96px] rounded-full p-1 bg-neutral-100">
               <UploadIcon />
             </div>

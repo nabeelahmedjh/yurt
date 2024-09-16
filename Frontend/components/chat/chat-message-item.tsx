@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { API_URL, PROXY_API_URL } from "@/constants";
-import { File, User } from "lucide-react";
+import { File, FileDownIcon, User } from "lucide-react";
 import { PhotoView } from "react-photo-view";
 import { format } from "date-fns";
 import { formatFileSize } from "@/lib/utils";
@@ -49,46 +49,56 @@ export default function MessageItem({
             </p>
           </div>
         </div>
-        <div className="ml-14 bg-[#B9FA77] min-w-16 max-w-max p-1 shadow-md rounded-md rounded-tl-none">
-          <p className=" whitespace-pre-wrap inline-block px-2 py-1 break-words max-w-[70vw] sm:max-w-[30vw]">
+        <div className="ml-14 bg-[#B9FA77] min-w-16 max-w-max p-3 shadow-sm rounded-md rounded-tl-none">
+          <p className="text-lg whitespace-pre-wrap inline-block px-2 break-words max-w-[70vw] sm:max-w-[30vw]">
             {content}
           </p>
 
-          {attachment?.map((file, index) => (
-            <div key={index} className="p-2">
-              {file?.type.includes("image") ? (
-                <PhotoView src={API_URL + "/" + file.source}>
-                  <img
-                    alt=""
-                    src={API_URL + "/" + file.source}
-                    className="h-20 max-w-64 object-cover rounded-[4px]"
-                  />
-                </PhotoView>
-              ) : (
-                <div className="flex flex-col">
-                  <File className="mx-2 size-20 text-lime-50" />
-                  <div className="flex flex-col my-1">
-                    {" "}
-                    <p className="text-center">{file.name}</p>
-                    <p className="text-sm text-center text-lime-700">
-                      {formatFileSize(file.size)}
-                    </p>
-                  </div>
-                  <a
-                    // href={API_URL + "/" + file.source}
-                    // download requires same origin so need to use proxy api
+          <div
+            className={` mt-2  lg:grid gap-2 lg:grid-cols-3 ${
+              attachment?.length === 1 ? "lg:grid-cols-1" : ""
+            } ${attachment?.length === 2 ? "lg:grid-cols-2" : ""}`}
+          >
+            {attachment
+              ?.filter((file) => file?.type.includes("image"))
+              .map((file, index) => (
+                <div key={index} className="max-w-fit">
+                  <PhotoView src={API_URL + "/" + file.source}>
+                    <img
+                      alt=""
+                      src={API_URL + "/" + file.source}
+                      className="max-w-44 h-full aspect-[9/10] object-cover rounded-sm"
+                    />
+                  </PhotoView>
+                </div>
+              ))}
 
+            {attachment
+              ?.filter((file) => !file?.type.includes("image"))
+              .map((file, index) => (
+                <div key={index} className="max-w-fit max-h-fit">
+                  <a
                     download={file.name}
                     href={PROXY_API_URL + "/" + file.source}
                     target="_blank"
-                    className="mt-2 bg-lime-50 hover:underline-offset-2 hover:underline p-[.5px] text-center rounded-[4px]"
+                    className="text-center block bg-neutral-100 rounded-sm  aspect-[9/10]"
                   >
-                    Download
+                    <div className="flex flex-col justify-center items-center h-full">
+                      <FileDownIcon className="mx-2 mt-4 size-28" />
+                      <div className="flex flex-col justify-center items-center text-center">
+                        <p className="text-sm">{formatFileSize(file.size)}</p>
+                        <p
+                          title={file.name}
+                          className="max-w-36 overflow-hidden whitespace-nowrap text-ellipsis mx-4"
+                        >
+                          {file.name}
+                        </p>
+                      </div>
+                    </div>
                   </a>
                 </div>
-              )}
-            </div>
-          ))}
+              ))}
+          </div>
         </div>
       </div>
     </>
