@@ -394,7 +394,7 @@ const generateInviteCode = async (serverId, userId, expiresIn, usageLimit) => {
     }
  
     const code = await generateUniqueInviteCode();
-    const expiresAt = new Date(Date.now() + expiresIn * 1000); 
+    const expiresAt = new Date(Date.now() + expiresIn); 
     
     const newInviteCode = await InviteCode.create({
       server: serverId,

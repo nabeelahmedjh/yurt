@@ -3,6 +3,7 @@ const ENDPOINTS = {
   SERVER: (serverId: string) => `/servers/${serverId}`,
   JOIN_SERVER: (serverId: string) => `/servers/${serverId}/join`,
   SPACES: (serverId: string) => `/servers/${serverId}/spaces`,
+  INVITE: (serverId: string) => `/servers/${serverId}/invite`,
   SPACE: (spaceId: string) => `/spaces/${spaceId}`,
   MESSAGES: (spaceId: string) => `/spaces/${spaceId}/messages`,
   PROFILE: `/users/me/profile`,

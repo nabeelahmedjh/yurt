@@ -11,6 +11,11 @@ const createSpace = async (serverId: string, data: any) => {
   return APIManager.post(url, data, {}, true);
 };
 
+const createInvite = async (serverId: string, data: any) => {
+  const url = ENDPOINTS.INVITE(serverId);
+  return APIManager.post(url, data, {}, true);
+};
+
 const createMessage = async (spaceId: string, data: any) => {
   const url = ENDPOINTS.MESSAGES(spaceId);
   return APIManager.post(url, data, {}, true);
@@ -94,6 +99,7 @@ const signup = async (data: any) => {
 export {
   createServer,
   createSpace,
+  createInvite,
   createMessage,
   updateAvatar,
   updateProfile,

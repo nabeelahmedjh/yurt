@@ -37,6 +37,7 @@ import {
   PencilIcon,
   Trash,
   Trash2Icon,
+  UserRoundPlusIcon,
 } from "lucide-react";
 
 import UploadAvatar from "@/components/image-uploader/upload-avatar";
@@ -54,6 +55,7 @@ import useGetServerById from "@/hooks/server/useGetServerById";
 import useUpdateServer from "@/hooks/server/useUpdateServer";
 import useDeleteSpace from "@/hooks/space/useDeleteSpace";
 import useDeleteServer from "@/hooks/server/useDeleteServer";
+import CreateInviteModal from "./create-invite-modal";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -226,7 +228,14 @@ export default function ServerSettingModal({
           </Form>
         </div>
         <div className="w-full justify-between items-center flex px-10">
-          <p className="font-semibold text-lg"> {serverData?.[0].name} </p>
+          <div className="flex gap-2 ml-2">
+            <p className="font-semibold text-lg"> {serverData?.[0].name} </p>
+            <CreateInviteModal inviteCodes={serverData?.[0].inviteCodes}>
+              <button className="bg-neutral-100 hover:bg-neutral-200 p-1 rounded-full">
+                <UserRoundPlusIcon />
+              </button>
+            </CreateInviteModal>
+          </div>
           <ServerUpdateModal>
             <button className="rounded-full bg-neutral-100 p-2 hover:bg-neutral-200">
               <PencilIcon />
