@@ -36,14 +36,15 @@ export default function FileManager({ serverId, role }: FileManagerProps) {
   const host_URL = FILEMANAGER_HOST;
   const rootPath = "/servers/" + serverId;
 
-  useEffect(() => {
-    console.log("Rerendeing File manager");
-    console.log("Server ID: ", serverId);
-    console.log("Role: ", role);
-  }, [serverId, role]);
+  // useEffect(() => {
+  //   console.log("Rerendeing File manager");
+  //   console.log("Server ID: ", serverId);
+  //   console.log("Role: ", role);
+  // }, [serverId, role]);
 
   return (
     <FileManagerComponent
+      height={"100%"}
       ajaxSettings={{
         url: host_URL + `?rootPath=${rootPath}&role=${role}`,
         downloadUrl: host_URL + "/Download",

@@ -38,11 +38,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 /////////////////////////////////////////////////////////////////////
 
 export default function CreateSpaceModal({
-  children,
+  isOpen,
+  setIsOpen,
 }: {
-  children: React.ReactNode;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
@@ -79,15 +80,14 @@ export default function CreateSpaceModal({
 
       toast.success("Space Created Successfully");
       form.reset();
-      setOpen(false);
+      setIsOpen(false);
     } else {
       toast.error("Something went wrong");
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Space</DialogTitle>

@@ -16,6 +16,7 @@ import SplashScreen from "@/components/splash-screen";
 import Explore from "@/components/explore-servers/explore";
 import { useViewportWidth } from "@/lib/viewport-width";
 import WhiteboardLayout from "@/components/whiteboard/whiteboard-layout";
+import FileManagerContainer from "../filemanager/file-manager-container";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -36,8 +37,10 @@ export default function ChatLayout() {
   const isGreetingOpen = pathname === "/servers";
   const isExploreOpen = pathname === "/explore";
   const isWhiteboardOpen = pathname === "/whiteboard";
+  const isFileManagerOpen = pathname.endsWith("/filemanager");
 
   // console.log("pathname", pathname);
+  // console.log("isFileManagerOpen", isFileManagerOpen);
 
   // if viewport width > 400 px, how much in percent is 340px of viewport width
   const newSize =
@@ -90,6 +93,7 @@ export default function ChatLayout() {
           {params?.spaceID && <ChatContent />}
           {isGreetingOpen && <ServerGreeting />}
           {isExploreOpen && <Explore />}
+          {isFileManagerOpen && <FileManagerContainer />}
         </ResizablePanel>
 
         <ResizableHandle

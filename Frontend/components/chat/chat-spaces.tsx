@@ -7,11 +7,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { PencilLineIcon, Plus } from "lucide-react";
+import { FolderTreeIcon, PencilLineIcon, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import CreateSpaceModal from "@/components/modals/space/create-space-modal";
 import useGetServers from "@/hooks/server/useGetServers";
-import FileManagerModal from "../modals/file-manager-modal";
+import FileManagerModal from "../filemanager/file-manager-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -28,6 +28,8 @@ import { useState } from "react";
 export default function ChatSpaces() {
   const [isServerSettingModalOpen, setIsServerSettingModalOpen] =
     useState(false);
+
+  const [isCreateSpaceModalOpen, setIsCreateSpaceModalOpen] = useState(false);
 
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
@@ -97,15 +99,21 @@ export default function ChatSpaces() {
       {params.serverID && data?.length > 0 && (
         <div className="rounded-t-lg justify-between h-full overflow-y-auto flex flex-col bg-white">
           <div className="flex flex-col overflow-y-auto pl-2 pr-[2px]">
-            <div className="flex justify-between items-center my-2 ml-6 mr-4">
+            <div className="flex justify-between items-center my-2 min-h-10 ml-6 mr-4">
               <p className="text-[12px] text-black font-medium bg-primary/60 rounded-[4px] h-fit">
                 Spaces.
               </p>
-              <CreateSpaceModal>
-                <span>
+              <CreateSpaceModal
+                isOpen={isCreateSpaceModalOpen}
+                setIsOpen={setIsCreateSpaceModalOpen}
+              />
+              <span>
+                {isAdmin && (
                   <TooltipProvider delayDuration={50}>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger
+                        onClick={() => setIsCreateSpaceModalOpen(true)}
+                      >
                         <div className="p-3">
                           <div className="rounded-[2px] bg-black text-white size-4 flex justify-center items-center">
                             <Plus />
@@ -117,8 +125,8 @@ export default function ChatSpaces() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </span>
-              </CreateSpaceModal>
+                )}
+              </span>
             </div>
             <Separator className="bg-slate-300" />
 
@@ -180,9 +188,17 @@ export default function ChatSpaces() {
             </div>
           </div>
           <div>
-            {isAdmin !== undefined && (
-              <FileManagerModal role={isAdmin ? "admin" : "member"} />
-            )}
+            <div
+              className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors cursor-pointer"
+              onClick={() =>
+                router.push(`/servers/${params.serverID}/filemanager`)
+              }
+            >
+              <div className="text-black font-medium flex gap-4 justify-center">
+                <span>Server Directory</span>
+                <FolderTreeIcon />
+              </div>
+            </div>
           </div>
         </div>
       )}

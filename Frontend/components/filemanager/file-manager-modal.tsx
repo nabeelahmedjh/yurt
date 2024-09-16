@@ -2,7 +2,7 @@
 
 import { DialogComponent } from "@syncfusion/ej2-react-popups";
 
-import FileManager from "@/components/file-manager";
+import FileManager from "@/components/filemanager/file-manager";
 
 import { useParams } from "next/navigation";
 import { useState } from "react";
