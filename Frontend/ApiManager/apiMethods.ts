@@ -41,6 +41,11 @@ const joinServer = async (serverId: string) => {
   return APIManager.put(url, {}, {}, true);
 };
 
+const joinServerByInviteCode = async (inviteCode: string) => {
+  const url = ENDPOINTS.JOIN_SERVER_INVITECODE(inviteCode);
+  return APIManager.put(url, {}, {}, true);
+};
+
 const updateSpace = async (spaceId: string, data: any) => {
   const url = ENDPOINTS.SPACE(spaceId);
   return APIManager.put(url, data, {}, true);
@@ -105,6 +110,7 @@ export {
   updateProfile,
   updateServer,
   joinServer,
+  joinServerByInviteCode,
   updateSpace,
   deleteSpace,
   deleteServer,

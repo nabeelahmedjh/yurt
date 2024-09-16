@@ -32,9 +32,9 @@ import {
 } from "@/components/ui/dialog";
 
 import { toast } from "sonner";
-import { useRef } from "react";
-
+import { useRef, useState } from "react";
 import ms from "ms";
+import { useCopyToClipboard } from "usehooks-ts";
 
 import useCreateInvite from "@/hooks/server/useCreateInvite";
 
@@ -49,9 +49,24 @@ export default function CreateInviteModal({
   children: React.ReactNode;
   inviteCodes: string[];
 }) {
+  const [inviteLink, setInviteLink] = useState<string>("");
+
   const SelectContainerRef = useRef(null);
+  const [_, copy] = useCopyToClipboard();
 
   const { handleCreateInvite, loading } = useCreateInvite();
+
+  const handleCopy = (text: string) => () => {
+    copy(text)
+      .then(() => {
+        console.log("Copied!", { text });
+        toast.success("Invite link copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error("Failed to copy!", error);
+        toast.error("Failed to copy invite link to clipboard!");
+      });
+  };
 
   const formSchema = z.object({
     expiresIn: z.enum(["1h", "1d", "7d", "30d"]),
@@ -73,12 +88,18 @@ export default function CreateInviteModal({
     };
 
     console.log(formValues);
-    const error = await handleCreateInvite(formValues);
+    const response: any = await handleCreateInvite(formValues);
 
-    if (!error) {
-      toast.success("Invite link generated successfully");
+    if (response.result) {
+      const inviteCode = response.result.data.code;
+
+      console.log(inviteCode);
+      setInviteLink(`${window.origin}/invite/${inviteCode}`);
+
       form.reset();
-    } else {
+    }
+    if (response.error) {
+      console.error(response.error);
       toast.error("Something went wrong");
     }
   }
@@ -166,7 +187,27 @@ export default function CreateInviteModal({
           </Form>
         </div>
 
-        <div className="px-4 bg-neutral-100 min-h-24 rounded-lg">
+        <div className="min-h-[70px]">
+          <div className="text-sm font-semibold mt-2">Invite Link</div>
+          <div className="mt-2 space-y-2">
+            {inviteLink ? (
+              <div className="text-sm font-semibold">
+                {inviteLink}
+                <button
+                  onClick={handleCopy(inviteLink)}
+                  type="button"
+                  className="!ml-2 bg-primary text-black px-2 py-1 rounded-md"
+                >
+                  Copy
+                </button>
+              </div>
+            ) : (
+              <div className="h-10 bg-secondary rounded-sm"></div>
+            )}
+          </div>
+        </div>
+
+        {/* <div className="px-4 bg-neutral-100 min-h-24 rounded-lg">
           <div className="text-sm font-semibold mt-2">Invite Codes</div>
           <div className="mt-2 space-y-2">
             {inviteCodes.map((code) => (
@@ -175,7 +216,7 @@ export default function CreateInviteModal({
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );
