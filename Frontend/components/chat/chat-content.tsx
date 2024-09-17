@@ -64,10 +64,13 @@ export default function ChatContent() {
   useEffect(() => {
     const scrollArea = scrollAreaRef.current;
     if (!isUserScrolling && initialLoad) {
+      // console.log("scroll to bottom 1");
+
       scrollArea?.scrollTo({
         top: scrollArea.scrollHeight,
         behavior: "smooth",
       });
+
       setInitialLoad(false);
     }
   }, [messages, isUserScrolling, initialLoad]);

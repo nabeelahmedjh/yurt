@@ -24,12 +24,13 @@ export default function ChatInput({
 }) {
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [openMessageFileModal, setOpenMessageFileModal] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
   const [text, setText] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const autosizeTextareaRef = useRef<AutosizeTextAreaRef>(null);
   const params = useParams<{ serverID: string; spaceID: string }>();
-  const { handleCreateMessage } = useCreateMessage();
+  const { handleCreateMessage, loading } = useCreateMessage();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const MAX_FILES_UPLOAD_LIMIT = 5;
@@ -66,15 +67,17 @@ export default function ChatInput({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (text.trim().length === 0 && attachedFiles.length === 0) return;
+
+    e.preventDefault();
     const formData = new FormData();
     formData.append("content", text);
     attachedFiles.forEach((file) => {
       formData.append("attachment", file);
     });
 
-    await handleCreateMessage(params.spaceID, formData);
-
-    scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
+    const response = await handleCreateMessage(params.spaceID, formData);
 
     setText("");
     setAttachedFiles([]);
@@ -83,7 +86,25 @@ export default function ChatInput({
     if (autosizeTextareaRef.current) {
       autosizeTextareaRef.current.textArea.style.height = `${autosizeTextareaRef.current.minHeight}px`;
     }
+
+    setMessageSent(true);
   };
+
+  useEffect(() => {
+    if (messageSent) {
+      scrollToBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      setMessageSent(false);
+    }
+  }, [messageSent, scrollToBottomRef]);
+
+  useEffect(() => {
+    console.log("attached files changed");
+    scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
+  }, [attachedFiles, scrollToBottomRef]);
+
+  useEffect(() => {
+    autosizeTextareaRef.current?.textArea.focus();
+  }, []);
 
   return (
     params.serverID &&
@@ -105,29 +126,35 @@ export default function ChatInput({
           >
             <div className=" absolute bottom-[12%]">
               <EmojiPicker
-                onEmojiClick={(emojiData) =>
-                  setText((prev) => prev + emojiData.emoji)
-                }
+                onEmojiClick={(emojiData) => {
+                  setText((prev) => prev + emojiData.emoji);
+                  setIsEmojiPickerOpen(false);
+                  autosizeTextareaRef.current?.textArea.focus();
+                }}
                 emojiStyle={EmojiStyle.NATIVE}
                 open={isEmojiPickerOpen}
               />
             </div>
 
-            <div onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}>
+            <button
+              type="button"
+              onClick={() => setIsEmojiPickerOpen((prev) => !prev)}
+            >
               {isEmojiPickerOpen ? (
                 <X className="size-9 p-1 rounded-full border-0 hover:bg-gray-200/70" />
               ) : (
                 <Smile className="size-9 p-1 rounded-full border-0 hover:bg-gray-200/70" />
               )}
-            </div>
+            </button>
 
-            <div
+            <button
+              type="button"
               aria-label="Attach file"
               onClick={() => fileInputRef.current?.click()}
               className="hover:bg-gray-200/70 rounded-full hover:opacity-90 cursor-pointer pl-[2px] pr-0 py-0 mr-[2px] focus-visible:ring-0 focus-visible:ring-offset-0"
             >
               <PaperclipIcon className="size-9 p-1 rounded-full border-0 rotate-[315deg]" />
-            </div>
+            </button>
             <input
               multiple
               onChange={handleFileChange}
@@ -138,7 +165,7 @@ export default function ChatInput({
             />
             <AutosizeTextarea
               ref={autosizeTextareaRef}
-              className="bg-transparent"
+              className="bg-transparent text-lg scrollbar-hidden"
               placeholder="Type your message..."
               name="chat-input"
               value={text}
@@ -171,15 +198,18 @@ export default function ChatInput({
 }
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 function FilePreview({
   attachedFiles,
   onRemoveFile,
   fileInputRef,
+  className,
 }: {
   attachedFiles: File[];
   onRemoveFile: (fileName?: string) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
+  className?: string;
 }) {
   const [filePreviews, setFilePreviews] = useState<{ [key: string]: string }>(
     {}
@@ -203,7 +233,12 @@ function FilePreview({
   if (!attachedFiles.length) return null;
 
   return (
-    <div className="flex flex-col gap-1 bg-slate-100 rounded-3xl pt-4 mx-4 my-1">
+    <div
+      className={cn(
+        "flex flex-col gap-1 bg-slate-100 rounded-3xl pt-4 mx-4 my-1",
+        className
+      )}
+    >
       <div
         title="Remove all files"
         onClick={() => {

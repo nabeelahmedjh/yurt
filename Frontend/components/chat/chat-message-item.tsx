@@ -6,6 +6,7 @@ import { PhotoView } from "react-photo-view";
 import { format } from "date-fns";
 import { formatFileSize } from "@/lib/utils";
 import ProfileModal from "@/components/modals/profile/profile-modal";
+import Image from "next/image";
 
 export default function MessageItem({
   img,
@@ -54,51 +55,55 @@ export default function MessageItem({
             {content}
           </p>
 
-          <div
-            className={` mt-2  lg:grid gap-2 lg:grid-cols-3 ${
-              attachment?.length === 1 ? "lg:grid-cols-1" : ""
-            } ${attachment?.length === 2 ? "lg:grid-cols-2" : ""}`}
-          >
-            {attachment
-              ?.filter((file) => file?.type.includes("image"))
-              .map((file, index) => (
-                <div key={index} className="max-w-fit">
-                  <PhotoView src={API_URL + "/" + file.source}>
-                    <img
-                      alt=""
-                      src={API_URL + "/" + file.source}
-                      className="max-w-44 h-full aspect-[9/10] object-cover rounded-sm"
-                    />
-                  </PhotoView>
-                </div>
-              ))}
+          {attachment && (
+            <div
+              className={`mt-2 grid gap-2 grid-cols-1 lg:grid-cols-3 ${
+                attachment.length === 1 ? "lg:!grid-cols-1" : ""
+              } ${attachment.length === 2 ? "lg:!grid-cols-2" : ""}`}
+            >
+              {attachment
+                ?.filter((file) => file?.type.includes("image"))
+                .map((file, index) => (
+                  <div key={index} className="max-w-fit">
+                    <PhotoView src={API_URL + "/" + file.source}>
+                      <Image
+                        height={195}
+                        width={176}
+                        alt=""
+                        src={PROXY_API_URL + "/" + file.source}
+                        className="max-w-44 h-full aspect-[9/10] object-cover rounded-sm"
+                      />
+                    </PhotoView>
+                  </div>
+                ))}
 
-            {attachment
-              ?.filter((file) => !file?.type.includes("image"))
-              .map((file, index) => (
-                <div key={index} className="max-w-fit max-h-fit">
-                  <a
-                    download={file.name}
-                    href={PROXY_API_URL + "/" + file.source}
-                    target="_blank"
-                    className="text-center block bg-neutral-100 rounded-sm  aspect-[9/10]"
-                  >
-                    <div className="flex flex-col justify-center items-center h-full">
-                      <FileDownIcon className="mx-2 mt-4 size-28" />
-                      <div className="flex flex-col justify-center items-center text-center">
-                        <p className="text-sm">{formatFileSize(file.size)}</p>
-                        <p
-                          title={file.name}
-                          className="max-w-36 overflow-hidden whitespace-nowrap text-ellipsis mx-4"
-                        >
-                          {file.name}
-                        </p>
+              {attachment
+                ?.filter((file) => !file?.type.includes("image"))
+                .map((file, index) => (
+                  <div key={index} className="max-w-fit max-h-fit">
+                    <a
+                      download={file.name}
+                      href={PROXY_API_URL + "/" + file.source}
+                      target="_blank"
+                      className="text-center block bg-neutral-100 rounded-sm  aspect-[9/10]"
+                    >
+                      <div className="flex flex-col justify-center items-center h-full">
+                        <FileDownIcon className="mx-2 mt-4 size-28" />
+                        <div className="flex flex-col justify-center items-center text-center">
+                          <p className="text-sm">{formatFileSize(file.size)}</p>
+                          <p
+                            title={file.name}
+                            className="max-w-36 overflow-hidden whitespace-nowrap text-ellipsis mx-4"
+                          >
+                            {file.name}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </a>
-                </div>
-              ))}
-          </div>
+                    </a>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </>

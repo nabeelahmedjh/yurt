@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { createMessage } from '@/ApiManager/apiMethods';
-
-
+import { useState } from "react";
+import { createMessage } from "@/ApiManager/apiMethods";
 
 const useCreateMessage = () => {
   const [loading, setLoading] = useState(false);
@@ -10,12 +8,10 @@ const useCreateMessage = () => {
     setLoading(true);
 
     try {
-      await createMessage(spaceId, data);
-      return null;
+      const response = await createMessage(spaceId, data);
+      return { result: response };
     } catch (err) {
-
-      return (err as Error).message || "An error occurred";
-     
+      return { error: (err as Error).message || "An error occurred" };
     } finally {
       setLoading(false);
     }

@@ -32,9 +32,12 @@ export default function ChatMessages({
       const previousHeight = previousHeightRef.current;
 
       if (scrollTop < 100) {
+        // console.log("scroll to bottom 2");
+
         scrollArea.scrollTop += currentScrollHeight - previousHeight;
       }
 
+      // console.log("scroll to bottom 2.1", currentScrollHeight, previousHeight);
       previousHeightRef.current = currentScrollHeight;
     }
   }, [messages, isLoadingMore, scrollAreaRef]);
