@@ -561,7 +561,7 @@ const deleteServerById = async (serverId, userId) => {
     }
 
     
-    await Server.findByIdAndDelete(serverId);
+    await Server.deleteOne({ _id: serverId });
 
     return { message: 'Server and all associated data deleted successfully' };
   } catch (error) {
