@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createSpace } from "@/ApiManager/apiMethods";
-import useGetServers from "@/hooks/server/useGetServers";
+import useGetServerById from "@/hooks/server/useGetServerById";
 
 interface SpaceData {
   name: string;
@@ -9,10 +9,8 @@ interface SpaceData {
 
 const useCreateSpace = () => {
   const [loading, setLoading] = useState(false);
-  const searchParam = {
-    type: "joined",
-  };
-  const { mutate } = useGetServers(searchParam);
+
+  const { mutate } = useGetServerById();
 
   const handleCreateSpace = async (serverId: string, data: SpaceData) => {
     setLoading(true);

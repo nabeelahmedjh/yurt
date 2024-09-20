@@ -171,6 +171,7 @@ export default function ChatInput({
               value={text}
               onKeyDown={(e) => {
                 if (
+                  !loading &&
                   e.key === "Enter" &&
                   !e.shiftKey &&
                   text.trim().length > 0
@@ -185,6 +186,7 @@ export default function ChatInput({
               onChange={(e) => setText(e.target.value)}
             />
             <Button
+              disabled={loading}
               variant="ghost"
               className="rounded-none pl-[6px] pr-0 py-0 mr-[2px] hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
             >

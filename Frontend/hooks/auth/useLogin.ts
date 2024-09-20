@@ -32,9 +32,9 @@ const useLogin = () => {
       }
 
       return null;
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error:", err);
-      toast.error("Something went wrong, try again.");
+      toast.error(err.response.data.error.message);
     } finally {
       setLoading(false);
     }

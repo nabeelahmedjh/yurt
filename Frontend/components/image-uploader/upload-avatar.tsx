@@ -39,7 +39,6 @@ export default function UploadAvatar({
         id={field.name}
         name={field.name}
         onBlur={field.onBlur}
-        onClick={() => console.log(field)}
         onChange={(e) => {
           const file = e.target?.files?.[0];
 
@@ -145,9 +144,12 @@ export default function UploadAvatar({
         ) : (
           <label
             htmlFor={field.name}
-            className="cursor-pointer inline-block w-fit"
+            className="cursor-pointer inline-block w-fit relative"
           >
-            <div className="flex flex-col items-center justify-center w-[96px] h-[96px] rounded-full p-1 bg-neutral-100">
+            <div
+              title="Upload Picture"
+              className="flex flex-col items-center justify-center w-[96px] h-[96px] rounded-full p-1 bg-neutral-100"
+            >
               <UploadIcon />
             </div>
           </label>
