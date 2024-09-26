@@ -64,7 +64,7 @@ export default function Signup() {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="underline hover:no-underline ml-8 bg-[#ABF600] py-1 px-2 rounded-[8px] font-normal"
+            className="underline hover:no-underline bg-[#ABF600] py-1 px-2 rounded-[8px] font-normal"
           >
             Login
           </Link>

@@ -61,11 +61,11 @@ export default function Login() {
         <CardTitle className="text-5xl bg-[#F2FED1] max-w-fit p-1 rounded-[8px] mb-32 font-medium">
           Sign In.
         </CardTitle>
-        <CardDescription className="font-medium text-gray-950 text-lg mb-4 whitespace-nowrap">
+        <CardDescription className="font-medium text-gray-950 text-base sm:text-lg mb-4">
           Don&apos;t have an account?{" "}
           <Link
             href="/signup"
-            className="underline hover:no-underline ml-8 bg-[#ABF600] py-1 px-2 rounded-[8px] font-normal"
+            className="underline hover:no-underline bg-[#ABF600] py-1 px-2 rounded-[8px] font-normal w-fit"
           >
             Register
           </Link>
@@ -117,7 +117,7 @@ export default function Login() {
                       </FormControl>
                       <FormMessage />
                       <Link
-                        className="text-sm block py-1 hover:underline text-gray-600"
+                        className="text-sm block py-1 hover:underline text-gray-600 w-fit"
                         href="/forgot-password"
                       >
                         Forgot Password?
