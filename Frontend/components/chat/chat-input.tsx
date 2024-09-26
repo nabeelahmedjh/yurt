@@ -12,6 +12,8 @@ import MessageFileModal from "@/components/modals/message-file-modal";
 import { ArrowUp, File, PaperclipIcon, Smile, X } from "lucide-react";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 
+import { useMediaQuery } from "usehooks-ts";
+
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,8 @@ export default function ChatInput({
   const autosizeTextareaRef = useRef<AutosizeTextAreaRef>(null);
   const params = useParams<{ serverID: string; spaceID: string }>();
   const { handleCreateMessage, loading } = useCreateMessage();
+
+  const desktop = useMediaQuery("(min-width: 1024px)");
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const MAX_FILES_UPLOAD_LIMIT = 5;
@@ -98,13 +102,15 @@ export default function ChatInput({
   }, [messageSent, scrollToBottomRef]);
 
   useEffect(() => {
-    console.log("attached files changed");
-    scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
+    if (attachedFiles.length > 0) {
+      console.log("attached files changed");
+      scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
+    }
   }, [attachedFiles, scrollToBottomRef]);
 
   useEffect(() => {
-    autosizeTextareaRef.current?.textArea.focus();
-  }, []);
+    desktop && autosizeTextareaRef.current?.textArea.focus();
+  }, [desktop]);
 
   return (
     params.serverID &&
@@ -161,7 +167,7 @@ export default function ChatInput({
               ref={fileInputRef}
               className="hidden"
               type="file"
-              accept=".jpeg, .jpg, .png, .gif, .pdf, .doc, .docx"
+              accept=".jpeg, .jpg, .png, .gif, .svg, .pdf, .doc, .docx"
             />
             <AutosizeTextarea
               ref={autosizeTextareaRef}

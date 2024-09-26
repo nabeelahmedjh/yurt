@@ -60,7 +60,7 @@ export default function UploadAvatar({
           }
         }}
         type="file"
-        accept="image/*"
+        accept=".jpeg, .jpg, .png, .gif"
         className="hidden"
       />
 

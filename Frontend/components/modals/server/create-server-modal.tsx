@@ -78,8 +78,12 @@ export default function CreateServerModal({
     serverImage: z
       .union([z.instanceof(File), z.undefined()])
       .refine(
-        (file) =>
-          file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
+        (file) => {
+          // console.log("create server file size", file);
+          return (
+            file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024
+          );
+        },
         {
           message: `File size must be less than ${MAX_FILE_SIZE_MB}MB.`,
         }

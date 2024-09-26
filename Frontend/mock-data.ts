@@ -56,7 +56,7 @@ export const allServersMockData = Array.from({ length: 23 }, (_, i) => ({
     size: 345998,
     type: "image/png",
     source:
-      "uploads/Screenshot from 2024-08-17 15-00-14-991036115-1724131290574.png",
+      "uploads/Screenshot from 2024-08-17 15-00-14-991036115-1724131290674.png",
   },
   tags: [],
   userJoined: false,

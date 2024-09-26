@@ -98,7 +98,7 @@ export default function ImageModal({
               }
             },
             selectedFile.type,
-            1
+            0.9
           );
         }
       }

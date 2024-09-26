@@ -16,7 +16,7 @@ import SplashScreen from "@/components/splash-screen";
 import Explore from "@/components/explore-servers/explore";
 import { useViewportWidth } from "@/lib/viewport-width";
 import WhiteboardLayout from "@/components/whiteboard/whiteboard-layout";
-import FileManagerContainer from "../filemanager/file-manager-container";
+import FileManagerContainer from "@/components/filemanager/file-manager-container";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
