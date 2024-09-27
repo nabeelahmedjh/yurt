@@ -32,7 +32,7 @@ export default function ProfileModal({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         OverlayclassName="place-items-start"
-        className="min-w-[50vw] px-20"
+        className="min-w-[50vw] px-[clamp(8px,10vw,64px)]"
       >
         <DialogHeader className="sr-only">
           <div>
@@ -66,7 +66,9 @@ export default function ProfileModal({
                 <Separator className="bg-gray-300" />
               </div>
             </div>
-            <p className="break-words">{profileData?.bio}</p>
+            <p className="break-words break-all whitespace-normal">
+              {profileData?.bio}
+            </p>
           </div>
           <div className="mb-8">
             <div className="w-full py-3 flex">

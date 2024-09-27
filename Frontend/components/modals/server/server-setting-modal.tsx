@@ -155,7 +155,7 @@ export default function ServerSettingModal({
         OverlayclassName="place-items-start"
         className="min-w-[50vw] px-0"
       >
-        <DialogHeader className="px-10">
+        <DialogHeader className="px-4 lg:px-10">
           <div>
             <DialogTitle className="w-fit px-2 py-1 rounded-[8px] font-medium text-gray-700 text-xl">
               Server Overview
@@ -198,7 +198,7 @@ export default function ServerSettingModal({
             alt="Server Banner"
           />
         </div>
-        <div className="px-10 -mt-24">
+        <div className="px-4 lg:px-10 -mt-24">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
@@ -227,8 +227,8 @@ export default function ServerSettingModal({
             </form>
           </Form>
         </div>
-        <div className="w-full justify-between items-center flex px-10">
-          <div className="flex gap-2 ml-2">
+        <div className="w-full justify-between items-center flex px-4 lg:px-10">
+          <div className="flex gap-2 ml-6 lg:ml-2">
             <p className="font-semibold text-lg"> {serverData?.[0].name} </p>
             <CreateInviteModal inviteCodes={serverData?.[0].inviteCodes}>
               <button className="bg-neutral-100 hover:bg-neutral-200 p-1 rounded-full">
@@ -242,7 +242,7 @@ export default function ServerSettingModal({
             </button>
           </ServerUpdateModal>
         </div>
-        <div className="px-10 w-full overflow-hidden">
+        <div className="px-4 lg:px-10 w-full overflow-hidden">
           <div className="min-h-28 mb-1 w-full bg-neutral-100 px-2 py-6 rounded-sm">
             <p className="break-words">{serverData?.[0].description}</p>
           </div>
@@ -332,7 +332,7 @@ export default function ServerSettingModal({
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="flex gap-20 mt-4">
+                  <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 xl:gap-32 mt-4">
                     <p className="text-red-500 text-balance">
                       If you delete this server, you will no longer be able to
                       access the server.

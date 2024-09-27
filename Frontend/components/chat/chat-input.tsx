@@ -39,20 +39,39 @@ export default function ChatInput({
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const MAX_FILES_UPLOAD_LIMIT = 5;
     const MAX_FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5 MB
+    const ALLOWED_FILE_TYPES = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
 
     if (event.target.files) {
       const newFiles = Array.from(event.target.files);
 
+      // Validate number of files
       if (attachedFiles.length + newFiles.length > MAX_FILES_UPLOAD_LIMIT) {
         setOpenMessageFileModal(true);
         return;
       }
 
+      // Validate file size
       const hasLargeFile = newFiles.some(
         (file) => file.size > MAX_FILE_SIZE_LIMIT
       );
-
       if (hasLargeFile) {
+        setOpenMessageFileModal(true);
+        return;
+      }
+
+      // Validate file types manually
+      const hasInvalidType = newFiles.some(
+        (file) => !ALLOWED_FILE_TYPES.includes(file.type)
+      );
+      if (hasInvalidType) {
         setOpenMessageFileModal(true);
         return;
       }
@@ -219,6 +238,8 @@ function FilePreview({
   fileInputRef: React.RefObject<HTMLInputElement>;
   className?: string;
 }) {
+  const desktop = useMediaQuery("(min-width: 1024px)");
+
   const [filePreviews, setFilePreviews] = useState<{ [key: string]: string }>(
     {}
   );
@@ -260,12 +281,12 @@ function FilePreview({
         <X className="size-4" />
       </div>
       <div className="bg-white rounded-3xl px-3 mx-4 my-1">
-        <ScrollArea className="overflow-x-auto">
-          <ul className="flex">
+        <ScrollArea className="overflow-auto max-h-[230px]">
+          <ul className="flex flex-col items-center lg:flex-row">
             {attachedFiles.map((file) => (
               <li
                 key={file.name}
-                className="file-item w-40 mx-1 my-4 flex flex-col bg-secondary rounded-lg border shadow-md p-2"
+                className="file-item w-52 lg:w-40 mx-1 my-2 lg:my-4 flex flex-col bg-secondary rounded-lg border shadow-md p-2"
                 data-filename={file.name}
               >
                 <span
@@ -300,7 +321,7 @@ function FilePreview({
               </li>
             ))}
           </ul>
-          <ScrollBar orientation="horizontal" />
+          <ScrollBar orientation={desktop ? "horizontal" : "vertical"} />
         </ScrollArea>
       </div>
     </div>
