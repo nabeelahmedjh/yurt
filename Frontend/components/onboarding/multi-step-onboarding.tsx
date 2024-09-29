@@ -147,24 +147,17 @@ export default function MultiStepForm() {
   }, [profileData, form]);
 
   const processForm = (data: Inputs) => {
-    const { educationalEmail, ...formData } = data;
+    handleUpdateProfile(data);
 
-    const updatedFormData = {
-      ...formData,
-      educationalEmail: educationalEmail === "" ? null : educationalEmail,
-    };
-
-    handleUpdateProfile(updatedFormData);
-
-    console.log("educationalEmail", educationalEmail);
-    if (educationalEmail === "") {
+    console.log("educationalEmail", data.educationalEmail);
+    if (data.educationalEmail === "") {
       console.log("No email, redirecting to servers");
       router.push("/servers");
     } else {
       setIsEducationalEmail(true);
     }
 
-    console.log("formData", updatedFormData);
+    console.log("formData", data);
 
     form.reset();
   };
