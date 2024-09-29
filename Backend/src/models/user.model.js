@@ -51,6 +51,21 @@ const userSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    educationalDetails: {
+      educationalEmail: {
+        type: String,
+        required: false,
+      },
+      verified: {
+        type: Boolean,
+        default: false,
+      },
+      type: {
+        type: String,
+        required: false,
+        default: '',
+      },
+    },
   },
   {
     toJSON: {
