@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import OnboardingContainer from "@/components/onboarding/onboarding-container";
 
 export default function OnboardingLayout({
@@ -5,5 +6,9 @@ export default function OnboardingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OnboardingContainer>{children}</OnboardingContainer>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OnboardingContainer>{children}</OnboardingContainer>
+    </Suspense>
+  );
 }
