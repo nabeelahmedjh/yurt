@@ -39,6 +39,7 @@ import useSignup from "@/hooks/auth/useSignup";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [verifyMsg, setVerifyMsg] = useState("");
   const { isLoading, handleSignup } = useSignup();
 
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -50,7 +51,11 @@ export default function Signup() {
   });
 
   async function onSubmit(values: z.infer<typeof signupSchema>) {
-    await handleSignup(values);
+    const error = await handleSignup(values);
+    if (!error) {
+      setVerifyMsg("Verification email sent. Please check your email.");
+    }
+
     form.reset();
   }
 
@@ -119,6 +124,7 @@ export default function Signup() {
                     </FormItem>
                   )}
                 />
+                <p className="text-green-600">{verifyMsg}</p>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 <span className="mr-2 font-medium text-sm">
