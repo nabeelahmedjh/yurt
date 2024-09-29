@@ -60,7 +60,17 @@ const updateUser = async (req, res, next) => {
       { email: educationalEmail },
       process.env.JWT_SECRET
     );
-    sendMail(educationalEmail, token, "EDUCATIONAL");
+
+    try {
+      sendMail(educationalEmail, token, "EDUCATIONAL");
+    } catch (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message,
+        },
+      });
+    }
+
   }
 
 
