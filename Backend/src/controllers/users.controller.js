@@ -1,5 +1,6 @@
 import { serversService, usersService } from "../services/index.js";
 import { sendMail } from "../utils/email-verification.js";
+import jwt from "jsonwebtoken";
 
 
 const getCurrentUser = async (req, res) => {
