@@ -120,7 +120,15 @@ const preSignUp = async (req, res) => {
 			{ email: email, password: password },
 			process.env.JWT_SECRET
 		);
-		sendMail(email, token, "GENERAL");
+
+    try {
+      sendMail(email, token, "GENERAL");
+    } catch(error) {
+      return res.status(500).json({
+        error: { message: error.message },
+      });
+    }
+
 
 		return res.status(200).json({
 			message: "Verification email sent successfully",
@@ -247,7 +255,17 @@ const updateUser = async (req, res) => {
       { email: educationalEmail },
       process.env.JWT_SECRET
     );
-    sendMail(educationalEmail, token, "EDUCATIONAL");
+
+    try {
+      sendMail(educationalEmail, token, "EDUCATIONAL");
+    } catch (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message,
+        },
+      });
+    }
+
   }
 
   try {
