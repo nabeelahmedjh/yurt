@@ -42,7 +42,7 @@ const steps = [
     illustration: "/onboarding-step3.svg",
   },
   {
-    fields: ["eduEmail"],
+    fields: ["educationalEmail"],
     illustration: "/onboarding-step4.svg",
   },
   {
@@ -53,6 +53,7 @@ const steps = [
 export default function MultiStepForm() {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  const [isEducationalEmail, setIsEducationalEmail] = useState(false);
   const delta = currentStep - previousStep;
 
   const MultiSelectConatinerRef = useRef(null);
@@ -102,14 +103,21 @@ export default function MultiStepForm() {
       .max(5, "Maximum 5 interests allowed.")
       .min(1, "Minimum 1 interest required."),
     bio: z.string().min(100, "Bio is too short").max(400, "Bio is too long"),
-    eduEmail: z
-      .string()
-      .email("Invalid email address")
-      .optional()
-      .refine((email) => email?.includes("edu", email.indexOf("@")), {
+    educationalEmail: z.string().refine(
+      (email) => {
+        if (email === "") return true;
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!isValidEmail) return false;
+        // uncomment below to bypass edu check
+        // return true;
+        const atIndex = email.indexOf("@");
+        return email.slice(atIndex).toLowerCase().includes("edu");
+      },
+      {
         message:
-          "Email must be an educational email (should contain 'edu' in the domain)",
-      }),
+          "Please enter a valid educational email address. It should contain 'edu'.",
+      }
+    ),
   });
 
   type Inputs = z.infer<typeof FormDataSchema>;
@@ -120,7 +128,7 @@ export default function MultiStepForm() {
       username: "",
       interests: [],
       bio: "",
-      eduEmail: "",
+      educationalEmail: "",
     },
   });
 
@@ -132,13 +140,32 @@ export default function MultiStepForm() {
         username: profileData.username,
         interests: defaultTags,
         bio: profileData.bio,
-        eduEmail: profileData.eduEmail ?? "",
+        educationalEmail:
+          profileData.educationalDetails?.educationalEmail ?? "",
       });
     }
   }, [profileData, form]);
 
   const processForm = (data: Inputs) => {
-    console.log(data);
+    const { educationalEmail, ...formData } = data;
+
+    const updatedFormData = {
+      ...formData,
+      educationalEmail: educationalEmail === "" ? null : educationalEmail,
+    };
+
+    handleUpdateProfile(updatedFormData);
+
+    console.log("educationalEmail", educationalEmail);
+    if (educationalEmail === "") {
+      console.log("No email, redirecting to servers");
+      router.push("/servers");
+    } else {
+      setIsEducationalEmail(true);
+    }
+
+    console.log("formData", updatedFormData);
+
     form.reset();
   };
 
@@ -161,12 +188,6 @@ export default function MultiStepForm() {
   };
 
   const prev = async () => {
-    if (currentStep === steps.length - 2) {
-      await form.handleSubmit(processForm)();
-      // router.push("/servers");
-      return;
-    }
-
     setPreviousStep(currentStep);
     setCurrentStep((step) => step - 1);
   };
@@ -178,7 +199,9 @@ export default function MultiStepForm() {
           {/* Form */}
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(processForm)}
+              // next button will submit the form not this
+              // onSubmit={form.handleSubmit(processForm)}
+              onSubmit={(e) => e.preventDefault()}
               className="mt-4 py-4"
             >
               {currentStep === 0 && (
@@ -320,10 +343,10 @@ export default function MultiStepForm() {
                   <div className="mt-10">
                     <FormField
                       control={form.control}
-                      name="eduEmail"
+                      name="educationalEmail"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Educational Email</FormLabel>
+                          <FormLabel>Educational Email (optional)</FormLabel>
                           <FormControl>
                             <Input
                               autoComplete="off"
@@ -347,6 +370,11 @@ export default function MultiStepForm() {
                   <p className="mt-1 text-sm leading-6 text-gray-600">
                     Thank you for your submission.
                   </p>
+                  {isEducationalEmail && (
+                    <p className="mt-1 text-sm leading-6 text-gray-600">
+                      Check your educational email for verification.
+                    </p>
+                  )}
                 </>
               )}
             </form>
@@ -364,8 +392,8 @@ export default function MultiStepForm() {
                 onClick={prev}
                 variant="outline"
               >
-                {currentStep !== 3 && <ChevronLeftIcon className="size-5" />}
-                {currentStep === 3 ? "Skip" : "Previous"}
+                <ChevronLeftIcon className="size-5" />
+                Previous
               </Button>
               <Button className="sm:px-8" type="button" onClick={next}>
                 Next <ChevronRightIcon className="size-5" />
