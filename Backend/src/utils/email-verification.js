@@ -44,10 +44,14 @@ export const sendMail = (sendTo, token, type) => {
 	};
     console.log(mailConfigurations);
 
-    transporter.sendMail(mailConfigurations, function (error, info) {
-        if (error) throw Error(error);
-        console.log("Email Sent Successfully");
-        console.log(info);
+	transporter.sendMail(mailConfigurations, function (error, info) {
+        if (error) {
+			console.log("Error in sending email:", error.response);
+		} else {
+			console.log("Email Sent Successfully");
+			console.log(info);
+		}
     });
+    
 };
 
