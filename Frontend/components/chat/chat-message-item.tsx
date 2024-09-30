@@ -67,11 +67,11 @@ export default function MessageItem({
                   <div key={index} className="max-w-fit">
                     <PhotoView src={API_URL + "/" + file.source}>
                       <Image
-                        height={195}
-                        width={176}
+                        height={144}
+                        width={160}
                         alt=""
                         src={PROXY_API_URL + "/" + file.source}
-                        className="max-w-44 h-full aspect-[9/10] object-cover rounded-sm"
+                        className="w-36 h-full aspect-[9/10] object-cover rounded-sm"
                       />
                     </PhotoView>
                   </div>
@@ -93,7 +93,7 @@ export default function MessageItem({
                           <p className="text-sm">{formatFileSize(file.size)}</p>
                           <p
                             title={file.name}
-                            className="max-w-36 overflow-hidden whitespace-nowrap text-ellipsis mx-4"
+                            className="w-28 overflow-hidden whitespace-nowrap text-ellipsis mx-4"
                           >
                             {file.name}
                           </p>

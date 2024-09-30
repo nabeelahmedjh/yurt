@@ -76,7 +76,7 @@ export default function ChatContent() {
   }, [messages, isUserScrolling, initialLoad]);
 
   return (
-    <div className="flex flex-col h-dvh relative">
+    <div className="flex flex-col h-dvh relative bg-white">
       <ChatHeader />
       <ChatMessages
         messagesEndRef={messagesEndRef}

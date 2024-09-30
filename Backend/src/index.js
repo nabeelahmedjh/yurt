@@ -77,7 +77,12 @@ app.use("/uploads", express.static("./uploads"));
 
 const socketio = new Server({
   cors: {
-    origin: ["http://localhost:3001", "https://admin.socket.io", "http://localhost:5173"],
+    origin: [
+      "http://localhost:3001", 
+      "https://admin.socket.io", 
+      "http://localhost:5173", 
+      "http://inspiron.lan:3001"
+    ],
     credentials: true,
   },
 });

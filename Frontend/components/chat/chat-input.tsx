@@ -12,6 +12,8 @@ import MessageFileModal from "@/components/modals/message-file-modal";
 import { ArrowUp, File, PaperclipIcon, Smile, X } from "lucide-react";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 
+import { useMediaQuery } from "usehooks-ts";
+
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -32,23 +34,44 @@ export default function ChatInput({
   const params = useParams<{ serverID: string; spaceID: string }>();
   const { handleCreateMessage, loading } = useCreateMessage();
 
+  const desktop = useMediaQuery("(min-width: 1024px)");
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const MAX_FILES_UPLOAD_LIMIT = 5;
     const MAX_FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5 MB
+    const ALLOWED_FILE_TYPES = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
 
     if (event.target.files) {
       const newFiles = Array.from(event.target.files);
 
+      // Validate number of files
       if (attachedFiles.length + newFiles.length > MAX_FILES_UPLOAD_LIMIT) {
         setOpenMessageFileModal(true);
         return;
       }
 
+      // Validate file size
       const hasLargeFile = newFiles.some(
         (file) => file.size > MAX_FILE_SIZE_LIMIT
       );
-
       if (hasLargeFile) {
+        setOpenMessageFileModal(true);
+        return;
+      }
+
+      // Validate file types manually
+      const hasInvalidType = newFiles.some(
+        (file) => !ALLOWED_FILE_TYPES.includes(file.type)
+      );
+      if (hasInvalidType) {
         setOpenMessageFileModal(true);
         return;
       }
@@ -98,13 +121,15 @@ export default function ChatInput({
   }, [messageSent, scrollToBottomRef]);
 
   useEffect(() => {
-    console.log("attached files changed");
-    scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
+    if (attachedFiles.length > 0) {
+      console.log("attached files changed");
+      scrollToBottomRef.current?.scrollIntoView({ behavior: "instant" });
+    }
   }, [attachedFiles, scrollToBottomRef]);
 
   useEffect(() => {
-    autosizeTextareaRef.current?.textArea.focus();
-  }, []);
+    desktop && autosizeTextareaRef.current?.textArea.focus();
+  }, [desktop]);
 
   return (
     params.serverID &&
@@ -161,7 +186,7 @@ export default function ChatInput({
               ref={fileInputRef}
               className="hidden"
               type="file"
-              accept=".jpeg, .jpg, .png, .gif, .pdf, .doc, .docx"
+              accept=".jpeg, .jpg, .png, .gif, .svg, .pdf, .doc, .docx"
             />
             <AutosizeTextarea
               ref={autosizeTextareaRef}
@@ -171,6 +196,7 @@ export default function ChatInput({
               value={text}
               onKeyDown={(e) => {
                 if (
+                  !loading &&
                   e.key === "Enter" &&
                   !e.shiftKey &&
                   text.trim().length > 0
@@ -185,6 +211,7 @@ export default function ChatInput({
               onChange={(e) => setText(e.target.value)}
             />
             <Button
+              disabled={loading}
               variant="ghost"
               className="rounded-none pl-[6px] pr-0 py-0 mr-[2px] hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
             >
@@ -211,6 +238,8 @@ function FilePreview({
   fileInputRef: React.RefObject<HTMLInputElement>;
   className?: string;
 }) {
+  const desktop = useMediaQuery("(min-width: 1024px)");
+
   const [filePreviews, setFilePreviews] = useState<{ [key: string]: string }>(
     {}
   );
@@ -252,12 +281,12 @@ function FilePreview({
         <X className="size-4" />
       </div>
       <div className="bg-white rounded-3xl px-3 mx-4 my-1">
-        <ScrollArea className="overflow-x-auto">
-          <ul className="flex">
+        <ScrollArea className="overflow-auto max-h-[230px]">
+          <ul className="flex flex-col items-center lg:flex-row">
             {attachedFiles.map((file) => (
               <li
                 key={file.name}
-                className="file-item w-40 mx-1 my-4 flex flex-col bg-secondary rounded-lg border shadow-md p-2"
+                className="file-item w-52 lg:w-40 mx-1 my-2 lg:my-4 flex flex-col bg-secondary rounded-lg border shadow-md p-2"
                 data-filename={file.name}
               >
                 <span
@@ -292,7 +321,7 @@ function FilePreview({
               </li>
             ))}
           </ul>
-          <ScrollBar orientation="horizontal" />
+          <ScrollBar orientation={desktop ? "horizontal" : "vertical"} />
         </ScrollArea>
       </div>
     </div>

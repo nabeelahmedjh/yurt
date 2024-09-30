@@ -5,6 +5,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import { generatePassword } from "../utils/generate-pass.utils.js";
+import { sendMail } from "../utils/email-verification.js";
 
 const login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
@@ -83,13 +84,143 @@ const signUp = async (req, res) => {
     return res.status(500).json({
       error: { message: error.message },
     }); 
-    }
   }
+}
+
+const preSignUp = async (req, res) => {
+	const { email, password } = req.body;
+
+	if (!email || !password) {
+		return res.status(400).json({
+			error: {
+				message: "email and password  are required",
+			},
+		});
+	}
+	try {
+		const emailExist = await User.findOne({
+			email: email,
+		}).collation({ locale: "en", strength: 2 });
+
+		if (emailExist) {
+			return res.status(400).json({
+				error: {
+					message:
+						" Email already exists. Please use a different email address",
+				},
+			});
+		}
+
+		// const passwordHash = await generatePassword(password);
+		// const user = await User.create({
+		//   email,
+		//   password: passwordHash,
+		// });
+		const token = jwt.sign(
+			{ email: email, password: password },
+			process.env.JWT_SECRET
+		);
+
+    try {
+      sendMail(email, token, "GENERAL");
+    } catch(error) {
+      return res.status(500).json({
+        error: { message: error.message },
+      });
+    }
+
+
+		return res.status(200).json({
+			message: "Verification email sent successfully",
+		});
+	} catch (error) {
+		return res.status(500).json({
+			error: { message: error.message },
+		});
+	}
+};
+
+const verifyEmail = async (req, res) => {
+	const { token } = req.params;
+	const { type } = req.query;
+
+	if (!token || !type) {
+		return res.status(400).json({
+			error: {
+				message: "Token and type are required",
+			},
+		});
+	}
+
+	const { email, password } = jwt.verify(token, process.env.JWT_SECRET);
+
+	if (!email || (type.toLowerCase() === "general" && !password)) {
+		return res.status(400).json({
+			error: {
+				message: "Invalid token",
+			},
+		});
+	}
+
+	if (type.toLowerCase() === "general") {
+		try {
+			const emailExist = await User.findOne({
+				email: email,
+			}).collation({ locale: "en", strength: 2 });
+
+			if (emailExist) {
+				return res.status(400).json({
+					error: {
+						message:
+							" Email already exists. Please use a different email address",
+					},
+				});
+			}
+
+			const passwordHash = await generatePassword(password);
+			const user = await User.create({
+				email,
+				password: passwordHash,
+        verified: true,
+			});
+			const token = jwt.sign({ user: user }, process.env.JWT_SECRET);
+
+			// redirect to some frontend page
+			return res.redirect(
+				`http://localhost:3001/onboarding?token=${token}&userId=${user._id}`
+			);
+		} catch (error) {
+			return res.status(500).json({
+				error: { message: error.message },
+			});
+		}
+	} else if (type.toLowerCase() === "educational") {
+		try {
+			const user = await User.findOne({
+				email: email,
+			}).collation({ locale: "en", strength: 2 });
+
+			user.educationalDetails = {
+				educationalEmail: email,
+				verified: true,
+			};
+
+			await user.save();
+
+			return res.redirect(`http://localhost:3001/servers`);
+		} catch (error) {
+			return res.status(500).json({
+				error: { message: error.message },
+			});
+		}
+	}
+};
 
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
   let interests = req.body.interests || [];
+  const { educationalEmail } = req.body || {};
   const avatar = req.file
     ? {
         name: req.file.originalname,
@@ -119,10 +250,28 @@ const updateUser = async (req, res) => {
     interests = JSON.parse(interests);
   }
 
+  if (educationalEmail) {
+    const token = jwt.sign(
+      { email: educationalEmail },
+      process.env.JWT_SECRET
+    );
+
+    try {
+      sendMail(educationalEmail, token, "EDUCATIONAL");
+    } catch (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message,
+        },
+      });
+    }
+
+  }
+
   try {
     const user = await User.findByIdAndUpdate(
       id,
-      { interests: interests, avatar: avatar },
+      { interests: interests, avatar: avatar},
       { new: true }
     ).populate("interests");
 
@@ -156,4 +305,6 @@ export default {
   signUp,
   getProfile,
   updateUser,
+  verifyEmail,
+  preSignUp,
 };

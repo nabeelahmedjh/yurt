@@ -30,12 +30,12 @@ export default function Search() {
   };
 
   return (
-    <div className="bg-secondary border-2 mx-12 mt-12 pt-8 flex flex-col gap-4 items-center">
-      <h1 className="font-semibold text-2xl">Find community to study</h1>
-      <h3 className=" text-black/50 font-medium text-xl">
+    <div className="bg-secondary border-2 mx-2 lg:mx-12 mt-12 pt-8 flex flex-col gap-4 items-center">
+      <h1 className="font-semibold md:text-2xl">Find community to study</h1>
+      <h3 className=" text-black/50 font-medium md:text-xl">
         A community that is focused on learning{" "}
       </h3>
-      <div className="w-[50%] flex justify-center">
+      <div className="w-[90%] md:w-[75%] lg:w-[50%] flex justify-center">
         <Input
           defaultValue={searchParams.get("search")?.toString()}
           onChange={debouncedSearch}
@@ -47,7 +47,7 @@ export default function Search() {
         />
       </div>
       <div>
-        <Image alt="" src={searchIllustration} />
+        <Image className="hidden md:block" alt="" src={searchIllustration} />
       </div>
     </div>
   );

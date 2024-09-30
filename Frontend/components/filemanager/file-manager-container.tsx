@@ -10,7 +10,7 @@ export default function FileManagerContainer() {
   const serverId = selectedServerData?.[0]._id;
 
   return (
-    <div className="flex items-center h-dvh">
+    <div className="flex items-center h-dvh bg-white">
       {selectedServerData && !isLoading && (
         <FileManager serverId={serverId} role={isAdmin ? "admin" : "member"} />
       )}

@@ -1,4 +1,6 @@
 import { serversService, usersService } from "../services/index.js";
+import { sendMail } from "../utils/email-verification.js";
+import jwt from "jsonwebtoken";
 
 
 const getCurrentUser = async (req, res) => {
@@ -49,6 +51,28 @@ const updateAvatar = async (req, res) => {
 const updateUser = async (req, res, next) => {
   const userId = req.user.user._id;
   const userData = req.body;
+  const { educationalEmail } = req.body || {};
+
+
+
+  if (educationalEmail) {
+    const token = jwt.sign(
+      { email: educationalEmail },
+      process.env.JWT_SECRET
+    );
+
+    try {
+      sendMail(educationalEmail, token, "EDUCATIONAL");
+    } catch (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message,
+        },
+      });
+    }
+
+  }
+
 
   try {
     const updatedUser = await usersService.updateUser(userId, userData);

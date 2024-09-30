@@ -27,7 +27,7 @@ export default function Explore() {
   }, [searchParams, mutate]);
 
   return (
-    <div className="h-dvh overflow-y-scroll">
+    <div className="h-dvh overflow-y-scroll bg-white">
       <Search />
       <Tags />
       <Servers isLoading={isLoading} servers={data} />

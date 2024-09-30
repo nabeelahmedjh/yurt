@@ -77,10 +77,13 @@ export default function CreateServerModal({
   const formSchema = z.object({
     serverImage: z
       .union([z.instanceof(File), z.undefined()])
-      .refine((file) => file !== undefined, "Server Image is required.")
       .refine(
-        (file) =>
-          file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024,
+        (file) => {
+          // console.log("create server file size", file);
+          return (
+            file === undefined || file.size <= MAX_FILE_SIZE_MB * 1024 * 1024
+          );
+        },
         {
           message: `File size must be less than ${MAX_FILE_SIZE_MB}MB.`,
         }
@@ -120,12 +123,8 @@ export default function CreateServerModal({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!values.serverImage) {
-      return toast.error("Server Image is required.");
-    }
-
     const formData = new FormData();
-    formData.append("serverImage", values.serverImage);
+    values.serverImage && formData.append("serverImage", values.serverImage);
     formData.append("name", values.name);
     formData.append("description", values.description);
 

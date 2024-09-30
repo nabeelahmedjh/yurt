@@ -1,25 +1,20 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import useGetServers from "@/hooks/server/useGetServers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
-
 import { PROXY_API_URL } from "@/constants";
 import SpaceFallbackImage from "@/public/space.png";
+import useGetServerById from "@/hooks/server/useGetServerById";
 
 export default function ChatHeader() {
   const params = useParams<{ serverID: string; spaceID: string }>();
 
-  const searchParam = {
-    type: "joined",
-  };
+  const { data, isLoading } = useGetServerById();
 
-  const { data, isLoading } = useGetServers(searchParam);
-
-  const space = data
-    ?.filter((server: any) => server._id === params.serverID)?.[0]
-    ?.spaces?.filter((space: any) => space._id === params.spaceID)?.[0];
+  const space = data?.[0]?.spaces?.filter(
+    (space: any) => space._id === params.spaceID
+  )?.[0];
 
   if (isLoading) return;
 

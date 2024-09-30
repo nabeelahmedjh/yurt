@@ -40,15 +40,20 @@ export default function ChatSpaces() {
 
   const { data } = useGetServers(searchParam);
   const { data: selectedServerData } = useGetServerById();
-  const userId = getCookie(USER_ID);
-  const isAdmin = selectedServerData?.[0].admins.includes(userId);
 
-  const serverImage = selectedServerData?.[0].serverImage?.source;
+  const userId = getCookie(USER_ID);
+
+  const isAdmin = selectedServerData?.[0].admins.includes(userId);
+  const serverImage = selectedServerData?.[0].serverImage?.source
+    ? PROXY_API_URL + "/" + selectedServerData?.[0].serverImage?.source
+    : "/server.png";
+  const serverName = selectedServerData?.[0].name;
+  const serverSpaces = selectedServerData?.[0].spaces;
 
   return (
     <div
       className={`${
-        params.serverID && data?.length > 0 && "bg-primary"
+        params.serverID && selectedServerData?.length > 0 && "bg-primary"
       } h-dvh p-0 w-full flex flex-col ${
         isAdmin ? "has-[.server-settings:hover]:bg-primary/50" : ""
       }`}
@@ -63,7 +68,7 @@ export default function ChatSpaces() {
           isAdmin ? "[&_.pencil-icon]:hover:inline hover:cursor-pointer" : ""
         }`}
       >
-        {params.serverID && data?.length > 0 && (
+        {params.serverID && selectedServerData?.length > 0 && (
           <div className="flex gap-4 items-center justify-center">
             <span className="pencil-icon absolute hidden right-2 top-2">
               <PencilLineIcon className="size-4" />
@@ -74,24 +79,14 @@ export default function ChatSpaces() {
                 height={32}
                 className="rounded-full size-8 object-cover"
                 alt="server image"
-                src={
-                  serverImage
-                    ? PROXY_API_URL + "/" + serverImage
-                    : "/server.png"
-                }
+                src={serverImage}
               />
             </div>
             <p
-              title={
-                data?.filter((server: any) => params.serverID === server._id)[0]
-                  ?.name
-              }
+              title={serverName}
               className="font-semibold max-w-32 whitespace-nowrap text-ellipsis overflow-x-hidden"
             >
-              {
-                data?.filter((server: any) => params.serverID === server._id)[0]
-                  ?.name
-              }
+              {serverName}
             </p>
           </div>
         )}
@@ -131,60 +126,52 @@ export default function ChatSpaces() {
             <Separator className="bg-slate-300" />
 
             <div className="mt-2 flex flex-col overflow-y-auto">
-              {data
-                ?.filter((server: any) => server._id === params.serverID)
-                .map((server: any) => (
-                  <div
-                    key={server._id}
-                    className="flex flex-col overflow-y-auto"
-                  >
-                    <ScrollArea className="space-y-1 flex flex-col">
-                      {server.spaces
-                        .sort((a: any, b: any) => a.name.localeCompare(b.name))
-                        .map((space: any) => (
-                          <div
-                            onClick={() =>
-                              router.replace(
-                                `/servers/${params.serverID}/${space._id}`
-                              )
-                            }
-                            key={space._id}
-                            className={`${
-                              params.spaceID === space._id
-                                ? "bg-neutral-200"
-                                : "hover:bg-neutral-100"
-                            } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
-                          >
-                            <span>
-                              <Avatar className="size-6">
-                                <AvatarImage
-                                  src={
-                                    PROXY_API_URL +
-                                    "/" +
-                                    space.spaceImage?.source
-                                  }
-                                />
+              <div className="flex flex-col overflow-y-auto">
+                <ScrollArea className="space-y-1 flex flex-col">
+                  {serverSpaces &&
+                    serverSpaces
+                      .sort((a: any, b: any) => a.name.localeCompare(b.name))
+                      .map((space: any) => (
+                        <div
+                          onClick={() =>
+                            router.replace(
+                              `/servers/${params.serverID}/${space._id}`
+                            )
+                          }
+                          key={space._id}
+                          className={`${
+                            params.spaceID === space._id
+                              ? "bg-neutral-200"
+                              : "hover:bg-neutral-100"
+                          } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
+                        >
+                          <span>
+                            <Avatar className="size-6">
+                              <AvatarImage
+                                src={
+                                  PROXY_API_URL + "/" + space.spaceImage?.source
+                                }
+                              />
 
-                                <AvatarFallback className="bg-transparent">
-                                  <Image
-                                    alt="space image"
-                                    src={SpaceFallbackImage}
-                                  />
-                                </AvatarFallback>
-                              </Avatar>
-                            </span>
-                            <span
-                              title={space.name}
-                              className="w-2 flex-grow font-medium text-black overflow-x-hidden text-ellipsis whitespace-nowrap"
-                            >
-                              {space.name}
-                            </span>
-                          </div>
-                        ))}
-                      <ScrollBar />
-                    </ScrollArea>
-                  </div>
-                ))}
+                              <AvatarFallback className="bg-transparent">
+                                <Image
+                                  alt="space image"
+                                  src={SpaceFallbackImage}
+                                />
+                              </AvatarFallback>
+                            </Avatar>
+                          </span>
+                          <span
+                            title={space.name}
+                            className="w-2 flex-grow font-medium text-black overflow-x-hidden text-ellipsis whitespace-nowrap"
+                          >
+                            {space.name}
+                          </span>
+                        </div>
+                      ))}
+                  <ScrollBar />
+                </ScrollArea>
+              </div>
             </div>
           </div>
           <div>
