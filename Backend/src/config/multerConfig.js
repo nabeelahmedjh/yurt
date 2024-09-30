@@ -48,14 +48,14 @@ const upload = multer({
 
 // Check file type
 function checkFileType(file, cb) {
-    const filetypes = /jpeg|jpg|png|svg|gif|pdf|doc|docx/;
+    const filetypes = /jpeg|jpg|png|svg|webp|gif|pdf||doc|docx/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
     if (mimetype && extname) {
         return cb(null, true);
     } else {
-        cb('Error: Files Only!');
+        cb('Error: File Type not supported!');
     }
 }
 

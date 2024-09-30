@@ -93,6 +93,8 @@ const updateUser = async (userId, userData) => {
   }
 };
 
+
+
 const getAllUsers = async (username, searchType) => {
 
   if(username.toLowerCase() === "delete" || username.toLowerCase() === "deleted"){
@@ -109,7 +111,7 @@ const getAllUsers = async (username, searchType) => {
         $options: "i",            
       },
     };
-  } else if (searchType === "contain") {
+  } else if (searchType === "contain" || searchType === "") {
     matchCondition = {
       username: {
         $regex: username,

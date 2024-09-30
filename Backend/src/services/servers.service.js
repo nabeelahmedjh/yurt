@@ -181,6 +181,7 @@ const getAllServers = async (
   if (tags && tags.length > 0) {
     tagNames = tags.split(",");
   }
+  
   try {
     let matchCondition;
     if (searchtype === "strict") {
@@ -218,7 +219,7 @@ const getAllServers = async (
           },
           {
             $match: {
-              "tag.name": { $all: tagNames },
+              "tags.name": { $all: tagNames },
             },
           },
         ]
@@ -257,6 +258,7 @@ const getAllServers = async (
       },
     },
   ]);
+
   return Pagination.paginateArray(page, limit, offset, servers);
   } catch (error) {
     if (error instanceof ValidationError || error instanceof ConflictError || error instanceof NotFoundError) {

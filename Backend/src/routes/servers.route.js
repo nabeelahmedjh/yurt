@@ -14,6 +14,7 @@ router.put("/:serverId/join", serversController.joinServer);
 router.put("/join/:inviteCode", serversController.joinServerWithInviteCode);
 router.put("/:serverId/leave", serversController.leaveServer);
 router.post("/:serverId/invite", serversController.generateInviteCode);
+// router.get("/invite/invitecode", serversController.generateInviteCode);
 
 router.get("/:serverId/members", serversController.getMembers);
 
