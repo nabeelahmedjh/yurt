@@ -1,6 +1,7 @@
 import { serversService, usersService } from "../services/index.js";
 import { sendMail } from "../utils/email-verification.js";
 import jwt from "jsonwebtoken";
+import path from 'path';
 
 
 const getCurrentUser = async (req, res) => {
@@ -31,7 +32,7 @@ const updateAvatar = async (req, res) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 
@@ -56,6 +57,7 @@ const updateUser = async (req, res, next) => {
 
 
   if (educationalEmail) {
+    userData.educationalDetails = { educationalEmail : educationalEmail }
     const token = jwt.sign(
       { email: educationalEmail },
       process.env.JWT_SECRET

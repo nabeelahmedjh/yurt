@@ -3,6 +3,7 @@ import Message from "../models/message.model.js";
 import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
 import spacesController from "./spaces.controller.js";
+import path from 'path';
 
 const createSpace = async (req, res) => {
   const { name, description, type } = req.body;
@@ -12,7 +13,7 @@ const createSpace = async (req, res) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 
@@ -56,7 +57,7 @@ const updateSpace = async (req, res, next) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 
@@ -92,7 +93,7 @@ const sendMessageInSpace = async (req, res) => {
         name: file.originalname,
         size: file.size,
         type: file.mimetype,
-        source: file.path,
+        source: file.path.split(path.sep).join('/'),
       }))
     : null;
   const sentBy = req.user.user._id;

@@ -1,6 +1,7 @@
 import { Server, User } from "../models/index.js";
 import { serversService } from "../services/index.js";
 import mongoose from "mongoose";
+import path from 'path';
 
 
 const createServer = async (req, res, next) => {
@@ -15,7 +16,7 @@ const createServer = async (req, res, next) => {
           name: req.files["banner"][0].originalname,
           size: req.files["banner"][0].size,
           type: req.files["banner"][0].mimetype,
-          source: req.files["banner"][0].path,
+          source: req.files["banner"][0].path.split(path.sep).join('/'),
         }
       : null;
 
@@ -25,7 +26,7 @@ const createServer = async (req, res, next) => {
           name: req.files["serverImage"][0].originalname,
           size: req.files["serverImage"][0].size,
           type: req.files["serverImage"][0].mimetype,
-          source: req.files["serverImage"][0].path,
+          source: req.files["serverImage"][0].path.split(path.sep).join('/'),
         }
       : null;
 
@@ -93,7 +94,7 @@ const updateServer = async (req, res, next) => {
           name: req.files["banner"][0].originalname,
           size: req.files["banner"][0].size,
           type: req.files["banner"][0].mimetype,
-          source: req.files["banner"][0].path,
+          source: req.files["banner"][0].path.split(path.sep).join('/'),
         }
       : null;
 
@@ -103,7 +104,7 @@ const updateServer = async (req, res, next) => {
           name: req.files["serverImage"][0].originalname,
           size: req.files["serverImage"][0].size,
           type: req.files["serverImage"][0].mimetype,
-          source: req.files["serverImage"][0].path,
+          source: req.files["serverImage"][0].path.split(path.sep).join('/'),
         }
       : null;
 
@@ -220,7 +221,7 @@ const createSpace = async (req, res) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 

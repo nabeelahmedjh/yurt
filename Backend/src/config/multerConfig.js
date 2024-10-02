@@ -14,9 +14,9 @@ const storage = multer.diskStorage({
             if (spaceId) {
                 const serverId = await getServerIdBySpaceId(spaceId);
                 const serverIdString = serverId._id.toString();
-                dir = `./uploads/${serverIdString}/${spaceId}`;
+                dir = path.join('.', 'uploads', serverIdString, spaceId);
             } else {
-                dir = './uploads/profiles';
+                dir = path.join('.', 'uploads', 'profiles');
             }
             
             console.log('Directory:', dir);

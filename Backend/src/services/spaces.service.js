@@ -180,7 +180,6 @@ const deleteSpaceById = async (spaceId, userId) => {
       console.error('Error deleting message files:', error);
       
     }
-
     await server.save();
     return server.populate([{path: "spaces"}, {path: "tags"}]);
 
@@ -194,6 +193,23 @@ const deleteSpaceById = async (spaceId, userId) => {
 }
 
 
+//========================================================================================================================================================================
+
+
+const messageChatBot = (message, spaceId) => {
+
+  const userId = 
+}
+
+
+
+
+
+
+
+
+
+
 export default {
   getJoinedSpacesIds,
   sendMessageInSpace,
@@ -201,4 +217,5 @@ export default {
   createSpace,
   updateSpace,
   deleteSpaceById,
+  messageChatBot
 };
