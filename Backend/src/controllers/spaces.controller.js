@@ -192,6 +192,33 @@ const deleteSpace = async (req, res, next) => {
 }
 
 
+const generateMeetingToken = async (req, res, next) => {
+  const username = req.user.user.username;
+  const { spaceId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid space id",
+      },
+    });
+  }
+
+  try {
+    const token = await spacesService.generateToken(username,spaceId);
+    return res.status(201).json({
+      data: token
+    });
+
+  } catch (error) {
+    next(error)
+    
+  }
+
+
+}
+
+
 
 
 export default {
@@ -200,5 +227,6 @@ export default {
   sendMessageInSpace,
   getMessagesInSpace,
   deleteSpace,
+  generateMeetingToken,
 };
  
