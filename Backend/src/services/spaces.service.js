@@ -196,10 +196,10 @@ const deleteSpaceById = async (spaceId, userId) => {
 //========================================================================================================================================================================
 
 
-const messageChatBot = (message, spaceId) => {
+// const messageChatBot = (message, spaceId) => {
 
-  const userId = 
-}
+//   const userId = 
+// }
 
 
 
@@ -217,5 +217,5 @@ export default {
   createSpace,
   updateSpace,
   deleteSpaceById,
-  messageChatBot
+  // messageChatBot
 };
