@@ -3,6 +3,7 @@
 
 # Environment
 .env
+.env.exposeddev
 
 # dependencies
 /node_modules
