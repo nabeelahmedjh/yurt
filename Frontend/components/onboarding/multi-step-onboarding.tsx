@@ -46,7 +46,7 @@ const steps = [
     illustration: "/onboarding-step4.svg",
   },
   {
-    illustration: "/onboarding-step1.svg",
+    illustration: "/onboarding-step5.svg",
   },
 ];
 
@@ -211,7 +211,7 @@ export default function MultiStepForm() {
                     Your collaborative learning platform
                   </p>
                   <Button
-                    className="px-8 sm:px-12 group mt-12 text-lime-950 bg-gradient-to-b from-[#B1E938] to-[#61BB00]"
+                    className="px-8 sm:px-12 group mt-12 text-lime-950 bg-primary"
                     type="button"
                     onClick={next}
                   >
@@ -356,19 +356,38 @@ export default function MultiStepForm() {
               )}
 
               {currentStep === 4 && (
-                <>
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Complete
-                  </h2>
-                  <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Thank you for your submission.
-                  </p>
-                  {isEducationalEmail && (
-                    <p className="mt-1 text-sm leading-6 text-gray-600">
-                      Check your educational email for verification.
-                    </p>
+                <motion.div
+                  initial={{ x: delta >= 0 ? "10%" : "-10%", opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  {isEducationalEmail ? (
+                    <div className="flex flex-col items-center md:items-start mt-24 gap-4 md:ml-8">
+                      <h2 className="text-[clamp(16px,2.3vw,28px)] font-medium bg-secondary mb-8 p-2 w-fit rounded-[8px] leading-7 text-gray-900">
+                        Check Your Email Box
+                      </h2>
+                      <p className="mt-1 text-[clamp(12px,1.5vw,20px)] font-medium leading-6 text-gray-600">
+                        A verification link has been sent.
+                      </p>
+                      <p className="mt-1 text-xs sm:text-sm text-gray-600">
+                        Please check your inbox and click the link to verify
+                        your email
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center md:items-start mt-24 gap-4 md:ml-8">
+                      <h2 className="text-[clamp(16px,2.3vw,28px)] font-medium bg-secondary mb-8 p-2 w-fit rounded-[8px] leading-7 text-gray-900">
+                        Onboarding Complete 🎉
+                      </h2>
+                      <p className="mt-1 text-[clamp(16px,1.5vw,28px)] font-medium leading-6 text-gray-600">
+                        Redirecting...
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-gray-600">
+                        Please wait while we redirect you.
+                      </p>
+                    </div>
                   )}
-                </>
+                </motion.div>
               )}
             </form>
           </Form>
