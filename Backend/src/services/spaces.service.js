@@ -7,6 +7,8 @@ import pagination from "../utils/pagination.js";
 import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
 import fs from 'fs/promises';
 import path from "path"
+import { AccessToken } from 'livekit-server-sdk';
+import "dotenv/config";
 
 
 
@@ -180,7 +182,6 @@ const deleteSpaceById = async (spaceId, userId) => {
       console.error('Error deleting message files:', error);
       
     }
-
     await server.save();
     return server.populate([{path: "spaces"}, {path: "tags"}]);
 
@@ -194,6 +195,54 @@ const deleteSpaceById = async (spaceId, userId) => {
 }
 
 
+//========================================================================================================================================================================
+
+
+
+const generateToken = async (username,spaceId) =>{
+
+  const space = Space.findById(spaceId);
+
+  if(!space){
+    throw new NotFoundError("space does not exist with this ID");
+  }
+
+  if(space.type === "CHAT"){
+    throw new ForbiddenError("Token can not be generated of space type chat");
+  }
+
+  // if this room doesn't exist, it'll be automatically created when the first
+  // client joins
+  console.log(process.env.LIVEKIT_API_KEY); // should output the value of LIVEKIT_API_KEY
+  console.log(process.env.LIVEKIT_API_SECRET)
+
+  const apiKey = process.env.LIVEKIT_API_KEY;
+  const apiSecret = process.env.LIVEKIT_API_SECRET;
+
+
+  const roomName = spaceId;
+  // identifier to be used for participant.
+  // it's available as LocalParticipant.identity with livekit-client SDK
+  const participantName = username ;
+
+  const at = new AccessToken(apiKey, apiSecret, {
+    identity: participantName,
+  });
+  at.addGrant({ roomJoin: true, room: roomName });
+
+  const token = await at.toJwt();
+  return token;
+
+
+}
+
+
+
+
+
+
+
+
 export default {
   getJoinedSpacesIds,
   sendMessageInSpace,
@@ -201,4 +250,6 @@ export default {
   createSpace,
   updateSpace,
   deleteSpaceById,
+  generateToken,
+
 };

@@ -19,4 +19,5 @@ router.use("/users", passport.authenticate("jwt", { session: false }), usersRout
 router.use("/tags", passport.authenticate("jwt", { session: false }), tagsRoute);
 router.use("/whiteboard", whiteBoardRoute);
 
+
 export default router;

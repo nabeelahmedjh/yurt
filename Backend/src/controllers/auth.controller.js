@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 import { generatePassword } from "../utils/generate-pass.utils.js";
 import { sendMail } from "../utils/email-verification.js";
+import path from "path";
 
 const login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
@@ -50,7 +51,7 @@ const signUp = async (req, res) => {
         name: req.fileoriginalname,
         size: req.filesize,
         type: req.filemimetype,
-        source: req.filepath,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 
@@ -197,7 +198,7 @@ const verifyEmail = async (req, res) => {
 	} else if (type.toLowerCase() === "educational") {
 		try {
 			const user = await User.findOne({
-				email: email,
+				educationalDetails: { educationalEmail: email },
 			}).collation({ locale: "en", strength: 2 });
 
 			user.educationalDetails = {
@@ -217,6 +218,7 @@ const verifyEmail = async (req, res) => {
 };
 
 
+//it is depricated 
 const updateUser = async (req, res) => {
   const { id } = req.params;
   let interests = req.body.interests || [];
@@ -226,7 +228,7 @@ const updateUser = async (req, res) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 

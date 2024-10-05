@@ -3,6 +3,7 @@ import Message from "../models/message.model.js";
 import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
 import spacesController from "./spaces.controller.js";
+import path from 'path';
 
 const createSpace = async (req, res) => {
   const { name, description, type } = req.body;
@@ -12,7 +13,7 @@ const createSpace = async (req, res) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 
@@ -56,7 +57,7 @@ const updateSpace = async (req, res, next) => {
         name: req.file.originalname,
         size: req.file.size,
         type: req.file.mimetype,
-        source: req.file.path,
+        source: req.file.path.split(path.sep).join('/'),
       }
     : null;
 
@@ -92,7 +93,7 @@ const sendMessageInSpace = async (req, res) => {
         name: file.originalname,
         size: file.size,
         type: file.mimetype,
-        source: file.path,
+        source: file.path.split(path.sep).join('/'),
       }))
     : null;
   const sentBy = req.user.user._id;
@@ -191,6 +192,33 @@ const deleteSpace = async (req, res, next) => {
 }
 
 
+const generateMeetingToken = async (req, res, next) => {
+  const username = req.user.user.username;
+  const { spaceId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid space id",
+      },
+    });
+  }
+
+  try {
+    const token = await spacesService.generateToken(username,spaceId);
+    return res.status(201).json({
+      data: token
+    });
+
+  } catch (error) {
+    next(error)
+    
+  }
+
+
+}
+
+
 
 
 export default {
@@ -199,5 +227,6 @@ export default {
   sendMessageInSpace,
   getMessagesInSpace,
   deleteSpace,
+  generateMeetingToken,
 };
  

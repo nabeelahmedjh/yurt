@@ -20,15 +20,9 @@ import expressWs from 'express-ws';
 import { makeOrLoadRoom } from './whiteboard/rooms.js';
 import { routeErrorHandler } from "./utils/routeErrorHandler.js";
 
-let corsOptions = {
-  origin: [
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
-    "http://inspiron.lan:3001",
-    "http://localhost:5173",
-    "*"
-  ],
-};
+const CORS_ORIGINS = process.env.CORS_ORIGINS.split(",") || [];
+
+
 
 dbConnection();
 const app = express();
@@ -40,7 +34,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: "nabeel",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -53,7 +47,9 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: CORS_ORIGINS,
+}));
 
 // WebSocket endpoint for whiteboard
 app.ws('/whiteboard/:roomId', async (ws, req) => {
@@ -77,12 +73,7 @@ app.use("/uploads", express.static("./uploads"));
 
 const socketio = new Server({
   cors: {
-    origin: [
-      "http://localhost:3001", 
-      "https://admin.socket.io", 
-      "http://localhost:5173", 
-      "http://inspiron.lan:3001"
-    ],
+    origin: CORS_ORIGINS,
     credentials: true,
   },
 });
@@ -97,5 +88,7 @@ global.io.on("connection", WebSockets.connection);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Listening on port:: http://localhost:${PORT}/`);
+  const host = server.address().address;
+  const port = server.address().port;
+  console.log(`Listening on http://${host}:${port}/`);
 });

@@ -13,7 +13,7 @@ const seedDeleteUser = async () => {
       size: 3280,
       type: "image/svg+xml",
       source:
-        "uploads\\dummyUserAvatar\\deleteUserAvatar-351535690-1725027583680.svg",
+        "uploads/dummyUserAvatar/deleteUserAvatar-351535690-1725027583680.svg",
     },
     email: "noLongerExist@delete.com",
     password: passwordHash,
@@ -93,6 +93,8 @@ const updateUser = async (userId, userData) => {
   }
 };
 
+
+
 const getAllUsers = async (username, searchType) => {
 
   if(username.toLowerCase() === "delete" || username.toLowerCase() === "deleted"){
@@ -109,7 +111,7 @@ const getAllUsers = async (username, searchType) => {
         $options: "i",            
       },
     };
-  } else if (searchType === "contain") {
+  } else if (searchType === "contain" || searchType === "") {
     matchCondition = {
       username: {
         $regex: username,

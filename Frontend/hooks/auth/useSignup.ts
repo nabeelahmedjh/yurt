@@ -16,21 +16,22 @@ const useSignup = () => {
       const response: any = await signup(data);
 
       if (response) {
-        if (response.token) {
-          setCookie(TOKEN, response.token);
+        // if (response.token) {
 
-          const data: any = await getProfile();
-          const userId = data.data._id;
-          setCookie(USER_ID, userId);
+        //   setCookie(TOKEN, response.token);
 
-          router.refresh();
+        //   const data: any = await getProfile();
+        //   const userId = data.data._id;
+        //   setCookie(USER_ID, userId);
 
-          /* Below solution does not work for some reason.
-           current workaround is to have the route push in layout
-           and then refresh the page in here */
+        //   router.refresh();
 
-          // router.push("/servers");
-        }
+        //   /* Below solution does not work for some reason.
+        //    current workaround is to have the route push in layout
+        //    and then refresh the page in here */
+
+        //   // router.push("/servers");
+        // }
 
         toast.success("Registered Successfully");
       }
