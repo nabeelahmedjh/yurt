@@ -3,7 +3,6 @@ import "dotenv/config";
 
 const transporter = nodeMailer.createTransport({
 	host: process.env.SMTP_HOST,
-	domain: process.env.SMTP_DOMAIN,
 	port: process.env.SMTP_PORT,
 	auth: {
 		user: process.env.SMTP_USER,
@@ -38,7 +37,7 @@ export const sendMail = (sendTo, token, type) => {
 		email on our website.
 
 		Please follow the given link to verify your email
-        http://localhost:3000/auth/verify/${token}?type=${type.toLowerCase()}
+        http://localhost:3000/auth/verify/${token}?type=${type.toLowerCase()} 
 
 		Thanks`
 	};
