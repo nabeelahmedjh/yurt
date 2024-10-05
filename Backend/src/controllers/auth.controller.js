@@ -26,6 +26,7 @@ const login = async (req, res, next) => {
 
         const body = {
           _id: user._id,
+          username: user.username,
           email: user.email,
           serversJoined: user.serversJoined,
         };
