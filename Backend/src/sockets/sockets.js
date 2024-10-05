@@ -1,4 +1,5 @@
 import { spacesService } from "../services/index.js";
+import { botService } from "../services/index.js";
 import { makeOrLoadRoom } from "../whiteboard/rooms.js";
 class WebSockets {
   users = [];
@@ -76,6 +77,30 @@ class WebSockets {
         socket.emit("error", { message: "Failed to join the room" });
       }
     });
+
+    socket.on('BOT_MESSAGE', async(message) => {
+      try {
+        const resp = await botService.processBotMessage(message);
+        console.log("Bot response", resp)
+        global.io.emit.to(resp.spaceId).emit("BOT_RESPONSE", resp);
+      } catch (error) {
+        console.log("Error processing bot message", error);
+      }
+    })
+
+    socket.on('DELETE_MESSAGE', async (messageId, loggedInUserId) => {
+      try {
+        const deleteMessage = await spacesService.deleteMessage(messageId, loggedInUserId);
+        global.io.emit.to(deleteMessage.spaceId).emit("DELETED_MESSAGE", deleteMessage);
+      } catch (error) {
+        console.log("unable to delete message", error)
+      }
+    });
+
+    socket.on("NEW_MESSAGE", (message, spaceId, sentBy) => {
+      console.log("received a new message: ", message);
+    })
+
   }
 
   subscribeToSpacesOfJoinedServers = async (userId) => {

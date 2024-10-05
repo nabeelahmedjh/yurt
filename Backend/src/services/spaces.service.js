@@ -95,6 +95,35 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
   return newMessageObj;
 };
 
+const deleteMessageInSpace = async (messageId, loggedInUser) => {
+
+  const message = await Message.findOne({ _id: messageId });
+  if (!message) {
+    throw new NotFoundError("Message not found");
+  }
+
+  if (message.sentBy._id !== loggedInUser) {
+    // check if the user is the admin of the server
+    const server = await Server.findOne({ spaces: message.spaceId });
+    if (!server) {
+      throw new NotFoundError("Server not found");
+    }
+
+    const isAdmin = server.admins.includes(loggedInUser);
+    if (!isAdmin) {
+      throw new ForbiddenError("You are not authorized to delete this message");
+    }
+  }
+
+  const deletedMessage = await Message.deleteOne({ _id: messageId });
+  if (!deletedMessage) {
+    throw new InternalServerError("Failed to delete message");
+  }
+  return deletedMessage;
+
+};
+
+
 const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
   const messages = await Message.aggregate([
     {
