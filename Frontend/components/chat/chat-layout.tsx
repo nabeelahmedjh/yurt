@@ -9,7 +9,6 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import ChatSidebar from "@/components/chat/chat-sidebar";
-import ChatContent from "@/components/chat/chat-content";
 import ChatRightbar from "@/components/chat/chat-rightbar";
 import ServerGreeting from "@/components/server-greeting";
 import SplashScreen from "@/components/splash-screen";
@@ -17,6 +16,7 @@ import Explore from "@/components/explore-servers/explore";
 import { useViewportWidth } from "@/lib/viewport-width";
 import WhiteboardLayout from "@/components/whiteboard/whiteboard-layout";
 import FileManagerContainer from "@/components/filemanager/file-manager-container";
+import ChatCenterbar from "@/components/chat/chat-centerbar";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ export default function ChatLayout() {
 
         <ResizablePanel defaultSize={65}>
           {isWhiteboardOpen && <WhiteboardLayout />}
-          {params?.spaceID && <ChatContent />}
+          {params?.spaceID && <ChatCenterbar />}
           {isGreetingOpen && <ServerGreeting />}
           {isExploreOpen && <Explore />}
           {isFileManagerOpen && <FileManagerContainer />}

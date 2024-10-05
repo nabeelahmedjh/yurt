@@ -207,7 +207,9 @@ const generateMeetingToken = async (req, res, next) => {
   try {
     const token = await spacesService.generateToken(username,spaceId);
     return res.status(201).json({
-      data: token
+      data: {
+        token
+      }
     });
 
   } catch (error) {
