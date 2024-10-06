@@ -190,7 +190,7 @@ const verifyEmail = async (req, res) => {
 
 			// redirect to some frontend page
 			return res.redirect(
-				`http://localhost:3001/onboarding?token=${token}&userId=${user._id}`
+				`${process.env.FRONTEND_URL}/onboarding?token=${token}&userId=${user._id}`
 			);
 		} catch (error) {
 			return res.status(500).json({
@@ -210,7 +210,7 @@ const verifyEmail = async (req, res) => {
 
 			await user.save();
 
-			return res.redirect(`http://localhost:3001/servers`);
+			return res.redirect(`${process.env.FRONTEND_URL}/servers`);
 		} catch (error) {
 			return res.status(500).json({
 				error: { message: error.message },

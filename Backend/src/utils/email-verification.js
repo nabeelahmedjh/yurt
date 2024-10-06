@@ -37,7 +37,7 @@ export const sendMail = (sendTo, token, type) => {
 		email on our website.
 
 		Please follow the given link to verify your email
-        http://localhost:3000/auth/verify/${token}?type=${type.toLowerCase()} 
+        ${process.env.BACKEND_URL}/auth/verify/${token}?type=${type.toLowerCase()} 
 
 		Thanks`
 	};
