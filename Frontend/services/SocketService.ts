@@ -1,10 +1,13 @@
-import { io, Socket } from 'socket.io-client';
+import { io, Socket } from "socket.io-client";
+import { getCookie } from "cookies-next";
+import { TOKEN } from "@/constants";
 
 class SocketService {
   private static instance: SocketService;
   private socket: Socket | null = null;
-  private readonly SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://127.0.0.1:3000'; 
-
+  private readonly SOCKET_URL =
+    process.env.NEXT_PUBLIC_SOCKET_URL || "http://127.0.0.1:3000";
+  private readonly token = getCookie(TOKEN);
   private constructor() {}
 
   public static getInstance(): SocketService {
@@ -16,7 +19,11 @@ class SocketService {
 
   public connect(): Socket {
     if (!this.socket) {
-      this.socket = io(this.SOCKET_URL);
+      this.socket = io(this.SOCKET_URL, {
+        auth: {
+          token: this.token,
+        },
+      });
     }
     return this.socket;
   }
