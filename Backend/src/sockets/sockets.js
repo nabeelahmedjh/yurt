@@ -26,6 +26,10 @@ class WebSockets {
       socket.join(room);
     });
 
+    socket.on("subscribeToSpace", (spaceId) => {
+      socket.join(spaceId);
+    });
+
     socket.on("subscribeToSpacesOfJoinedServers", (userId) => {
 
       console.log("herhehrhere")
