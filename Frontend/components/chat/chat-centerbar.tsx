@@ -10,9 +10,9 @@ export default function ChatCenterbar() {
 
   const spaceType = data?.[0]?.spaces.find(
     (space: any) => space._id === spaceID
-  ).type;
+  )?.type;
 
-  if (isLoading && !data) {
+  if (isLoading && !data && !spaceType) {
     return <div>Loading...</div>;
   }
 
