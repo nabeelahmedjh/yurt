@@ -19,6 +19,7 @@ import routes from "./routes/index.js";
 import expressWs from 'express-ws';
 import { makeOrLoadRoom } from './whiteboard/rooms.js';
 import { routeErrorHandler } from "./utils/routeErrorHandler.js";
+import jwt from "jsonwebtoken";
 
 const CORS_ORIGINS = process.env.CORS_ORIGINS.split(",") || [];
 
@@ -81,6 +82,32 @@ const socketio = new Server({
 instrument(socketio, {
   auth: false,
   mode: "development",
+});
+
+
+// Middleware to authenticate socket connections
+socketio.use((socket, next) => {
+  let token;
+
+  // Extract token from `socket.handshake.auth.token`
+  if (socket.handshake.auth && socket.handshake.auth.token) {
+    token = socket.handshake.auth.token;
+  } else {
+    console.log(`Authentication error: No token provided for socket ${socket.id}`);
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log(`Authentication error: Invalid token for socket ${socket.id}`);
+      return next(new Error('Authentication error: Invalid token'));
+    }
+
+    // Attach decoded data to the socket object, e.g., user information
+    socket.user = decoded;
+    console.log(`Socket with ID ${socket.id} authenticated successfully. User info:`, decoded);
+
+    return next();
+  });
 });
 
 global.io = socketio.listen(server);

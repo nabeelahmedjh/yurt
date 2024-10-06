@@ -88,19 +88,19 @@ class WebSockets {
       }
     })
 
-    socket.on('DELETE_MESSAGE', async (messageId, loggedInUserId) => {
+    socket.on('DELETE_MESSAGE', async (eventPayload) => {
+      const messageId = eventPayload.messageId;
       try {
-        const deleteMessage = await spacesService.deleteMessage(messageId, loggedInUserId);
-        global.io.emit.to(deleteMessage.spaceId).emit("DELETED_MESSAGE", deleteMessage);
+        const deletedMessage = await spacesService.deleteMessageInSpace(messageId, socket.user._id);
+        global.io.emit.to(deleteMessage.spaceId).emit("DELETED_MESSAGE", deletedMessage);
       } catch (error) {
         console.log("unable to delete message", error)
       }
     });
 
-    socket.on("NEW_MESSAGE", (message, spaceId, sentBy) => {
-      console.log("received a new message: ", message);
+    socket.on("NEW_MESSAGE", (eventPayload) => {
+      console.log("received a new message: ", eventPayload);
     })
-
   }
 
   subscribeToSpacesOfJoinedServers = async (userId) => {

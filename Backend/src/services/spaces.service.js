@@ -95,21 +95,21 @@ const sendMessageInSpace = async (content, spaceId, sentBy, attachment) => {
   return newMessageObj;
 };
 
-const deleteMessageInSpace = async (messageId, loggedInUser) => {
+const deleteMessageInSpace = async (messageId, loggedInUserId) => {
 
   const message = await Message.findOne({ _id: messageId });
   if (!message) {
     throw new NotFoundError("Message not found");
   }
 
-  if (message.sentBy._id !== loggedInUser) {
+  if (message.sentBy._id !== loggedInUserId) {
     // check if the user is the admin of the server
     const server = await Server.findOne({ spaces: message.spaceId });
     if (!server) {
       throw new NotFoundError("Server not found");
     }
 
-    const isAdmin = server.admins.includes(loggedInUser);
+    const isAdmin = server.admins.includes(loggedInUserId);
     if (!isAdmin) {
       throw new ForbiddenError("You are not authorized to delete this message");
     }
@@ -280,5 +280,5 @@ export default {
   updateSpace,
   deleteSpaceById,
   generateToken,
-
+  deleteMessageInSpace
 };
