@@ -10,4 +10,3 @@ Filemanager/directory/servers/*
 /Filemanager/node_modules/@syncfusion/ej2-filemanager-node-filesystem/.vscode
 !Filemanager/node_modules/@syncfusion/
 !Filemanager/directory/servers/temp.txt
-Frontend/.env.exposeddev

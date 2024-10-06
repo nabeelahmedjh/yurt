@@ -4,7 +4,7 @@ import SwiperContainer from "@/components/swiper/swiper-container";
 import { useParams, usePathname } from "next/navigation";
 
 import ChatSidebar from "@/components/chat/chat-sidebar";
-import ChatContent from "@/components/chat/chat-content";
+import ChatCenterbar from "@/components/chat/chat-centerbar";
 import ChatRightbar from "@/components/chat/chat-rightbar";
 
 import WhiteboardLayout from "@/components/whiteboard/whiteboard-layout";
@@ -30,7 +30,7 @@ export default function ChatMobileLayout() {
         </SwiperSlide>
         <SwiperSlide>
           {isWhiteboardOpen && <WhiteboardLayout />}
-          {params?.spaceID && <ChatContent />}
+          {params?.spaceID && <ChatCenterbar />}
           {isGreetingOpen && <ServerGreeting />}
           {isExploreOpen && <Explore />}
           {isFileManagerOpen && <FileManagerContainer />}

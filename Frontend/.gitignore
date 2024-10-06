@@ -4,6 +4,7 @@
 # Environment
 .env
 .env.exposeddev
+.env.localdev
 
 # dependencies
 /node_modules

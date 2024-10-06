@@ -6,6 +6,7 @@ const ENDPOINTS = {
   SPACES: (serverId: string) => `/servers/${serverId}/spaces`,
   INVITE: (serverId: string) => `/servers/${serverId}/invite`,
   SPACE: (spaceId: string) => `/spaces/${spaceId}`,
+  JOIN_SPACE: (spaceId: string) => `/spaces/${spaceId}/join`,
   MESSAGES: (spaceId: string) => `/spaces/${spaceId}/messages`,
   PROFILE: `/users/me/profile`,
   PROFILE_AVATAR: `/users/me/profile/avatar`,
