@@ -48,6 +48,14 @@ const useGetMessages = () => {
   useEffect(() => {
     const socket = SocketService.connect();
 
+    const handleDeletedMessage = (message: any) => {
+      // setMessages((prevMessages) =>
+      //   prevMessages.filter((msg: any) => msg._id !== message.messageId)
+      // );
+
+      console.log("message deleted", message);
+    };
+
     const handleMessage = (message: any) => {
       // console.log("new message", message.message);
       setMessages((prevMessages) => [...prevMessages, message.message]);
@@ -57,12 +65,14 @@ const useGetMessages = () => {
       emitIdentity();
     };
 
+    socket.on(`DELETED_MESSAGE`, handleDeletedMessage);
     socket.on(`new message`, handleMessage);
     socket.on(`connect`, onConnect);
 
     return () => {
       socket.off(`connect`, onConnect);
       socket.off(`new message`, handleMessage);
+      socket.off(`DELETED_MESSAGE`, handleDeletedMessage);
       SocketService.disconnect();
     };
   }, []);

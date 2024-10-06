@@ -69,6 +69,7 @@ export default function ChatMessages({
                   </div>
                 )}
                 <MessageItem
+                  msgId={message._id}
                   sentBy={message.sentBy}
                   currentDate={currentDate}
                   img={message.sentBy.avatar?.source}

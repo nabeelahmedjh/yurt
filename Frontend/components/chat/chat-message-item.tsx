@@ -16,7 +16,10 @@ import {
 import ConfirmAlert from "@/components/confirm-alert";
 import { useState } from "react";
 
+import SocketService from "@/services/SocketService";
+
 export default function MessageItem({
+  msgId,
   img,
   name,
   content,
@@ -24,6 +27,7 @@ export default function MessageItem({
   attachment,
   sentBy,
 }: {
+  msgId: string;
   img?: string;
   name: string;
   content: string;
@@ -38,6 +42,11 @@ export default function MessageItem({
 }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleDeleteMessage = () => {
+    const socket = SocketService.connect();
+    socket.emit("DELETE_MESSAGE", { messageId: msgId });
+  };
 
   return (
     <>
@@ -154,7 +163,7 @@ export default function MessageItem({
               onOpenChange={setShowDeleteDialog}
               title="Delete Message"
               descripton="Are you sure you want to delete this message?"
-              action={() => console.log("Deleted")}
+              action={handleDeleteMessage}
               actionLabel="Delete"
               actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
             />
