@@ -1,6 +1,9 @@
 import {
   ControlBar,
   GridLayout,
+  FocusLayoutContainer,
+  FocusLayout,
+  CarouselLayout,
   LiveKitRoom,
   ParticipantTile,
   RoomAudioRenderer,
@@ -36,20 +39,30 @@ export default function VideoConference({ token }: { token: string }) {
 function MyVideoConference() {
   // `useTracks` returns all camera and screen share tracks. If a user
   // joins without a published camera track, a placeholder track is returned.
-  const tracks = useTracks(
-    [
-      { source: Track.Source.Camera, withPlaceholder: true },
-      { source: Track.Source.ScreenShare, withPlaceholder: false },
-    ],
+  const cameraTracks = useTracks(
+    [{ source: Track.Source.Camera, withPlaceholder: true }],
     { onlySubscribed: false }
   );
-  return (
-    <GridLayout
-      tracks={tracks}
+
+  const screenTracks = useTracks(
+    [{ source: Track.Source.ScreenShare, withPlaceholder: false }],
+    { onlySubscribed: false }
+  );
+
+  return screenTracks.length > 0 ? (
+    <FocusLayoutContainer
       style={{ height: "calc(100dvh - var(--lk-control-bar-height))" }}
     >
-      {/* The GridLayout accepts zero or one child. The child is used
-        as a template to render all passed in tracks. */}
+      <CarouselLayout orientation="vertical" tracks={cameraTracks}>
+        <ParticipantTile />
+      </CarouselLayout>
+      <FocusLayout trackRef={screenTracks[0]} />
+    </FocusLayoutContainer>
+  ) : (
+    <GridLayout
+      tracks={cameraTracks}
+      style={{ height: "calc(100dvh - var(--lk-control-bar-height))" }}
+    >
       <ParticipantTile />
     </GridLayout>
   );
