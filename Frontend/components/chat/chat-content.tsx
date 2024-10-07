@@ -7,6 +7,7 @@ import ChatInput from "@/components/chat/chat-input";
 import useGetMessages from "@/hooks/useGetMessages";
 import { useDebounce } from "use-debounce";
 import { ChevronDownCircleIcon } from "lucide-react";
+import { useMediaQuery } from "usehooks-ts";
 
 export default function ChatContent() {
   const { messages, isLoadingMore, isReachingEnd, setSize } = useGetMessages();
@@ -18,34 +19,31 @@ export default function ChatContent() {
 
   const [debouncedSetSize] = useDebounce(setSize, 200);
 
+  const isOnDesktop = useMediaQuery("(min-width: 1024px)");
+
   const handleScroll = useCallback(() => {
     const scrollArea = scrollAreaRef.current;
 
     if (!scrollArea) return;
 
-    const showScrollToBottomButton = (scrollArea: HTMLElement) => {
-      const threshold = 200; // in pixels
-      const distanceFromBottom =
-        scrollArea.scrollHeight -
-        (scrollArea.scrollTop + scrollArea.clientHeight);
+    const distanceFromBottom =
+      scrollArea.scrollHeight -
+      (scrollArea.scrollTop + scrollArea.clientHeight);
 
-      return distanceFromBottom < threshold;
-    };
+    const threshold = 300; // Threshold for showing 'scroll to bottom' button
 
-    setIsAtBottom(showScrollToBottomButton(scrollArea));
+    setIsAtBottom(distanceFromBottom < threshold);
 
-    if (!scrollArea || isLoadingMore || isReachingEnd) return;
+    if (isLoadingMore || isReachingEnd) return;
 
+    // Load more messages when scrolling close to the top
     if (scrollArea.scrollTop <= 100) {
       debouncedSetSize((prevSize: any) => prevSize + 1);
     }
 
-    const threshold = 50;
-    if (scrollArea.scrollTop <= threshold) {
-      setIsUserScrolling(true);
-    } else {
-      setIsUserScrolling(false);
-    }
+    // Set user scrolling state based on their scroll position
+    const userScrollThreshold = 300;
+    setIsUserScrolling(distanceFromBottom > userScrollThreshold);
   }, [debouncedSetSize, isLoadingMore, isReachingEnd]);
 
   useEffect(() => {
@@ -63,17 +61,22 @@ export default function ChatContent() {
 
   useEffect(() => {
     const scrollArea = scrollAreaRef.current;
-    if (!isUserScrolling && initialLoad) {
-      // console.log("scroll to bottom 1");
 
+    if (!scrollArea) return;
+
+    const distanceFromBottom =
+      scrollArea?.scrollHeight -
+      (scrollArea?.scrollTop + scrollArea?.clientHeight);
+
+    // If the user is close to the bottom , scroll them to the bottom
+    const threshold = isOnDesktop ? 500 : 1500;
+    if (distanceFromBottom < threshold) {
       scrollArea?.scrollTo({
         top: scrollArea.scrollHeight,
         behavior: "smooth",
       });
-
-      setInitialLoad(false);
     }
-  }, [messages, isUserScrolling, initialLoad]);
+  }, [isOnDesktop, messages]);
 
   return (
     <div className="flex flex-col h-dvh relative bg-white">

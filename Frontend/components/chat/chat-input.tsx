@@ -113,12 +113,12 @@ export default function ChatInput({
     setMessageSent(true);
   };
 
-  useEffect(() => {
-    if (messageSent) {
-      scrollToBottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      setMessageSent(false);
-    }
-  }, [messageSent, scrollToBottomRef]);
+  // useEffect(() => {
+  //   if (messageSent) {
+  //     scrollToBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  //     setMessageSent(false);
+  //   }
+  // }, [messageSent, scrollToBottomRef]);
 
   useEffect(() => {
     if (attachedFiles.length > 0) {
