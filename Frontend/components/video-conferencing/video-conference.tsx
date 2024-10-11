@@ -22,7 +22,7 @@ export default function VideoConference({ token }: { token: string }) {
       token={token}
       serverUrl={serverUrl}
       // Use the default LiveKit theme for nice styles.
-      data-lk-theme="default"
+      data-lk-theme="brand"
       style={{ height: "100dvh" }}
     >
       {/* Your custom component with basic video conferencing functionality. */}

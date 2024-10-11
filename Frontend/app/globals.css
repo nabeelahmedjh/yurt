@@ -71,3 +71,88 @@
   background-color: rgba(168, 168, 168, 0.4) !important;
 }
 
+
+[data-lk-theme=brand] {
+  color-scheme: light;
+  --brand-primary: #ABF600;
+  --lk-bg: #ffffff;
+  --lk-bg2: #F3F3F3;
+  --lk-bg3: var(--brand-primary);
+  --lk-bg4: #373737;
+  --lk-bg5: #444444;
+  --lk-fg: #fff;
+  --lk-fg2: whitesmoke;
+  --lk-fg3: #ebebeb;
+  --lk-fg4: #e0e0e0;
+  --lk-fg5: #d6d6d6;
+  --lk-border-color: rgba(255, 255, 255, 0.1);
+  --lk-accent-fg: #fff;
+  --lk-accent-bg: #8dc900;
+  --lk-accent2: #8dc900;
+  --lk-accent3: #8dc900;
+  --lk-accent4: #8dc900;
+  --lk-danger-fg: #fff;
+  --lk-danger: #f91f31;
+  --lk-danger2: #fa3343;
+  --lk-danger3: #fa4756;
+  --lk-danger4: #fb5b68;
+  --lk-success-fg: #fff;
+  --lk-success: #1ff968;
+  --lk-success2: #33fa75;
+  --lk-success3: #47fa83;
+  --lk-success4: #5bfb90;
+  --lk-control-fg: #fff;
+  --lk-control-bg: #000;
+  --lk-control-hover-bg: 
+  --lk-control-active-bg: var(--brand-primary);
+  --lk-control-active-hover-bg: var(--brand-primary);
+  --lk-connection-excellent: #06db4d;
+  --lk-connection-good: #f9b11f;
+  --lk-connection-poor: #f91f31;
+  --lk-font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --lk-font-size: 16px;
+  --lk-line-height: 1.5;
+  --lk-border-radius: 0.5rem;
+  --lk-box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+  --lk-drop-shadow: rgba(255, 255, 255, 0.2) 0px 0px 24px;
+  --lk-grid-gap: 0.5rem;
+  --lk-control-bar-height: 69px;
+  --lk-chat-header-height: 69px
+}
+
+.lk-participant-placeholder svg path {
+ fill: #ABF600;
+ fill-opacity: 1;
+ stroke: rgba(0, 0, 0, 0.3);
+ stroke-width: 1px;
+}
+
+
+.lk-button:hover {
+  background-color: var(--brand-primary) !important;
+  color: #000 !important;
+}
+
+button.lk-button[aria-pressed="true"] {
+  background-color: #000 ;
+  color: #fff ;
+}
+
+
+
+button.lk-button[aria-pressed="false"] {
+
+  background-color: #646464;
+  color: #fff;
+
+}
+
+button.lk-button-menu {
+  background-color: #000 !important;
+  color: #fff ;
+}
+
+
+.lk-control-bar {
+  border-top: 2px solid black !important;
+}
