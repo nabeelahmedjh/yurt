@@ -102,7 +102,7 @@ export default function MultiStepForm() {
       .array()
       .max(5, "Maximum 5 interests allowed.")
       .min(1, "Minimum 1 interest required."),
-    bio: z.string().min(100, "Bio is too short").max(400, "Bio is too long"),
+    bio: z.string().min(25, "Bio is too short").max(400, "Bio is too long"),
     educationalEmail: z.string().refine(
       (email) => {
         if (email === "") return true;

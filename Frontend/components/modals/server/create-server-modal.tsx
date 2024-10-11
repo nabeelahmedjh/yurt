@@ -101,7 +101,7 @@ export default function CreateServerModal({
       }, "Server with this name already exists."),
     description: z
       .string()
-      .min(100, "Description is too short")
+      .min(50, "Description is too short")
       .max(200, "Description is too long"),
     tags: z
       .string()

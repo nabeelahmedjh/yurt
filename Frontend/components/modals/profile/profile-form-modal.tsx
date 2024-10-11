@@ -86,7 +86,7 @@ export default function ProfileFormModal({
         const isUnique = await checkUsernameUnique(value);
         return isUnique;
       }, "Username already exists."),
-    bio: z.string().min(100, "Bio is too short").max(400, "Bio is too long"),
+    bio: z.string().min(25, "Bio is too short").max(400, "Bio is too long"),
     interests: z
       .string()
       .array()

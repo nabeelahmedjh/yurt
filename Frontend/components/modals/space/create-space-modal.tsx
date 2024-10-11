@@ -53,7 +53,7 @@ export default function CreateSpaceModal({
     name: z.string().min(2, "Name is too short").max(50, "Name is too long"),
     description: z
       .string()
-      .min(2, "Description is too short")
+      .min(10, "Description is too short")
       .max(100, "Description is too long"),
     type: z.enum(["CHAT", "VOICE"]),
   });
