@@ -23,6 +23,9 @@ class SocketService {
         auth: {
           token: this.token,
         },
+        transports: ['websocket'],  // Force WebSocket on the client side
+        reconnectionAttempts: 5,    // Retry a few times before giving up
+        timeout: 20000,             // Set a reasonable timeout
       });
     }
     return this.socket;

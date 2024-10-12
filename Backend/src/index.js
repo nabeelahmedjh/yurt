@@ -27,8 +27,8 @@ const CORS_ORIGINS = process.env.CORS_ORIGINS.split(",") || [];
 
 dbConnection();
 const app = express();
-const server = http.createServer(app);
-expressWs(app, server); // Attach expressWs to both app and server
+const expressServer = http.createServer(app);
+expressWs(app, expressServer); // Attach expressWs to both app and server
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
@@ -72,11 +72,26 @@ app.use("/", routes);
 app.use(routeErrorHandler);
 app.use("/uploads", express.static("./uploads"));
 
+
+
+const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
+expressServer.listen(EXPRESS_PORT, () => {
+  const host = expressServer.address().address;
+  const port = expressServer.address().port;
+  console.log(`Express server Listening on http://${host}:${port}/`);
+});
+
+
+// ---------------- Socket.IO Server (Different Port) -------------------
+
+const socketServer = http.createServer(); // New server for Socket.IO
+
 const socketio = new Server({
   cors: {
     origin: CORS_ORIGINS,
     credentials: true,
   },
+  // transports: ['websocket']
 });
 
 instrument(socketio, {
@@ -110,12 +125,17 @@ socketio.use((socket, next) => {
   });
 });
 
-global.io = socketio.listen(server);
+global.io = socketio.listen(socketServer);
 global.io.on("connection", WebSockets.connection);
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  const host = server.address().address;
-  const port = server.address().port;
-  console.log(`Listening on http://${host}:${port}/`);
+// const PORT = process.env.PORT || 3000;
+// server.listen(PORT, () => {
+//   const host = server.address().address;
+//   const port = server.address().port;
+//   console.log(`Listening on http://${host}:${port}/`);
+// });
+
+const SOCKET_IO_PORT = process.env.SOCKET_IO_PORT || 4000;
+socketServer.listen(SOCKET_IO_PORT, () => {
+  console.log(`Socket.IO server listening on port ${SOCKET_IO_PORT}`);
 });
