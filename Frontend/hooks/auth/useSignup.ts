@@ -40,6 +40,7 @@ const useSignup = () => {
     } catch (err: any) {
       console.error("Error:", err);
       toast.error(err.response.data.error.message);
+      return err;
     } finally {
       setLoading(false);
     }
