@@ -92,11 +92,11 @@ class WebSockets {
       }
     })
 
-    socket.on('DELETE_MESSAGE', async (eventPayload) => {
+    socket.on("DELETE_MESSAGE", async (eventPayload) => {
       const messageId = eventPayload.messageId;
       try {
-        const deletedMessage = await spacesService.deleteMessageInSpace(messageId, socket.user._id);
-        global.io.emit.to(deleteMessage.spaceId).emit("DELETED_MESSAGE", deletedMessage);
+        const deletedMessage = await spacesService.deleteMessageInSpace(messageId, socket.user.user._id);
+        global.io.to(deletedMessage.spaceId).emit("DELETED_MESSAGE", deletedMessage);
       } catch (error) {
         console.log("unable to delete message", error)
       }
