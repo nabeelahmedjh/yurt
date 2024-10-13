@@ -115,7 +115,7 @@ const deleteMessageInSpace = async (messageId, loggedInUserId) => {
     }
   }
 
-  const deletedMessage = await Message.deleteOne({ _id: messageId });
+  const deletedMessage = await Message.findOneAndDelete({ _id: messageId });
   if (!deletedMessage) {
     throw new InternalServerError("Failed to delete message");
   }
