@@ -72,7 +72,7 @@ export default function MessageItem({
         </div>
         <div className="flex items-center gap-2">
           <div className="ml-14 bg-[#B9FA77] min-w-16 max-w-max p-3 shadow-sm rounded-md rounded-tl-none">
-            <p className="text-lg whitespace-pre-wrap inline-block px-2 break-words max-w-[70vw] sm:max-w-[30vw]">
+            <p className="text-lg whitespace-pre-wrap inline-block px-2 break-all max-w-[70vw] sm:max-w-[30vw]">
               {content}
             </p>
 
