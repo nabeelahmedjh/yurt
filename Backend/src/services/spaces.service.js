@@ -102,7 +102,7 @@ const deleteMessageInSpace = async (messageId, loggedInUserId) => {
     throw new NotFoundError("Message not found");
   }
 
-  if (message.sentBy._id !== loggedInUserId) {
+  if (message.sentBy._id.toString() !== loggedInUserId) {
     // check if the user is the admin of the server
     const server = await Server.findOne({ spaces: message.spaceId });
     if (!server) {
