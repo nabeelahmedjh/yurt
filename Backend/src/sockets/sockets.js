@@ -86,7 +86,7 @@ class WebSockets {
       try {
         const resp = await botService.processBotMessage(message);
         console.log("Bot response", resp)
-        global.io.emit.to(resp.spaceId).emit("BOT_RESPONSE", resp);
+        global.io.to(resp.spaceId.toString()).emit("BOT_RESPONSE", resp);
       } catch (error) {
         console.log("Error processing bot message", error);
       }
@@ -96,7 +96,7 @@ class WebSockets {
       const messageId = eventPayload.messageId;
       try {
         const deletedMessage = await spacesService.deleteMessageInSpace(messageId, socket.user.user._id);
-        global.io.to(deletedMessage.spaceId).emit("DELETED_MESSAGE", deletedMessage);
+        global.io.to(deletedMessage.spaceId.toString()).emit("DELETED_MESSAGE", deletedMessage);
       } catch (error) {
         console.log("unable to delete message", error)
       }
