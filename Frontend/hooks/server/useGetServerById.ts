@@ -2,6 +2,10 @@ import useSWR from "swr";
 import ENDPOINTS from "@/ApiManager/endpoints";
 import { getServerById } from "@/ApiManager/apiMethods";
 import { useParams } from "next/navigation";
+import { getCookie } from "cookies-next";
+import { USER_ID } from "@/constants";
+
+const userId = getCookie(USER_ID);
 
 const fetcher = async (serverId: string) => {
   const data: any = await getServerById(serverId);
@@ -18,6 +22,7 @@ const useGetServerById = () => {
   );
 
   return {
+    isAdmin: data?.data?.[0].admins.includes(userId),
     data: data?.data,
     isLoading: !error && !data,
     error,
