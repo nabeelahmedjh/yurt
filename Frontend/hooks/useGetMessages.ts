@@ -49,11 +49,11 @@ const useGetMessages = () => {
     const socket = SocketService.connect();
 
     const handleDeletedMessage = (message: any) => {
-      // setMessages((prevMessages) =>
-      //   prevMessages.filter((msg: any) => msg._id !== message.messageId)
-      // );
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg: any) => msg._id !== message._id)
+      );
 
-      console.log("message deleted", message);
+      // console.log("message deleted", message);
     };
 
     const handleMessage = (message: any) => {

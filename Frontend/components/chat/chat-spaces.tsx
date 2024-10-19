@@ -39,11 +39,13 @@ export default function ChatSpaces() {
   };
 
   const { data } = useGetServers(searchParam);
-  const { data: selectedServerData } = useGetServerById();
+  const { data: selectedServerData, isAdmin: selectedServerIsAdmin } =
+    useGetServerById();
 
   const userId = getCookie(USER_ID);
 
-  const isAdmin = selectedServerData?.[0].admins.includes(userId);
+  const isAdmin = selectedServerIsAdmin;
+  // const isAdmin = selectedServerData?.[0].admins.includes(userId);
   const serverImage = selectedServerData?.[0].serverImage?.source
     ? PROXY_API_URL + "/" + selectedServerData?.[0].serverImage?.source
     : "/server.png";

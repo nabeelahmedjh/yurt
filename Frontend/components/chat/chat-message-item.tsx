@@ -18,6 +18,12 @@ import { useState } from "react";
 
 import SocketService from "@/services/SocketService";
 
+import { USER_ID } from "@/constants";
+import { getCookie } from "cookies-next";
+import useGetServerById from "@/hooks/server/useGetServerById";
+
+const userId = getCookie(USER_ID);
+
 export default function MessageItem({
   msgId,
   img,
@@ -43,9 +49,19 @@ export default function MessageItem({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const { isAdmin } = useGetServerById();
+
   const handleDeleteMessage = () => {
     const socket = SocketService.connect();
     socket.emit("DELETE_MESSAGE", { messageId: msgId });
+  };
+
+  const canDeleteMessage = () => {
+    if (sentBy?._id === userId || isAdmin) {
+      return true;
+    }
+
+    return false;
   };
 
   return (
@@ -129,45 +145,47 @@ export default function MessageItem({
             )}
           </div>
 
-          <div>
-            <button
-              onClick={() => setShowDropdown(true)}
-              className="hover:bg-neutral-100 rounded-full p-1"
-            >
-              <EllipsisVerticalIcon />
-            </button>
-            <DropdownMenu
-              open={showDropdown}
-              onOpenChange={setShowDropdown}
-              modal={false}
-            >
-              <DropdownMenuTrigger>
-                {
-                  // Do not remove, trigger used so that dropdown knows where to portal to otherwise it wont know how to position itself
-                }
-                <span></span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setShowDeleteDialog(true);
-                  }}
-                >
-                  <button>Delete</button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <ConfirmAlert
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              title="Delete Message"
-              descripton="Are you sure you want to delete this message?"
-              action={handleDeleteMessage}
-              actionLabel="Delete"
-              actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
-            />
-          </div>
+          {canDeleteMessage() && (
+            <div>
+              <button
+                onClick={() => setShowDropdown(true)}
+                className="hover:bg-neutral-100 rounded-full p-1"
+              >
+                <EllipsisVerticalIcon />
+              </button>
+              <DropdownMenu
+                open={showDropdown}
+                onOpenChange={setShowDropdown}
+                modal={false}
+              >
+                <DropdownMenuTrigger>
+                  {
+                    // Do not remove, trigger used so that dropdown knows where to portal to otherwise it wont know how to position itself
+                  }
+                  <span></span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setShowDeleteDialog(true);
+                    }}
+                  >
+                    <button>Delete</button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <ConfirmAlert
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                title="Delete Message"
+                descripton="Are you sure you want to delete this message?"
+                action={handleDeleteMessage}
+                actionLabel="Delete"
+                actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
