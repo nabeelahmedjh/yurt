@@ -32,7 +32,7 @@ export default function ChatRightbar() {
           </Button>
         </div>
       </div>
-      <div className="h-[calc(100dvh-220px)]">
+      <div className="max-h-[calc(100dvh-220px)]">
         <BotChatContent />
       </div>
     </div>
