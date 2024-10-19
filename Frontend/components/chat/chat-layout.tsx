@@ -88,7 +88,7 @@ export default function ChatLayout() {
           }`}
         />
 
-        <ResizablePanel defaultSize={65}>
+        <ResizablePanel defaultSize={55}>
           {isWhiteboardOpen && <WhiteboardLayout />}
           {params?.spaceID && <ChatCenterbar />}
           {isGreetingOpen && <ServerGreeting />}
@@ -102,7 +102,7 @@ export default function ChatLayout() {
           }`}
         />
 
-        <ResizablePanel ref={rightPanelRef} maxSize={20} minSize={0}>
+        <ResizablePanel ref={rightPanelRef} maxSize={40} minSize={20}>
           {!isExploreOpen && <ChatRightbar />}
         </ResizablePanel>
       </ResizablePanelGroup>

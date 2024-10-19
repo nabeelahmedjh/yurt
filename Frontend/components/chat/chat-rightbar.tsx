@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { BotMessageSquareIcon, BrushIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import BotChatContent from "@/components/bot/bot-content";
+
 export default function ChatRightbar() {
   const router = useRouter();
 
   return (
-    <div className="bg-white h-dvh p-1">
-      <div className="h-full flex flex-col items-center mx-4 gap-4 mt-4">
+    <div className="h-dvh bg-white pt-1 flex flex-col justify-between">
+      <div className="flex flex-col items-center mx-4 gap-4 mt-4">
         <h1 className="font-bold text-xl w-full">Study Tools</h1>
         <div className="w-full space-y-4">
           <Button
@@ -29,6 +31,9 @@ export default function ChatRightbar() {
             <BotMessageSquareIcon className="ml-6" />
           </Button>
         </div>
+      </div>
+      <div className="h-[calc(100dvh-220px)]">
+        <BotChatContent />
       </div>
     </div>
   );
