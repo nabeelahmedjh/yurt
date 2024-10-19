@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    botSpace: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Space",
+      defualt: null,
+    },
     serversJoined: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -35,6 +35,7 @@
     "random-token": "^0.0.8",
     "socket.io": "^4.7.5",
     "tldraw": "^2.4.6",
+    "together-ai": "^0.6.0-alpha.4",
     "unfurl.js": "^6.4.0",
     "uuid": "^9.0.1"
   }
