@@ -134,6 +134,7 @@ const getAllUsers = async (username, searchType) => {
         email: 1,
         interest: 1,
         _id: 1,
+        botSpace: 1
       },
     },
   ]);

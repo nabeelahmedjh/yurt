@@ -32,6 +32,10 @@ const messageSchema = new mongoose.Schema(
         },
       },
     ],
+    role: {
+      type: String,
+      default: null
+    },
     referencedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",

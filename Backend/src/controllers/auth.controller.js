@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import User from "../models/user.model.js";
+import { User, Space } from "../models/index.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -181,11 +181,14 @@ const verifyEmail = async (req, res) => {
 			}
 
 			const passwordHash = await generatePassword(password);
+      const botSpace = await Space.create({name: email, type: "BOT", description: `This is LLM bot convo Space for user ${email}`});
 			const user = await User.create({
 				email,
 				password: passwordHash,
         verified: true,
+        botSpace: botSpace._id
 			});
+
 			const token = jwt.sign({ user: user }, process.env.JWT_SECRET);
 
 			// redirect to some frontend page

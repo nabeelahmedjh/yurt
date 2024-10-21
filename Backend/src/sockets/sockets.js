@@ -1,3 +1,5 @@
+import Space from "../models/space.model.js";
+import User from "../models/user.model.js";
 import { spacesService } from "../services/index.js";
 import { botService } from "../services/index.js";
 import { makeOrLoadRoom } from "../whiteboard/rooms.js";
@@ -10,13 +12,16 @@ class WebSockets {
     //   this.users = this.users.filter((user) => user.socketId !== socket.id);
     // });
     // add identity of user mapped to the socket id
+    console.log("hello");
     socket.on("identity", (userId) => {
       this.users.push({
         socketId: socket.id,
         userId: userId,
       });
+      console.log("hello");
       console.log(this.users, "From the identity event");
       this.subscribeToSpacesOfJoinedServers(userId);
+      this.subscribeToBotSpace(userId);
       // socket.emit("subscribeToSpacesOfJoinedServers", userId);
     });
     // subscribe person to chat & other user as well
@@ -82,11 +87,29 @@ class WebSockets {
       }
     });
 
-    socket.on('BOT_MESSAGE', async(message) => {
+    socket.on('BOT_MESSAGE', async(eventPayload) => {
+      console.log(eventPayload);
+      if (typeof eventPayload === 'string') {
+        try {
+            eventPayload = JSON.parse(eventPayload);  
+        } catch (error) {
+            console.error("Error parsing eventPayload:", error);
+            return; 
+        }
+    }
+      console.log(eventPayload.spaceId);
+
       try {
-        const resp = await botService.processBotMessage(message);
-        console.log("Bot response", resp)
-        global.io.to(resp.spaceId.toString()).emit("BOT_RESPONSE", resp);
+        const resp = await botService.processBotMessage(eventPayload, socket.user.user._id);
+        // console.log("Bot response:", resp);
+        // console.log("Space ID:", eventPayload.spaceId);
+        if (eventPayload.spaceId) {
+          global.io.to(eventPayload.spaceId).emit("BOT_RESPONSE", resp);
+          console.log(resp)
+          console.log("Event emitted to room:", eventPayload.spaceId);
+        } else {
+          console.log("Invalid spaceId");
+        }
       } catch (error) {
         console.log("Error processing bot message", error);
       }
@@ -94,6 +117,7 @@ class WebSockets {
 
     socket.on("DELETE_MESSAGE", async (eventPayload) => {
       const messageId = eventPayload.messageId;
+      console.log("messageObject", eventPayload);
       try {
         const deletedMessage = await spacesService.deleteMessageInSpace(messageId, socket.user.user._id);
         global.io.to(deletedMessage.spaceId.toString()).emit("DELETED_MESSAGE", deletedMessage);
@@ -106,6 +130,8 @@ class WebSockets {
       console.log("received a new message: ", eventPayload);
     })
   }
+
+
 
   subscribeToSpacesOfJoinedServers = async (userId) => {
 
@@ -131,6 +157,29 @@ class WebSockets {
     });
   }
 
+
+  subscribeToBotSpace = async (userId) => {
+
+    const user = await User.findById({_id: userId})
+    console.log("===============USER HERE========================")
+    console.log(user);
+    const botSpace = user.botSpace.toString();
+    console.log(botSpace);
+
+    const userSockets = this.users.filter(
+      (user) => user.userId === userId
+    );
+
+    userSockets.map((userInfo) => {
+      const socketConn = global.io.sockets.sockets.get(userInfo.socketId);
+      if (socketConn) {
+        socketConn.join(botSpace)
+        console.log("Joined bot space: ", botSpace, socketConn.id, userInfo.socketId);
+      }
+    });
+
+
+  }
 
 
 
