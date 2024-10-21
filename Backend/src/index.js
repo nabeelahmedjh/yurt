@@ -104,12 +104,18 @@ instrument(socketio, {
 socketio.use((socket, next) => {
   let token;
 
-  // Extract token from `socket.handshake.auth.token`
-  if (socket.handshake.auth && socket.handshake.auth.token) {
+  if (socket.handshake.auth.token) {
     token = socket.handshake.auth.token;
-  } else {
+  } 
+
+  if(socket.handshake.headers.authorization) {
+    token = socket.handshake.headers.authorization.split(' ')[1];
+  }
+
+  if(!token) {
     console.log(`Authentication error: No token provided for socket ${socket.id}`);
   }
+  
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {

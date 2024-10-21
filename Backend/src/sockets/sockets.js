@@ -7,13 +7,18 @@ class WebSockets {
   users = [];
   connection = (socket) => {
     console.log("Socket io socket ID", socket.id);
+    // console.log("socket instance: ", socket.user.user._id);
+
+
     // event fired when the chat room is disconnected
     // socket.on("disconnect", () => {
     //   this.users = this.users.filter((user) => user.socketId !== socket.id);
     // });
     // add identity of user mapped to the socket id
     console.log("hello");
-    socket.on("identity", (userId) => {
+
+
+   const subscribeToUsersSpacesOnSocketConnection = async  (userId) => {
       this.users.push({
         socketId: socket.id,
         userId: userId,
@@ -23,7 +28,12 @@ class WebSockets {
       this.subscribeToSpacesOfJoinedServers(userId);
       this.subscribeToBotSpace(userId);
       // socket.emit("subscribeToSpacesOfJoinedServers", userId);
-    });
+    }
+
+
+    subscribeToUsersSpacesOnSocketConnection(socket.user.user._id);
+
+
     // subscribe person to chat & other user as well
     // in our case we will be subscribing a user to a space
     socket.on("subscribe", (room, otherUserId = "") => {
