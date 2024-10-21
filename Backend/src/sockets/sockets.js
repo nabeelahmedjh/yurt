@@ -21,6 +21,7 @@ class WebSockets {
       console.log("hello");
       console.log(this.users, "From the identity event");
       this.subscribeToSpacesOfJoinedServers(userId);
+      this.subscribeToBotSpace(userId);
       // socket.emit("subscribeToSpacesOfJoinedServers", userId);
     });
     // subscribe person to chat & other user as well
@@ -103,7 +104,6 @@ class WebSockets {
         // console.log("Bot response:", resp);
         // console.log("Space ID:", eventPayload.spaceId);
         if (eventPayload.spaceId) {
-          socket.join(eventPayload.spaceId);
           global.io.to(eventPayload.spaceId).emit("BOT_RESPONSE", resp);
           console.log(resp)
           console.log("Event emitted to room:", eventPayload.spaceId);
@@ -157,6 +157,29 @@ class WebSockets {
     });
   }
 
+
+  subscribeToBotSpace = async (userId) => {
+
+    const user = await User.findById({_id: userId})
+    console.log("===============USER HERE========================")
+    console.log(user);
+    const botSpace = user.botSpace.toString();
+    console.log(botSpace);
+
+    const userSockets = this.users.filter(
+      (user) => user.userId === userId
+    );
+
+    userSockets.map((userInfo) => {
+      const socketConn = global.io.sockets.sockets.get(userInfo.socketId);
+      if (socketConn) {
+        socketConn.join(botSpace)
+        console.log("Joined bot space: ", botSpace, socketConn.id, userInfo.socketId);
+      }
+    });
+
+
+  }
 
 
 
