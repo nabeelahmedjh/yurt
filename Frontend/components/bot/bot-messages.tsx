@@ -50,7 +50,10 @@ export default function BotChatMessages({
         </div>
       )}
       {messages?.map((message: any, index: number) => {
-        const currentDate = new Date(message.createdAt);
+        const currentDate = message.createdAt
+          ? new Date(message.createdAt)
+          : new Date();
+
         const showDateStamp =
           !previousDate || !isSameDay(currentDate, previousDate);
         previousDate = currentDate;
@@ -65,9 +68,9 @@ export default function BotChatMessages({
               </div>
             )}
             <BotMessageItem
-              sentBy={message.sentBy}
+              sentBy={message?.sentBy}
               currentDate={currentDate}
-              img={message.sentBy.avatar?.source}
+              img={message?.sentBy?.avatar?.source}
               content={message.content}
               name={
                 message?.sentBy?.username

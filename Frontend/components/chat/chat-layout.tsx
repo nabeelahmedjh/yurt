@@ -102,7 +102,11 @@ export default function ChatLayout() {
           }`}
         />
 
-        <ResizablePanel ref={rightPanelRef} maxSize={40} minSize={20}>
+        <ResizablePanel
+          ref={rightPanelRef}
+          maxSize={40}
+          minSize={isExploreOpen ? 0 : 20}
+        >
           {!isExploreOpen && <ChatRightbar />}
         </ResizablePanel>
       </ResizablePanelGroup>

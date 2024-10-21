@@ -9,6 +9,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
+import SocketService from "@/services/SocketService";
+import { getProfile } from "@/ApiManager/apiMethods";
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -30,10 +32,15 @@ export default function BotInput({
     if (text.trim().length === 0) return;
 
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("content", text);
 
-    const response = await handleCreateMessage(params.spaceID, formData);
+    const profile: any = await getProfile();
+    const botSpaceId = profile.data.botSpace;
+
+    const socket = SocketService.connect();
+    socket.emit("BOT_MESSAGE", {
+      spaceId: botSpaceId,
+      content: text,
+    });
 
     setText("");
 

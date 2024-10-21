@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import useSWRInfinite from "swr/infinite";
-import { useParams } from "next/navigation";
-import { getMessages } from "@/ApiManager/apiMethods";
+import { getMessages, getProfile } from "@/ApiManager/apiMethods";
 import SocketService from "@/services/SocketService";
 import { emitIdentity } from "@/lib/emit-identity";
 
 const PAGE_SIZE = 10;
+
 const fetcher = async (spaceId: string, pageIndex: number) => {
   if (isNaN(pageIndex)) pageIndex = 0;
   const searchParams = {
@@ -17,12 +17,26 @@ const fetcher = async (spaceId: string, pageIndex: number) => {
   return data?.data || [];
 };
 
-const useGetMessages = () => {
-  const params = useParams<{ serverID: string; spaceID: string }>();
-  const spaceId = params?.spaceID;
-
+const useGetBotMessages = () => {
+  const [profile, setProfile] = useState<any>(null); // Store profile
   const [messages, setMessages] = useState<object[]>([]);
 
+  // Fetch profile data once when the component mounts
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profileData = await getProfile();
+        setProfile(profileData); // Set profile after fetching
+      } catch (error) {
+        console.error("Error fetching profile", error);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const spaceId = profile?.data?.botSpace; // Access spaceId from profile
+
+  // Define SWR key only if spaceId exists
   const getKey: any = (pageIndex: number, previousPageData: any) => {
     if (!spaceId) return null;
     if (previousPageData && !previousPageData.length) return null;
@@ -31,9 +45,11 @@ const useGetMessages = () => {
 
   const { data, error, mutate, size, setSize, isValidating } = useSWRInfinite(
     getKey,
-    ([spaceId, pageIndex]) => fetcher(spaceId.toString(), Number(pageIndex))
+    ([spaceId, pageIndex]) => fetcher(spaceId.toString(), Number(pageIndex)),
+    { revalidateFirstPage: false }
   );
 
+  // Handle data and merge messages
   useEffect(() => {
     if (data) {
       const mergedMessages = data ? [].concat(...data) : [];
@@ -42,37 +58,34 @@ const useGetMessages = () => {
   }, [data]);
 
   useEffect(() => {
-    mutate();
+    if (spaceId) mutate(); // Only mutate when spaceId is available
   }, [spaceId, mutate]);
 
   useEffect(() => {
     const socket = SocketService.connect();
 
-    const handleDeletedMessage = (message: any) => {
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg: any) => msg._id !== message._id)
-      );
-
-      // console.log("message deleted", message);
-    };
-
     const handleMessage = (message: any) => {
-      // console.log("new message", message.message);
-      setMessages((prevMessages) => [...prevMessages, message.message]);
+      console.log("Bot Reply: ", message);
+
+      // temporary change later
+      const tempMessage = {
+        content: message,
+      };
+
+      setMessages((prevMessages) => [...prevMessages, tempMessage]);
     };
 
     const onConnect = () => {
       emitIdentity();
     };
 
-    socket.on(`DELETED_MESSAGE`, handleDeletedMessage);
-    socket.on(`new message`, handleMessage);
+    socket.on(`BOT_RESPONSE`, handleMessage);
     socket.on(`connect`, onConnect);
 
     return () => {
       socket.off(`connect`, onConnect);
-      socket.off(`new message`, handleMessage);
-      socket.off(`DELETED_MESSAGE`, handleDeletedMessage);
+      socket.off(`BOT_RESPONSE`, handleMessage);
+      SocketService.disconnect();
     };
   }, []);
 
@@ -92,4 +105,4 @@ const useGetMessages = () => {
   };
 };
 
-export default useGetMessages;
+export default useGetBotMessages;

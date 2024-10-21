@@ -5,18 +5,19 @@ import { motion } from "framer-motion"; // Import motion from Framer Motion
 import BotChatHeader from "@/components/bot/bot-header";
 import BotChatMessages from "@/components/bot/bot-messages";
 import BotChatInput from "@/components/bot/bot-input";
-import useGetMessages from "@/hooks/useGetMessages";
+import useGetBotMessages from "@/components/bot/useGetBotMessages";
 import { useDebounce } from "use-debounce";
 import { ChevronDownCircleIcon } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 export default function BotChatContent() {
-  const { messages, isLoadingMore, isReachingEnd, setSize } = useGetMessages();
+  const { messages, isLoadingMore, isReachingEnd, setSize } =
+    useGetBotMessages();
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [isOpen, setIsOpen] = useState(true); // State to manage chat visibility
+  const [isOpen, setIsOpen] = useState(true);
 
   const [debouncedSetSize] = useDebounce(setSize, 200);
   const isOnDesktop = useMediaQuery("(min-width: 1024px)");
@@ -30,7 +31,7 @@ export default function BotChatContent() {
       scrollArea.scrollHeight -
       (scrollArea.scrollTop + scrollArea.clientHeight);
 
-    const threshold = 300; // Threshold for showing 'scroll to bottom' button
+    const threshold = 100; // Threshold for showing 'scroll to bottom' button
     setIsAtBottom(distanceFromBottom < threshold);
 
     if (isLoadingMore || isReachingEnd) return;
@@ -68,7 +69,7 @@ export default function BotChatContent() {
       (scrollArea?.scrollTop + scrollArea?.clientHeight);
 
     // If the user is close to the bottom, scroll them to the bottom
-    const threshold = isOnDesktop ? 500 : 1500;
+    const threshold = isOnDesktop ? 4500 : 1500;
     if (distanceFromBottom < threshold) {
       scrollArea?.scrollTo({
         top: scrollArea.scrollHeight,
@@ -79,17 +80,17 @@ export default function BotChatContent() {
 
   return (
     <div className="px-1 h-full flex flex-col relative bg-white">
-      <button
-        className="w-full"
-        onClick={() => setIsOpen((prev) => !prev)} // Toggle chat visibility
-      >
+      <button className="w-full" onClick={() => setIsOpen((prev) => !prev)}>
         <BotChatHeader />
       </button>
       <motion.div
-        className="overflow-hidden" // Hide overflow
-        initial={{ height: 0 }} // Start with height 0
-        animate={{ height: isOpen ? "auto" : 0 }} // Animate height based on isOpen
-        transition={{ duration: 0.3 }} // Duration of the animation
+        className="overflow-hidden"
+        initial={{ height: 0, minHeight: 0 }}
+        animate={{
+          height: isOpen ? "calc(100dvh - 350px)" : 0,
+          minHeight: isOpen ? "calc(100dvh - 350px)" : 0,
+        }}
+        transition={{ duration: 0.3 }}
       >
         <BotChatMessages
           messagesEndRef={messagesEndRef}
@@ -112,12 +113,12 @@ export default function BotChatContent() {
         )}
       </motion.div>
       <motion.div
-        initial={{ opacity: 0, height: 0 }} // Start with height 0 and opacity 0
+        initial={{ opacity: 0, height: 0 }}
         animate={{
-          opacity: isOpen ? 1 : 0, // Animate opacity based on isOpen
-          height: isOpen ? "auto" : 0, // Animate height based on isOpen
+          opacity: isOpen ? 1 : 0,
+          height: isOpen ? "auto" : 0,
         }}
-        transition={{ duration: 0.3 }} // Duration of the animation
+        transition={{ duration: 0.3 }}
       >
         <BotChatInput scrollToBottomRef={messagesEndRef} />
       </motion.div>
