@@ -13,7 +13,9 @@ router.post("/",upload.single("spaceImage"), multerErrorHandler, spacesControlle
 router.put("/:spaceId", upload.single("spaceImage"), multerErrorHandler, spacesController.updateSpace)
 router.post("/:spaceId/messages", upload.array("attachment", 5), multerErrorHandler, spacesController.sendMessageInSpace);
 router.get("/:spaceId/messages", spacesController.getMessagesInSpace);
+router.get("/:spaceId/botMessages", spacesController.getBotMessagesInSpace);
 router.delete("/:spaceId", spacesController.deleteSpace);
+router.delete("/:spaceId/clear", spacesController.clearBotSpace);
 router.post("/:spaceId/join", spacesController.generateMeetingToken)
 // router.delete("/messages/:Id");
 // // spaces/meassages/:Id

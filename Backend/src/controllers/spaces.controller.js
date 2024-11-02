@@ -2,6 +2,7 @@ import Space from "../models/space.model.js";
 import Message from "../models/message.model.js";
 import mongoose, { get } from "mongoose";
 import spacesService from "../services/spaces.service.js";
+import botService from "../services/bot.service.js";
 import spacesController from "./spaces.controller.js";
 import path from 'path';
 
@@ -216,11 +217,69 @@ const generateMeetingToken = async (req, res, next) => {
     next(error)
     
   }
-
-
 }
 
 
+const getBotMessagesInSpace = async (req, res) => {
+  const { spaceId } = req.params;
+  const type = req.query.type ?? "";
+  const page = req.query.page ?? "";
+  const limit = req.query.limit ?? 10;
+  const offset = page === "" ? req.query.offset ?? "" : (page - 1) * limit;
+
+  if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid space id",
+      },
+    });
+  }
+  try {
+    const resp = await botService.getAllBotMessageInSpace(
+      spaceId,
+      page,
+      limit,
+      offset
+    );
+    res.status(200).json({
+      data: resp.results,
+      page: resp.page,
+      offset: resp.offset,
+      limit: resp.limit,
+      totalItems: resp.totalItems,
+      totalPages: resp.totalPages,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: {
+        message: error.message,
+      },
+    });
+  }
+
+}
+
+const clearBotSpace = async (req, res, next) => {
+  const { spaceId } = req.params;
+  const userId = req.user.user._id;
+  console.log(userId)
+    
+  if (!mongoose.Types.ObjectId.isValid(spaceId)) {
+    return res.status(400).json({
+      error: {
+        message: "Invalid space id",
+      },
+    });
+  }
+  try {
+    const clearSpace = await botService.clearSpaceById(spaceId);
+    return res.status(200).json({
+      data: clearSpace
+    });
+  } catch (error) {
+    next(error)
+  }
+}
 
 
 export default {
@@ -230,5 +289,7 @@ export default {
   getMessagesInSpace,
   deleteSpace,
   generateMeetingToken,
+  getBotMessagesInSpace,
+  clearBotSpace
 };
  

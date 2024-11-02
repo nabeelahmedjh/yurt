@@ -1,6 +1,8 @@
 
 import Together from 'together-ai';
 import { Message, Server, User, Space } from "../models/index.js";
+import mongoose from "mongoose";
+import pagination from "../utils/pagination.js";
 
 const together = new Together({
   apiKey: process.env['TOGETHER_API_KEY'],
@@ -11,7 +13,7 @@ const chatHistory = {};
 const processBotMessage = async (eventPayload, userId) => {
     const userMessage = eventPayload.content;
     const spaceId = eventPayload.spaceId;
-    console.log(spaceId);
+    console.log("userID in botserverice:", userId);
     const maxRetries = 3;
     let retryCount = 0;
 
@@ -25,18 +27,18 @@ const processBotMessage = async (eventPayload, userId) => {
         const messagesForModel = chatHistory[userId].slice(-10);
         const systemMessage = {
             role: 'system',
-            content: 'You are a knowledgeable and friendly tutor, specialized in helping students with their academic questions. Your goal is to provide clear, helpful, and accurate answers in a way that is easy to understand. You should also be encouraging and supportive, helping students learn and gain confidence in their studies. Answer questions across subjects like math, science, history, literature, and more.',
+            content: 'give very short answer. You are a knowledgeable and friendly tutor, specialized in helping students with their academic questions. Your goal is to provide clear, helpful, and accurate answers in a way that is easy to understand. You should also be encouraging and supportive, helping students learn and gain confidence in their studies. Answer questions across subjects like math, science, history, literature, and more.',
         };
 
         messagesForModel.unshift(systemMessage);
 
         
-        // await Message.create({
-        //     spaceId: spaceId,
-        //     content: userMessage,
-        //     sentBy: userId,
-        //     role: 'user',
-        // });
+        await Message.create({
+            spaceId: spaceId,
+            content: userMessage,
+            sentBy: userId,
+            role: 'user',
+        });
 
         let buffer = '';
         let response;
@@ -70,12 +72,12 @@ const processBotMessage = async (eventPayload, userId) => {
 
      
         if (buffer) {
-            // await Message.create({
-            //     spaceId: spaceId,
-            //     content: buffer,
-            //     sentBy: null,
-            //     role: 'assistant',
-            // });
+            await Message.create({
+                spaceId: spaceId,
+                content: buffer,
+                sentBy: spaceId,
+                role: 'assistant',
+            });
 
             chatHistory[userId].push({ role: 'assistant', content: buffer });
             
@@ -90,6 +92,35 @@ const processBotMessage = async (eventPayload, userId) => {
     }
 };
 
+
+const getAllBotMessageInSpace = async (spaceId, page, limit, offset) => {
+
+    const messages = await Message.aggregate([
+        {
+          $match: {
+            spaceId: new mongoose.Types.ObjectId(spaceId),
+          },
+        },
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+      ]);
+    
+      return pagination.paginateArray(page, limit, offset, messages);
+
+    };
+
+const clearSpaceById = async (spaceId) => {
+
+    const clearMessages = await Message.deleteMany({spaceId: spaceId});
+    return clearMessages;
+
+}
+
 export default {
-    processBotMessage
+    processBotMessage,
+    getAllBotMessageInSpace,
+    clearSpaceById
 };
