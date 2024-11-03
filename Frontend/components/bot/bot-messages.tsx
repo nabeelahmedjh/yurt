@@ -1,10 +1,11 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import BotMessageItem from "@/components/bot/bot-message-item";
-import { format, isSameDay } from "date-fns";
 import { Loader } from "lucide-react";
 import { useEffect, useRef } from "react";
+
+// for testing only
+import { botMarkdown } from "./bot-makrdown";
 
 export default function BotChatMessages({
   messages,
@@ -17,10 +18,7 @@ export default function BotChatMessages({
   isLoadingMore?: boolean;
   messagesEndRef?: any;
 }) {
-  const params = useParams<{ serverID: string; spaceID: string }>();
   const previousHeightRef = useRef(0);
-
-  let previousDate: Date | null = null;
 
   useEffect(() => {
     const scrollArea = scrollAreaRef.current;
@@ -40,8 +38,6 @@ export default function BotChatMessages({
     }
   }, [messages, isLoadingMore, scrollAreaRef]);
 
-  if (!params?.serverID || !params?.spaceID) return "";
-
   return (
     <div ref={scrollAreaRef} className="p-4 h-full overflow-y-auto relative">
       {isLoadingMore && (
@@ -50,34 +46,9 @@ export default function BotChatMessages({
         </div>
       )}
       {messages?.map((message: any, index: number) => {
-        const currentDate = message.createdAt
-          ? new Date(message.createdAt)
-          : new Date();
-
-        const showDateStamp =
-          !previousDate || !isSameDay(currentDate, previousDate);
-        previousDate = currentDate;
-
         return (
           <li className="list-none" key={message._id}>
-            {showDateStamp && (
-              <div className="text-sm text-center text-gray-500 py-1 my-4 rounded-lg">
-                <span className="bg-slate-100 p-2 rounded-lg">
-                  {format(currentDate, "MMMM d, yyyy")}
-                </span>
-              </div>
-            )}
-            <BotMessageItem
-              sentBy={message?.sentBy}
-              currentDate={currentDate}
-              img={message?.sentBy?.avatar?.source}
-              content={message.content}
-              name={
-                message?.sentBy?.username
-                  ? message?.sentBy?.username
-                  : message?.sentBy?.email ?? "Bot"
-              }
-            />
+            <BotMessageItem content={message.content} role={message.role} />
           </li>
         );
       })}

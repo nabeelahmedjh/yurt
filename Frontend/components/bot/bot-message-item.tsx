@@ -1,50 +1,89 @@
-/* eslint-disable @next/next/no-img-element */
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { API_URL } from "@/constants";
-import { User } from "lucide-react";
-import { format } from "date-fns";
+import { BotMessageSquareIcon } from "lucide-react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import { ReactNode } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-export default function BotMessageItem({
-  img,
-  name,
-  content,
-  currentDate,
-  sentBy,
-}: {
-  img?: string;
-  name: string;
+interface BotMessageItemProps {
   content: string;
-  currentDate: Date;
-  sentBy: any;
-}) {
-  return (
-    <>
-      <div className="p-2 ml-4">
-        <div className="flex gap-4">
-          <div className="cursor-pointer">
-            <Avatar data-src={API_URL + "/" + img} className="size-10 -mb-6">
-              <AvatarImage src={API_URL + "/" + img} />
-              <AvatarFallback className="bg-white border">
-                <User className="size-8" />
-              </AvatarFallback>
-            </Avatar>
-          </div>
+  role: string;
+}
 
-          <div className="flex gap-4">
-            <p className="text-[1rem] self-center font-medium">{name}</p>
-            <p className="text-sm self-center text-gray-600">
-              {format(currentDate, "p")}
-            </p>
+interface CodeBlockProps {
+  inline?: boolean;
+  className?: string;
+  children?: ReactNode;
+}
+
+const CodeBlock: React.FC<CodeBlockProps> = ({
+  inline,
+  className = "",
+  children,
+}) => {
+  const match = /language-(\w+)/.exec(className || "");
+
+  // Properly handle React children conversion to string
+  const getCodeString = (children: ReactNode): string => {
+    if (typeof children === "string") return children;
+    if (Array.isArray(children)) {
+      return children.map((child) => getCodeString(child)).join("");
+    }
+    if (children && typeof children === "object" && "props" in children) {
+      return getCodeString(children.props.children);
+    }
+    return String(children || "");
+  };
+
+  const codeString = getCodeString(children).trim();
+
+  return !inline && match ? (
+    <div className="overflow-x-auto">
+      <SyntaxHighlighter style={materialDark} language={match[1]} PreTag="div">
+        {codeString}
+      </SyntaxHighlighter>
+    </div>
+  ) : (
+    <code className={`overflow-x-auto max-w-[70vw] block ${className}`}>
+      {codeString}
+    </code>
+  );
+};
+
+const BotMessageItem: React.FC<BotMessageItemProps> = ({ content, role }) => {
+  return (
+    <div className="p-2">
+      <div className="flex gap-4">
+        {role !== "user" && <BotMessageSquareIcon strokeWidth={1.5} />}
+      </div>
+      {role !== "user" ? (
+        <div className="flex items-center gap-2">
+          <div className="bg-zinc-200 min-w-16 max-w-max py-2 px-3 rounded-[1rem] rounded-tl-none">
+            <div className="whitespace-pre-wrap inline-block px-2 break-words max-w-full">
+              <Markdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                components={{
+                  code: ({ node, ...props }) => <CodeBlock {...props} />,
+                }}
+              >
+                {content}
+              </Markdown>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="ml-14 bg-[#B9FA77] min-w-16 max-w-max p-3 shadow-sm rounded-md rounded-tl-none">
-            <p className="text-lg whitespace-pre-wrap inline-block px-2 break-all max-w-[70vw] sm:max-w-[30vw]">
+      ) : (
+        <div className="flex flex-row-reverse items-center gap-2">
+          <div className="bg-lime-300 min-w-16 max-w-max py-2 px-3 rounded-[1rem] rounded-tr-none">
+            <p className="whitespace-pre-wrap inline-block px-2 break-all max-w-[70vw] sm:max-w-[30vw]">
               {content}
             </p>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
-}
+};
+
+export default BotMessageItem;

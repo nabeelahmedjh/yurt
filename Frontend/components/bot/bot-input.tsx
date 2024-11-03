@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/autosize-textarea";
 
 import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, SendHorizonalIcon } from "lucide-react";
 import SocketService from "@/services/SocketService";
 import { getProfile } from "@/ApiManager/apiMethods";
 
@@ -59,45 +59,47 @@ export default function BotInput({
   // }, [messageSent, scrollToBottomRef]);
 
   return (
-    params.serverID &&
-    params.spaceID && (
-      <>
-        <div className="bg-white px-1 border-2 m-4 mt-0 rounded-3xl">
-          <form
-            onSubmit={handleSubmit}
-            className="flex justify-between items-center"
+    <>
+      <div className="bg-white px-1 border-[1px] rounded-[4px] m-2 mt-0">
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-between items-center min-h-8 max-h-20"
+        >
+          <AutosizeTextarea
+            minHeight={24}
+            maxHeight={80}
+            ref={autosizeTextareaRef}
+            className="bg-transparent text-lg scrollbar-hidden"
+            placeholder="Type your message..."
+            name="chat-input"
+            value={text}
+            onKeyDown={(e) => {
+              if (
+                !loading &&
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                text.trim().length > 0
+              ) {
+                e.preventDefault();
+                handleSubmit(e);
+              } else if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+              }
+            }}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <Button
+            disabled={loading}
+            variant="ghost"
+            className=" h-auto rounded-none pl-[6px] pr-0 py-0 mr-[2px] hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
           >
-            <AutosizeTextarea
-              ref={autosizeTextareaRef}
-              className="bg-transparent text-lg scrollbar-hidden"
-              placeholder="Type your message..."
-              name="chat-input"
-              value={text}
-              onKeyDown={(e) => {
-                if (
-                  !loading &&
-                  e.key === "Enter" &&
-                  !e.shiftKey &&
-                  text.trim().length > 0
-                ) {
-                  e.preventDefault();
-                  handleSubmit(e);
-                } else if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                }
-              }}
-              onChange={(e) => setText(e.target.value)}
+            <SendHorizonalIcon
+              strokeWidth={1.5}
+              className="p-1 text-lime-500 size-8"
             />
-            <Button
-              disabled={loading}
-              variant="ghost"
-              className="rounded-none pl-[6px] pr-0 py-0 mr-[2px] hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-            >
-              <ArrowUp className="size-9 p-1 rounded-full bg-secondary border-2" />
-            </Button>
-          </form>
-        </div>
-      </>
-    )
+          </Button>
+        </form>
+      </div>
+    </>
   );
 }

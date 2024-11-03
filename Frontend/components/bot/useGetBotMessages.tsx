@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import useSWRInfinite from "swr/infinite";
-import { getMessages, getProfile } from "@/ApiManager/apiMethods";
+import { getBotMessages, getProfile } from "@/ApiManager/apiMethods";
 import SocketService from "@/services/SocketService";
 import { emitIdentity } from "@/lib/emit-identity";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 const fetcher = async (spaceId: string, pageIndex: number) => {
   if (isNaN(pageIndex)) pageIndex = 0;
@@ -13,7 +13,7 @@ const fetcher = async (spaceId: string, pageIndex: number) => {
     page: pageIndex + 1,
   };
 
-  const data: any = await getMessages(spaceId, searchParams);
+  const data: any = await getBotMessages(spaceId, searchParams);
   return data?.data || [];
 };
 
@@ -96,6 +96,7 @@ const useGetBotMessages = () => {
   const isReachingEnd = data && data[data.length - 1]?.length < PAGE_SIZE;
 
   return {
+    mutate,
     messages,
     isLoading: isLoadingInitialData || isValidating,
     isLoadingMore,

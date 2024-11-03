@@ -86,6 +86,16 @@ const getMessages = async (spaceId: string, params: {}) => {
   return APIManager.get(url, params, {}, true);
 };
 
+const getBotMessages = async (spaceId: string, params: {}) => {
+  const url = ENDPOINTS.BOT_MESSAGES(spaceId);
+  return APIManager.get(url, params, {}, true);
+};
+
+const deleteBotMessages = async (spaceId: string) => {
+  const url = ENDPOINTS.DELETE_BOT_MESSAGES(spaceId);
+  return APIManager.delete(url, {}, {}, true);
+};
+
 const getUsers = async (params: {}) => {
   const url = ENDPOINTS.USERS;
   return APIManager.get(url, params, {}, true);
@@ -129,6 +139,8 @@ export {
   getServers,
   getServerById,
   getMessages,
+  getBotMessages,
+  deleteBotMessages,
   getUsers,
   getProfile,
   getTags,

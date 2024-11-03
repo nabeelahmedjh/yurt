@@ -8,6 +8,8 @@ const ENDPOINTS = {
   SPACE: (spaceId: string) => `/spaces/${spaceId}`,
   JOIN_SPACE: (spaceId: string) => `/spaces/${spaceId}/join`,
   MESSAGES: (spaceId: string) => `/spaces/${spaceId}/messages`,
+  BOT_MESSAGES: (spaceId: string) => `/spaces/${spaceId}/botMessages`,
+  DELETE_BOT_MESSAGES: (spaceId: string) => `/spaces/${spaceId}/clear`,
   PROFILE: `/users/me/profile`,
   PROFILE_AVATAR: `/users/me/profile/avatar`,
   LOGIN: `/auth/login`,

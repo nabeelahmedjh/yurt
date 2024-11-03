@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BotMessageSquareIcon, BrushIcon } from "lucide-react";
+import { BrushIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import BotChatContent from "@/components/bot/bot-content";
@@ -21,14 +21,6 @@ export default function ChatRightbar() {
           >
             <p className="font-bold max-lg:text-xs">Let&apos;s collaborate</p>
             <BrushIcon className="ml-1 xl:ml-4" />
-          </Button>
-          <Button
-            variant="tool"
-            className="w-full"
-            onClick={() => alert("Feature in progress")}
-          >
-            <p className="font-bold">Ask questions</p>
-            <BotMessageSquareIcon className="ml-6" />
           </Button>
         </div>
       </div>

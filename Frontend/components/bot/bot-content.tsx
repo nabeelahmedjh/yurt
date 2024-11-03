@@ -17,7 +17,7 @@ export default function BotChatContent() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [debouncedSetSize] = useDebounce(setSize, 200);
   const isOnDesktop = useMediaQuery("(min-width: 1024px)");
@@ -69,7 +69,7 @@ export default function BotChatContent() {
       (scrollArea?.scrollTop + scrollArea?.clientHeight);
 
     // If the user is close to the bottom, scroll them to the bottom
-    const threshold = isOnDesktop ? 4500 : 1500;
+    const threshold = isOnDesktop ? 1500 : 1500;
     if (distanceFromBottom < threshold) {
       scrollArea?.scrollTo({
         top: scrollArea.scrollHeight,
@@ -79,16 +79,14 @@ export default function BotChatContent() {
   }, [isOnDesktop, messages]);
 
   return (
-    <div className="px-1 h-full flex flex-col relative bg-white">
-      <button className="w-full" onClick={() => setIsOpen((prev) => !prev)}>
-        <BotChatHeader />
-      </button>
+    <div className="mx-1 h-full flex flex-col relative bg-neutral-100 rounded-t-3xl">
+      <BotChatHeader setIsOpen={setIsOpen} isOpen={isOpen} />
       <motion.div
         className="overflow-hidden"
         initial={{ height: 0, minHeight: 0 }}
         animate={{
-          height: isOpen ? "calc(100dvh - 350px)" : 0,
-          minHeight: isOpen ? "calc(100dvh - 350px)" : 0,
+          height: isOpen ? "calc(100dvh - 250px)" : 0,
+          minHeight: isOpen ? "calc(100dvh - 250px)" : 0,
         }}
         transition={{ duration: 0.3 }}
       >
@@ -98,7 +96,7 @@ export default function BotChatContent() {
           scrollAreaRef={scrollAreaRef}
           messages={messages}
         />
-        {!isAtBottom && (
+        {!isAtBottom && isOpen && (
           <span
             onClick={() => {
               scrollAreaRef.current?.scrollTo({
