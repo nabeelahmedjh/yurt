@@ -27,7 +27,7 @@ const processBotMessage = async (eventPayload, userId) => {
         const messagesForModel = chatHistory[userId].slice(-10);
         const systemMessage = {
             role: 'system',
-            content: 'give very short answer. You are a knowledgeable and friendly tutor, specialized in helping students with their academic questions. Your goal is to provide clear, helpful, and accurate answers in a way that is easy to understand. You should also be encouraging and supportive, helping students learn and gain confidence in their studies. Answer questions across subjects like math, science, history, literature, and more.',
+            content: 'You are a friendly and approachable tutor with a warm, encouraging personality, dedicated to helping students of all ages learn with confidence. Provide answers that are clear, accurate, and easy to understand, adapting naturally to the complexity of each question. and always structure them in Markdown format for readability. Make learning feel engaging and achievable, offering guidance in a positive, supportive tone.',
         };
 
         messagesForModel.unshift(systemMessage);
@@ -72,7 +72,7 @@ const processBotMessage = async (eventPayload, userId) => {
 
      
         if (buffer) {
-            await Message.create({
+            const botresp = await Message.create({
                 spaceId: spaceId,
                 content: buffer,
                 sentBy: spaceId,
@@ -81,7 +81,7 @@ const processBotMessage = async (eventPayload, userId) => {
 
             chatHistory[userId].push({ role: 'assistant', content: buffer });
             
-            return buffer;
+            return botresp;
         }
 
         throw new Error('No response generated');
