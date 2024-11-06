@@ -110,6 +110,7 @@ class WebSockets {
       console.log(eventPayload.spaceId);
 
       try {
+        
         const resp = await botService.processBotMessage(eventPayload, socket.user.user._id);
         // console.log("Bot response:", resp);
         // console.log("Space ID:", eventPayload.spaceId);

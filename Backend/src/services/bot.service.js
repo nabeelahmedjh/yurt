@@ -33,13 +33,13 @@ const processBotMessage = async (eventPayload, userId) => {
         messagesForModel.unshift(systemMessage);
 
         
-        await Message.create({
+        const userMsg = await Message.create({
             spaceId: spaceId,
             content: userMessage,
             sentBy: userId,
             role: 'user',
         });
-
+        global.io.to(eventPayload.spaceId).emit("BOT_RESPONSE", userMsg);
         let buffer = '';
         let response;
 
