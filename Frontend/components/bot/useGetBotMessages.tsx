@@ -68,11 +68,11 @@ const useGetBotMessages = () => {
       console.log("Bot Reply: ", message);
 
       // temporary change later
-      const tempMessage = {
-        content: message,
-      };
+      // const tempMessage = {
+      //   content: message,
+      // };
 
-      setMessages((prevMessages) => [...prevMessages, tempMessage]);
+      setMessages((prevMessages) => [...prevMessages, message]);
     };
 
     const onConnect = () => {

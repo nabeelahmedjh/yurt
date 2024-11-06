@@ -95,7 +95,7 @@ export default function BotInput({
           >
             <SendHorizonalIcon
               strokeWidth={1.5}
-              className="p-1 text-lime-500 size-8"
+              className="p-1 text-lime-500 size-7 hover:bg-black/10 rounded-full"
             />
           </Button>
         </form>

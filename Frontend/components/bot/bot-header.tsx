@@ -36,18 +36,20 @@ export default function BotChatHeader({
     <div>
       <div className="bg-primary py-2 flex flex-col items-start justify-center gap-2 rounded-t-2xl">
         <div className="flex w-full justify-between gap-4 px-4">
-          <div className="flex gap-4">
+          <div className="flex self-center gap-4">
             <span className="self-center">
               <BotIcon strokeWidth={1.5} className="size-8" />
             </span>
             <p className="self-center font-medium text-sm">Ask Questions</p>
+          </div>
+          <div className="flex gap-1">
             <button
               disabled={!isOpen}
               onClick={() => setShowDropdown(true)}
               title={isOpen ? "Chat Settings" : ""}
               className={`${
                 isOpen ? "hover:bg-white/30" : ""
-              } transition px-2 rounded-sm h-8`}
+              } transition p-1 rounded-full h-8`}
             >
               {isOpen && <EllipsisVerticalIcon className="self-center" />}
             </button>
@@ -76,26 +78,25 @@ export default function BotChatHeader({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-
-          <ConfirmAlert
-            open={showDeleteDialog}
-            onOpenChange={setShowDeleteDialog}
-            title="Delete Conversation"
-            descripton="Are you sure you want to delete the conversation?"
-            action={handleDeleteMessage}
-            actionLabel="Delete"
-            actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
-          />
-          <button
-            title={`${isOpen ? "Close" : "Open"} chat`}
-            className="hover:bg-white/30 transition rounded-full p-1"
-            onClick={() => setIsOpen((prev) => !prev)}
-          >
-            <ChevronDownIcon
-              className={`transition ${isOpen ? "" : "rotate-180"}`}
+            <ConfirmAlert
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+              title="Delete Conversation"
+              descripton="Are you sure you want to delete the conversation?"
+              action={handleDeleteMessage}
+              actionLabel="Delete"
+              actionClassName="bg-red-500 hover:bg-red-500 hover:text-white border-0"
             />
-          </button>
+            <button
+              title={`${isOpen ? "Close" : "Open"} chat`}
+              className="hover:bg-white/30 transition rounded-full p-1"
+              onClick={() => setIsOpen((prev) => !prev)}
+            >
+              <ChevronDownIcon
+                className={`transition ${isOpen ? "" : "rotate-180"}`}
+              />
+            </button>
+          </div>
         </div>
       </div>
     </div>
