@@ -64,7 +64,7 @@ export default function BotChatHeader({
                 }
                 <span></span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="mr-4">
                 <DropdownMenuItem
                   onSelect={(e) => {
                     e.preventDefault();

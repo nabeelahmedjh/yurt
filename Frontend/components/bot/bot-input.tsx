@@ -51,16 +51,9 @@ export default function BotInput({
     setMessageSent(true);
   };
 
-  // useEffect(() => {
-  //   if (messageSent) {
-  //     scrollToBottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  //     setMessageSent(false);
-  //   }
-  // }, [messageSent, scrollToBottomRef]);
-
   return (
     <>
-      <div className="bg-white px-1 border-[1px] rounded-[4px] m-2 mt-0">
+      <div className="bg-white px-1 border-[1px] rounded-[4px] m-3 mt-0">
         <form
           onSubmit={handleSubmit}
           className="flex justify-between items-center min-h-8 max-h-20"

@@ -144,7 +144,7 @@ export default function ChatInput({
           attachedFiles={attachedFiles}
           onRemoveFile={handleRemoveFile}
         />
-        <div className="bg-white px-1 border-2 m-4 mt-0 rounded-3xl">
+        <div className="bg-white px-1 border-2 mx-4 my-3 mt-0 rounded-3xl">
           <form
             onSubmit={handleSubmit}
             className="flex justify-between items-center"

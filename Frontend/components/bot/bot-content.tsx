@@ -69,14 +69,15 @@ export default function BotChatContent() {
       (scrollArea?.scrollTop + scrollArea?.clientHeight);
 
     // If the user is close to the bottom, scroll them to the bottom
-    const threshold = isOnDesktop ? 1500 : 1500;
+    const threshold = isOnDesktop ? 3000 : 3000;
+
     if (distanceFromBottom < threshold) {
       scrollArea?.scrollTo({
         top: scrollArea.scrollHeight,
         behavior: "smooth",
       });
     }
-  }, [isOnDesktop, messages]);
+  }, [isOnDesktop]);
 
   return (
     <div className="mx-1 h-full flex flex-col relative bg-neutral-100 rounded-t-3xl">
@@ -104,13 +105,14 @@ export default function BotChatContent() {
                 behavior: "smooth",
               });
             }}
-            className="bg-primary rounded-full p-1 absolute right-8 bottom-24 cursor-pointer"
+            className="bg-primary rounded-full p-1 absolute right-4 bottom-16 cursor-pointer"
           >
             <ChevronDownCircleIcon />
           </span>
         )}
       </motion.div>
       <motion.div
+        className="overflow-hidden"
         initial={{ opacity: 0, height: 0 }}
         animate={{
           opacity: isOpen ? 1 : 0,

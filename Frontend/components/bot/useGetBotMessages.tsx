@@ -4,7 +4,7 @@ import { getBotMessages, getProfile } from "@/ApiManager/apiMethods";
 import SocketService from "@/services/SocketService";
 import { emitIdentity } from "@/lib/emit-identity";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 20;
 
 const fetcher = async (spaceId: string, pageIndex: number) => {
   if (isNaN(pageIndex)) pageIndex = 0;

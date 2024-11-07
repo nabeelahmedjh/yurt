@@ -4,9 +4,6 @@ import BotMessageItem from "@/components/bot/bot-message-item";
 import { Loader } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-// for testing only
-import { botMarkdown } from "./bot-makrdown";
-
 export default function BotChatMessages({
   messages,
   scrollAreaRef,
@@ -14,26 +11,27 @@ export default function BotChatMessages({
   messagesEndRef,
 }: {
   messages?: any;
-  scrollAreaRef?: any;
+  scrollAreaRef?: React.RefObject<HTMLDivElement>;
   isLoadingMore?: boolean;
-  messagesEndRef?: any;
+  messagesEndRef?: React.RefObject<HTMLDivElement>;
 }) {
   const previousHeightRef = useRef(0);
+  const latestMessageRef = useRef<HTMLLIElement | null>(null);
 
   useEffect(() => {
-    const scrollArea = scrollAreaRef.current;
+    const scrollArea = scrollAreaRef?.current;
     if (scrollArea && !isLoadingMore) {
       const currentScrollHeight = scrollArea.scrollHeight;
-      const scrollTop = scrollArea.scrollTop;
       const previousHeight = previousHeightRef.current;
 
-      if (scrollTop < 100) {
-        // console.log("scroll to bottom 2");
-
-        scrollArea.scrollTop += currentScrollHeight - previousHeight;
+      // Scroll to the latest bot message if available
+      if (latestMessageRef.current) {
+        latestMessageRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start", // Aligns to the beginning of the message item
+        });
       }
 
-      // console.log("scroll to bottom 2.1", currentScrollHeight, previousHeight);
       previousHeightRef.current = currentScrollHeight;
     }
   }, [messages, isLoadingMore, scrollAreaRef]);
@@ -46,8 +44,13 @@ export default function BotChatMessages({
         </div>
       )}
       {messages?.map((message: any, index: number) => {
+        const isLatestMessage = index === messages.length - 1;
         return (
-          <li className="list-none" key={message._id}>
+          <li
+            className="list-none"
+            key={message._id}
+            ref={isLatestMessage ? latestMessageRef : undefined}
+          >
             <BotMessageItem content={message.content} role={message.role} />
           </li>
         );
