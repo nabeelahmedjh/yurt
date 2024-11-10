@@ -20,6 +20,7 @@ import expressWs from 'express-ws';
 import { makeOrLoadRoom } from './whiteboard/rooms.js';
 import { routeErrorHandler } from "./utils/routeErrorHandler.js";
 import jwt from "jsonwebtoken";
+import helmet from "helmet";
 
 const CORS_ORIGINS = process.env.CORS_ORIGINS.split(",") || [];
 
@@ -27,6 +28,7 @@ const CORS_ORIGINS = process.env.CORS_ORIGINS.split(",") || [];
 
 dbConnection();
 const app = express();
+app.use(helmet());
 const expressServer = http.createServer(app);
 expressWs(app, expressServer); // Attach expressWs to both app and server
 

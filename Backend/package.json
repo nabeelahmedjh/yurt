@@ -19,6 +19,7 @@
     "express": "~4.16.1",
     "express-session": "^1.18.0",
     "express-ws": "^5.0.2",
+    "helmet": "^8.0.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
