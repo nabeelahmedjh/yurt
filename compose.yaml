@@ -1,0 +1,46 @@
+name: yurt
+
+services:
+  frontend:
+    image: frontend:latest
+    build: 
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+
+  backend:
+    image: backend:latest
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    env_file:
+      - ./Backend/.env.prod
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27027:27017"
+    volumes:
+      - mongodb-data:/data/db
+
+  filemanager:
+    image: filemanager:latest
+    build: 
+      context: ./Filemanager
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    volumes:
+      - filemanager-data:/app/directory/servers
+
+
+
+volumes:
+  filemanager-data:
+  mongodb-data:
