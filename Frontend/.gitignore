@@ -5,6 +5,7 @@
 .env
 .env.exposeddev
 .env.localdev
+.env.prod
 
 # dependencies
 /node_modules
