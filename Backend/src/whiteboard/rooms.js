@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 // For this example, we're just saving data to the local filesystem
-const DIR = './.rooms';
+const DIR = './uploads/.rooms';
 
 async function readSnapshotIfExists(roomId) {
   try {

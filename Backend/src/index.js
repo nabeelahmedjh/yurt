@@ -28,7 +28,10 @@ const CORS_ORIGINS = process.env.CORS_ORIGINS.split(",") || [];
 
 dbConnection();
 const app = express();
-app.use(helmet());
+
+// Disabling it for now, causing issues with some things.
+// app.use(helmet());
+
 const expressServer = http.createServer(app);
 expressWs(app, expressServer); // Attach expressWs to both app and server
 
@@ -73,6 +76,7 @@ app.ws('/whiteboard/:roomId', async (ws, req) => {
 app.use("/", routes);
 app.use(routeErrorHandler);
 app.use("/uploads", express.static("./uploads"));
+app.use("/public", express.static("./src/public"));
 
 
 

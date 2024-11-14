@@ -13,7 +13,7 @@ const seedDeleteUser = async () => {
       size: 3280,
       type: "image/svg+xml",
       source:
-        "uploads/dummyUserAvatar/deleteUserAvatar-351535690-1725027583680.svg",
+        "public/dummyUserAvatar/deleteUserAvatar.svg",
     },
     email: "noLongerExist@delete.com",
     password: passwordHash,

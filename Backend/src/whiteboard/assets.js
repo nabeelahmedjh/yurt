@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import { Readable } from 'stream';
 
 // We are just using the filesystem to store assets
-const DIR = resolve('./.assets');
+const DIR = resolve('./uploads/.assets');
 
 export async function storeAsset(id, stream) {
   await mkdir(DIR, { recursive: true });

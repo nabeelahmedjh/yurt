@@ -7,3 +7,4 @@ Dockerfile
 .env
 .env.prod
 .sample.env
+uploads/*
