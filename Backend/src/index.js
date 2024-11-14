@@ -55,6 +55,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors({
   origin: CORS_ORIGINS,
+  methods: '*',
+  allowedHeaders: '*',
+  credentials: true
 }));
 
 // WebSocket endpoint for whiteboard
@@ -95,6 +98,8 @@ const socketServer = http.createServer(); // New server for Socket.IO
 const socketio = new Server({
   cors: {
     origin: CORS_ORIGINS,
+    methods: '*',
+    allowedHeaders: '*',
     credentials: true,
   },
   // transports: ['websocket']
