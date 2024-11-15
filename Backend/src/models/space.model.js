@@ -18,7 +18,7 @@ const spaceSchema = new mongoose.Schema(
     type: {
       type: String,
       required: false,
-      default: "chat",
+      default: "CHAT",
     },
   },
   { timestamps: true }
