@@ -1,10 +1,9 @@
 FROM node:18
 
-WORKDIR /app
-
-COPY package*.json ./
-
 WORKDIR /app/node_modules/@syncfusion/ej2-filemanager-node-filesystem
+
+COPY ./node_modules/@syncfusion/ej2-filemanager-node-filesystem/package*.json ./
+
 
 RUN npm install
 
