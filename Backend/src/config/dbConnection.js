@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
-import {usersService} from '../services/index.js';
+import {usersService, tagsService} from '../services/index.js';
 
 const dbConnection = async () => {
   try {
@@ -14,6 +14,13 @@ const dbConnection = async () => {
       console.log("Seed deleteUser object operation completed successfully");
     } catch (seedError) {
       console.error("Error in seedDeleteUser operation:", seedError);
+    }
+    try {
+      await tagsService.addTagsInDb();
+      console.log("Tags added in database successfullly");
+    } catch (error) {
+      console.error("Error in tags operation:", error);
+      
     }
     console.log("MongoDB connected");
     

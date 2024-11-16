@@ -1,5 +1,5 @@
 import { Tag } from "../models/index.js"
-
+import fs from "fs";
 
 
 const createTag = async (name, description) => {
@@ -42,11 +42,22 @@ const bulkDeleteTags = async () => {
 }
 
 
+const addTagsInDb = async () => {
+    const count = await Tag.countDocuments()
+        if(count === 0){
+            const tagsJson = JSON.parse(fs.readFileSync("./tags.json", "utf-8"));
+            const tags = await Tag.insertMany(tagsJson);
+        }
+};
+
+
+
 export default {
     createTag,
     getTags,
     bulkUploadTags,
     deleteTag,
     updateTag,
-    bulkDeleteTags
+    bulkDeleteTags,
+    addTagsInDb
 };
