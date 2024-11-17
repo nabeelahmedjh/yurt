@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
+    restart: unless-stopped
 
   backend:
     image: backend:latest
@@ -23,6 +24,7 @@ services:
       - ./Backend/.env.prod
     depends_on:
       - mongodb
+    restart: unless-stopped
 
   mongodb:
     image: mongo:latest
@@ -30,6 +32,7 @@ services:
       - "27027:27017"
     volumes:
       - mongodb-data:/data/db
+    restart: unless-stopped
 
   filemanager:
     image: filemanager:latest
@@ -40,6 +43,7 @@ services:
       - "8090:8090"
     volumes:
       - filemanager-data:/app/directory/servers
+    restart: unless-stopped
 
 volumes:
   filemanager-data:
