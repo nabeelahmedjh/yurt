@@ -2,6 +2,7 @@ import { Server, User } from "../models/index.js";
 import { serversService } from "../services/index.js";
 import mongoose from "mongoose";
 import path from 'path';
+import WebSockets from "../sockets/sockets.js";
 
 
 const createServer = async (req, res, next) => {
@@ -244,6 +245,10 @@ const createSpace = async (req, res) => {
   }
 
   try {
+
+    const server = await Server.findById({_id: serverId});
+    const members = server.members;
+
     const newSpace = await serversService.createSpace(
       serverId,
       name,
@@ -251,6 +256,8 @@ const createSpace = async (req, res) => {
       spaceImage,
       type
     );
+   
+    await WebSockets.allMembersSubscribeToServer(newSpace._id, members);
     return res.status(201).json({
       data: newSpace,
     });

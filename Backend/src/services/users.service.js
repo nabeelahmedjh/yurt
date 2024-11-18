@@ -57,7 +57,7 @@ const updateUser = async (userId, userData) => {
     throw new ForbiddenError("You can not change email.")
   }
 
-  if(userData.username.toLowerCase() === "deleted" || userData.username.toLowerCase() === "delete"){
+  if(userData.username && (userData.username.toLowerCase() === "deleted" || userData.username.toLowerCase() === "delete")){
     throw new ConflictError("User with this name already exists.")
   }
 

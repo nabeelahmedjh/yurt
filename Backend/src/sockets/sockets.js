@@ -15,7 +15,7 @@ class WebSockets {
     //   this.users = this.users.filter((user) => user.socketId !== socket.id);
     // });
     // add identity of user mapped to the socket id
-    console.log("hello");
+ 
 
 
    const subscribeToUsersSpacesOnSocketConnection = async  (userId) => {
@@ -47,7 +47,7 @@ class WebSockets {
 
     socket.on("subscribeToSpacesOfJoinedServers", (userId) => {
 
-      console.log("herhehrhere")
+
 
       const spaces = spacesService.getJoinedSpacesIds(userId);
       const userSockets = this.users.filter(
@@ -142,7 +142,31 @@ class WebSockets {
     })
   }
 
-
+  allMembersSubscribeToServer = async (spaceId, members) => {
+    try {
+      console.log("Subscribing members to space:", spaceId, members);
+      members.forEach((memberId) => {
+        const userSockets = this.users.filter(
+          (user) => user.userId.toString() === memberId.toString()
+        );
+        console.log("userSockets ", userSockets);
+    
+        userSockets.forEach((userInfo) => {
+          const socketConn = global.io.sockets.sockets.get(userInfo.socketId);
+          if (socketConn) {
+            socketConn.join(spaceId.toString());
+            console.log("Member joined space:", {
+              spaceId,
+              socketId: socketConn.id,
+              userId: memberId
+            });
+          }
+        });
+      });
+    } catch (error) {
+      console.log("Error subscribing members to space:", error);
+    }
+  }
 
   subscribeToSpacesOfJoinedServers = async (userId) => {
 
@@ -178,12 +202,10 @@ class WebSockets {
   
       const user = await User.findById({_id: userId});
       
-      // Check if user exists
       if (!user) {
         throw new Error(`User with ID ${userId} not found`);
       }
-  
-      // Check if botSpace exists
+
       if (!user.botSpace) {
         throw new Error(`No botSpace found for user ${userId}`);
       }
@@ -194,7 +216,6 @@ class WebSockets {
         (user) => user.userId === userId
       );
   
-      // Check if there are any sockets for this user
       if (!userSockets || userSockets.length === 0) {
         throw new Error(`No active sockets found for user ${userId}`);
       }
@@ -214,8 +235,7 @@ class WebSockets {
           console.log(`Socket connection not found for socket ID: ${userInfo.socketId}`);
         }
       });
-  
-      // Check if any sockets were successfully connected
+
       if (connectedSockets.length === 0) {
         throw new Error("Failed to connect any sockets to bot space");
       }
@@ -230,7 +250,7 @@ class WebSockets {
   
     } catch (error) {
       console.error("Error in subscribeToBotSpace:", error.message);
-      throw error; // Re-throw the error to be handled by the caller
+      throw error; 
     }
   }
 
