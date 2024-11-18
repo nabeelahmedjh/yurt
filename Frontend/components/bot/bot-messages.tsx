@@ -38,9 +38,9 @@ export default function BotChatMessages({
   }, [messages, isLoadingMore, scrollAreaRef]);
 
   return (
-    <ScrollArea
-      viewportRef={scrollAreaRef}
-      className="p-4 h-full overflow-hidden relative"
+    <div
+      ref={scrollAreaRef}
+      className="p-4 h-full overflow-y-auto relative custom-scrollbar"
     >
       {isLoadingMore && (
         <div className="w-full flex justify-center font-medium p-6">
@@ -61,6 +61,6 @@ export default function BotChatMessages({
       })}
 
       <div className="h-px" ref={messagesEndRef}></div>
-    </ScrollArea>
+    </div>
   );
 }

@@ -34,7 +34,8 @@ import UploadAvatar from "@/components/image-uploader/upload-avatar";
 import useUpdateAvatar from "@/hooks/user/useUpdateAvatar";
 import useGetProfile from "@/hooks/user/useGetProfile";
 import ProfileFormModal from "@/components/modals/profile/profile-form-modal";
-import { Trash2Icon } from "lucide-react";
+import EducationVerifyModal from "@/components/modals/education-verify-modal";
+import { MailIcon, Trash2Icon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import ConfirmAlert from "@/components/confirm-alert";
@@ -53,7 +54,8 @@ export default function ProfileSettingModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { handleUpdateAvatar, loading } = useUpdateAvatar();
-  const { data: profileData } = useGetProfile();
+  const { data: profileData, isEduVerified } = useGetProfile();
+  const isEducationVerified = isEduVerified;
   const { handleDeleteProfile, loading: loadingDeleteProfile } =
     useDeleteProfile();
 
@@ -153,7 +155,23 @@ export default function ProfileSettingModal({
             </Form>
           </div>
           <div className="flex flex-col justify-center items-center">
-            <p className="font-semibold text-lg"> {profileData?.username} </p>
+            <div className="flex mt-4 mb-2">
+              <p className="font-semibold text-lg"> {profileData?.username} </p>
+              <EducationVerifyModal isEducationVerified={isEducationVerified}>
+                <button
+                  className={`flex items-center gap-1 rounded-3xl p-1 ml-2 ${
+                    isEducationVerified ? "bg-lime-300" : "bg-red-300"
+                  }`}
+                >
+                  <span className="bg-white p-1 rounded-full">
+                    <MailIcon className="size-4" />
+                  </span>
+                  <p className="px-1 text-sm">
+                    {isEducationVerified ? "Verified" : "Unverified"}
+                  </p>
+                </button>
+              </EducationVerifyModal>
+            </div>
             <p className="text-gray-500"> {profileData?.email} </p>
           </div>
           <div className="mt-8">

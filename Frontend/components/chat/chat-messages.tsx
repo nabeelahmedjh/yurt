@@ -47,9 +47,9 @@ export default function ChatMessages({
 
   return (
     <PhotoProvider className="h-full" maskOpacity={0.9}>
-      <ScrollArea
-        viewportRef={scrollAreaRef}
-        className="p-4 h-full overflow-y-auto relative"
+      <div
+        ref={scrollAreaRef}
+        className="p-4 h-full overflow-y-auto relative custom-scrollbar"
       >
         {isLoadingMore && (
           <div className="w-full flex justify-center font-medium p-6">
@@ -90,7 +90,7 @@ export default function ChatMessages({
           })}
 
         <div className="h-px" ref={messagesEndRef}></div>
-      </ScrollArea>
+      </div>
     </PhotoProvider>
   );
 }
