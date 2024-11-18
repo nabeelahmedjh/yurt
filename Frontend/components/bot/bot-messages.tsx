@@ -3,6 +3,7 @@
 import BotMessageItem from "@/components/bot/bot-message-item";
 import { Loader } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function BotChatMessages({
   messages,
@@ -37,7 +38,10 @@ export default function BotChatMessages({
   }, [messages, isLoadingMore, scrollAreaRef]);
 
   return (
-    <div ref={scrollAreaRef} className="p-4 h-full overflow-y-auto relative">
+    <ScrollArea
+      viewportRef={scrollAreaRef}
+      className="p-4 h-full overflow-hidden relative"
+    >
       {isLoadingMore && (
         <div className="w-full flex justify-center font-medium p-6">
           <Loader className="animate-spin animate" />
@@ -57,6 +61,6 @@ export default function BotChatMessages({
       })}
 
       <div className="h-px" ref={messagesEndRef}></div>
-    </div>
+    </ScrollArea>
   );
 }

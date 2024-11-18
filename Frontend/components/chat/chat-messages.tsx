@@ -7,6 +7,7 @@ import "@/app/react-photo-view.css";
 import { format, isSameDay } from "date-fns";
 import { Loader } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function ChatMessages({
   messages,
@@ -46,7 +47,10 @@ export default function ChatMessages({
 
   return (
     <PhotoProvider className="h-full" maskOpacity={0.9}>
-      <div ref={scrollAreaRef} className="p-4 h-full overflow-y-auto relative">
+      <ScrollArea
+        viewportRef={scrollAreaRef}
+        className="p-4 h-full overflow-y-auto relative"
+      >
         {isLoadingMore && (
           <div className="w-full flex justify-center font-medium p-6">
             <Loader className="animate-spin animate" />
@@ -86,7 +90,7 @@ export default function ChatMessages({
           })}
 
         <div className="h-px" ref={messagesEndRef}></div>
-      </div>
+      </ScrollArea>
     </PhotoProvider>
   );
 }
