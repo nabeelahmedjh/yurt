@@ -6,8 +6,11 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
 import BotChatContent from "@/components/bot/bot-content";
+import { useSwiper } from "swiper/react";
 
 export default function ChatRightbar() {
+  const swiper = useSwiper();
+
   const router = useRouter();
   const pathname = usePathname();
   const isWhiteboardOpen = pathname === "/whiteboard";
@@ -20,9 +23,10 @@ export default function ChatRightbar() {
           <Button
             variant="tool"
             className="w-full"
-            onClick={() =>
-              isWhiteboardOpen ? router.back() : router.push("/whiteboard")
-            }
+            onClick={() => {
+              isWhiteboardOpen ? router.back() : router.push("/whiteboard");
+              swiper && swiper.slidePrev();
+            }}
           >
             <p className="font-bold max-lg:text-xs">Let&apos;s collaborate</p>
             <BrushIcon className="ml-1 xl:ml-4" />

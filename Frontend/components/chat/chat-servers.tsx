@@ -17,8 +17,10 @@ import yurt_logo from "@/public/yurt_logo.svg";
 import Image from "next/image";
 import { PROXY_API_URL } from "@/constants";
 import ProfileSettingModal from "@/components/modals/profile/profile-setting-modal";
+import { useSwiper } from "swiper/react";
 
 export default function ChatServers() {
+  const swiper = useSwiper();
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
 
@@ -123,7 +125,12 @@ export default function ChatServers() {
             <div className="flex justify-center mt-1">
               <TooltipProvider delayDuration={150}>
                 <Tooltip>
-                  <TooltipTrigger onClick={() => router.push("/explore")}>
+                  <TooltipTrigger
+                    onClick={() => {
+                      router.push("/explore");
+                      swiper && swiper.slideNext();
+                    }}
+                  >
                     <div className="hover:bg-neutral-200 p-2 rounded-[8px]">
                       <CompassIcon
                         fill="white"

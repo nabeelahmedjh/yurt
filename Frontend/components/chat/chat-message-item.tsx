@@ -80,7 +80,9 @@ export default function MessageItem({
           </ProfileModal>
 
           <div className="flex gap-4">
-            <p className="text-[1rem] self-center font-medium">{name}</p>
+            <p className="text-[1rem] self-center font-medium max-sm:max-w-[150px] max-sm:truncate">
+              {name}
+            </p>
             <p className="text-sm self-center text-gray-600">
               {format(currentDate, "p")}
             </p>

@@ -24,8 +24,10 @@ import useGetServerById from "@/hooks/server/useGetServerById";
 
 import { getCookie } from "cookies-next";
 import { useState } from "react";
+import { useSwiper } from "swiper/react";
 
 export default function ChatSpaces() {
+  const swiper = useSwiper();
   const [isServerSettingModalOpen, setIsServerSettingModalOpen] =
     useState(false);
 
@@ -137,11 +139,12 @@ export default function ChatSpaces() {
                       .sort((a: any, b: any) => a.name.localeCompare(b.name))
                       .map((space: any) => (
                         <div
-                          onClick={() =>
+                          onClick={() => {
                             router.replace(
                               `/servers/${params.serverID}/${space._id}`
-                            )
-                          }
+                            );
+                            swiper && swiper.slideNext();
+                          }}
                           key={space._id}
                           className={`${
                             params.spaceID === space._id
@@ -181,11 +184,12 @@ export default function ChatSpaces() {
           <div>
             <div
               className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors cursor-pointer"
-              onClick={() =>
+              onClick={() => {
                 isFileManagerOpen
                   ? router.back()
-                  : router.push(`/servers/${params.serverID}/filemanager`)
-              }
+                  : router.push(`/servers/${params.serverID}/filemanager`);
+                swiper && swiper.slideNext();
+              }}
             >
               <div className="text-black font-medium flex gap-4 justify-center">
                 <span>Server Directory</span>
