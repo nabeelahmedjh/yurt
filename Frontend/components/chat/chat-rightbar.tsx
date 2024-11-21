@@ -3,11 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { BrushIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import BotChatContent from "@/components/bot/bot-content";
 
 export default function ChatRightbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  const isWhiteboardOpen = pathname === "/whiteboard";
 
   return (
     <div className="h-dvh bg-white pt-1 flex flex-col justify-between">
@@ -17,7 +20,9 @@ export default function ChatRightbar() {
           <Button
             variant="tool"
             className="w-full"
-            onClick={() => router.push("/whiteboard")}
+            onClick={() =>
+              isWhiteboardOpen ? router.back() : router.push("/whiteboard")
+            }
           >
             <p className="font-bold max-lg:text-xs">Let&apos;s collaborate</p>
             <BrushIcon className="ml-1 xl:ml-4" />

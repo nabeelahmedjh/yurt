@@ -156,7 +156,12 @@ export default function ProfileSettingModal({
           </div>
           <div className="flex flex-col justify-center items-center">
             <div className="flex mt-4 mb-2">
-              <p className="font-semibold text-lg"> {profileData?.username} </p>
+              <p
+                className="font-semibold text-lg max-w-20 truncate"
+                title={profileData?.username}
+              >
+                {profileData?.username}
+              </p>
               <EducationVerifyModal isEducationVerified={isEducationVerified}>
                 <button
                   className={`flex items-center gap-1 rounded-3xl p-1 ml-2 ${

@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { FolderTreeIcon, PencilLineIcon, Plus } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useParams, useRouter } from "next/navigation";
 import CreateSpaceModal from "@/components/modals/space/create-space-modal";
 import useGetServers from "@/hooks/server/useGetServers";
-import FileManagerModal from "../filemanager/file-manager-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -33,6 +33,8 @@ export default function ChatSpaces() {
 
   const params = useParams<{ serverID: string; spaceID: string }>();
   const router = useRouter();
+  const pathname = usePathname();
+  const isFileManagerOpen = pathname.endsWith("/filemanager");
 
   const searchParam = {
     type: "joined",
@@ -180,7 +182,9 @@ export default function ChatSpaces() {
             <div
               className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors cursor-pointer"
               onClick={() =>
-                router.push(`/servers/${params.serverID}/filemanager`)
+                isFileManagerOpen
+                  ? router.back()
+                  : router.push(`/servers/${params.serverID}/filemanager`)
               }
             >
               <div className="text-black font-medium flex gap-4 justify-center">

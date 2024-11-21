@@ -23,11 +23,19 @@ export default function EducationVerifyModal({
 }) {
   const [educationEmail, setEducationEmail] = useState("");
   const [isVerifyEmailSent, setIsVerifyEmailSent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { handleUpdateProfile, loading } = useUpdateProfile();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const error: any = handleUpdateProfile({
+    setErrorMessage("");
+
+    if (!educationEmail.includes(".edu")) {
+      setErrorMessage("Please enter a valid educational email address.");
+      return;
+    }
+
+    const error: any = await handleUpdateProfile({
       educationalEmail: educationEmail,
     });
 
@@ -60,7 +68,10 @@ export default function EducationVerifyModal({
               <p className="text-xl bg-secondary p-1 rounded-sm font-medium">
                 Verify Education
               </p>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-8 md:w-96"
+              >
                 <Input
                   required
                   value={educationEmail}
@@ -70,16 +81,18 @@ export default function EducationVerifyModal({
                   placeholder="Enter your educational email"
                   className="w-full"
                 />
-
-                <Button disabled={loading} type="submit" className="w-full">
-                  Send Verification Link
-                </Button>
+                {errorMessage && (
+                  <p className="text-red-500 text-sm">{errorMessage}</p>
+                )}
                 {isVerifyEmailSent && (
                   <p className="bg-secondary text-sm">
                     Verify Link has been sent to your email. Please check your
                     inbox or spam folder.
                   </p>
                 )}
+                <Button disabled={loading} type="submit" className="w-full">
+                  Send Verification Link
+                </Button>
               </form>
             </>
           )}
