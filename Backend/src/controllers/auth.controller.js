@@ -7,6 +7,8 @@ import "dotenv/config";
 import { generatePassword } from "../utils/generate-pass.utils.js";
 import { sendMail } from "../utils/email-verification.js";
 import path from "path";
+import { ValidationError, ConflictError, NotFoundError, ForbiddenError, InternalServerError } from "../utils/customErrors.js";
+
 
 const login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
@@ -164,6 +166,17 @@ const verifyEmail = async (req, res) => {
 			},
 		});
 	}
+  if(type.toLowerCase() === "resetpassword"){
+
+    const existingUser = await User.findOne({email: email});
+
+    const token = jwt.sign({ user: existingUser }, process.env.JWT_SECRET);
+
+			// redirect to some frontend page
+			return res.redirect(
+				`${process.env.FRONTEND_URL}/reset-Password?token=${token}&userId=${existingUser._id}`
+      )
+  }
 
 	if (type.toLowerCase() === "general") {
 		try {
@@ -307,6 +320,50 @@ const getProfile = async (req, res) => {
   });
 };
 
+const sendPasswordResetLink = async (req, res) => {
+  const { email } = req.body;
+
+
+  try {
+    const userExist = await User.findOne({email: email});
+  console.log("user ", userExist)
+  if (!userExist){
+    return res.status(500).json({
+      error: {
+        message: "User with this email not found",
+      },
+    });
+  } 
+
+  const token = jwt.sign(
+    { email: email, password: userExist.password},
+    process.env.JWT_SECRET
+  );
+
+  try {
+    sendMail(email, token, "RESETPASSWORD");
+  } catch(error) {
+    return res.status(500).json({
+      error: { message: error.message },
+    });
+  }
+
+
+  return res.status(200).json({
+    message: "Reset Password email sent successfully",
+  });
+
+  } catch (error) {
+    
+  }
+
+}
+
+
+
+
+
+
 export default {
   login,
   signUp,
@@ -314,4 +371,5 @@ export default {
   updateUser,
   verifyEmail,
   preSignUp,
+  sendPasswordResetLink,
 };

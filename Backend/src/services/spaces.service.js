@@ -155,6 +155,7 @@ const getAllMessageInSpace = async (spaceId, page, limit, offset) => {
               avatar: 1,
               verified: 1,
               interests: 1,
+              educationalDetails: 1
             },
           },
         ],

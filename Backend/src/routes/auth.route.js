@@ -10,11 +10,13 @@ import upload from "../config/multerConfig.js";
 
 const router = express.Router();
 
+
+router.post("/forgot-password", authController.sendPasswordResetLink)
 router.get("/verify/:token", authController.verifyEmail);
 router.post("/signup", authController.preSignUp);
 router.put("/users/:id", passport.authenticate("jwt", { session: false }), upload.single('avatar'), authController.updateUser);
 router.post("/login", authController.login);
-router.get(
+router.get( 
   "/profile",
   passport.authenticate("jwt", { session: false }),
   authController.getProfile

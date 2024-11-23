@@ -1,7 +1,7 @@
 import nodeMailer from "nodemailer";
 import "dotenv/config";
 
-import { YurtVerifyEdu, YurtVerifyNormal } from "../email/index.js";
+import { YurtVerifyEdu, YurtVerifyNormal, YurtResetPassword } from "../email/index.js";
 
 const transporter = nodeMailer.createTransport({
 	host: process.env.SMTP_HOST,
@@ -25,7 +25,11 @@ export const sendMail = (sendTo, token, type) => {
     } else if (type === "GENERAL") {
         subject = "Yurt Email Verification"
 		emailTemplate = YurtVerifyNormal(verifyLink);
-    } else {
+	
+    } else if(type === "RESETPASSWORD") {
+		subject = "Yurt Reset Password"
+		emailTemplate = YurtResetPassword(verifyLink);
+	}else {
         // throw an exception
         throw new Error("Invalid Email Type");
     }

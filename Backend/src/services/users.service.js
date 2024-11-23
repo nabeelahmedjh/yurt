@@ -73,6 +73,10 @@ const updateUser = async (userId, userData) => {
     }
   }
   
+  if(userData.password){
+    const passwordHash = await generatePassword(userData.password);
+    userData.password = passwordHash;
+  }
     const updatedUser = await User.findByIdAndUpdate(userId, userData, {
       new: true,
       runValidators: true,
@@ -134,7 +138,8 @@ const getAllUsers = async (username, searchType) => {
         email: 1,
         interest: 1,
         _id: 1,
-        botSpace: 1
+        botSpace: 1,
+        educationalDetails: 1,
       },
     },
   ]);
