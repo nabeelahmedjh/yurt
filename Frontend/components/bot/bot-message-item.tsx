@@ -111,7 +111,7 @@ const BotMessageItem: React.FC<BotMessageItemProps> = ({ content, role }) => {
                 {content}
               </Markdown>
             </div>
-            <div className="mt-8">
+            <div className="">
               <button
                 title="Copy"
                 onClick={() => {

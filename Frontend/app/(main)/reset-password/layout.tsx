@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import RedirectContainer from "@/components/redirect-container";
 
-export default function OnboardingLayout({
+export default function ResetPasswordLayout({
   children,
 }: {
   children: React.ReactNode;

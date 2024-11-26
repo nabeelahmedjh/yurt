@@ -32,12 +32,14 @@ import {
 import { loginSchema } from "./schema";
 import useGoogleOAuth from "@/hooks/auth/useGoogleOAuth";
 import useLogin from "@/hooks/auth/useLogin";
+import ForgotPasswordModal from "@/components/modals/forgot-password-modal";
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 export default function Login() {
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { isLoading, handleLogin } = useLogin();
   const handleGoogleOAuth = useGoogleOAuth();
@@ -116,12 +118,14 @@ export default function Login() {
                         />
                       </FormControl>
                       <FormMessage />
-                      <Link
+
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPasswordModal(true)}
                         className="text-sm block py-1 hover:underline text-gray-600 w-fit"
-                        href="/forgot-password"
                       >
                         Forgot Password?
-                      </Link>
+                      </button>
                     </FormItem>
                   )}
                 />
@@ -135,6 +139,10 @@ export default function Login() {
               </Button>
             </form>
           </Form>
+          <ForgotPasswordModal
+            open={showForgotPasswordModal}
+            onOpenChange={setShowForgotPasswordModal}
+          />
         </div>
         <div className="flex flex-col items-center space-y-2 mt-4">
           <p>or</p>

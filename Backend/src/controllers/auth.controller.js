@@ -174,7 +174,7 @@ const verifyEmail = async (req, res) => {
 
 			// redirect to some frontend page
 			return res.redirect(
-				`${process.env.FRONTEND_URL}/reset-Password?token=${token}&userId=${existingUser._id}`
+				`${process.env.FRONTEND_URL}/reset-password?token=${token}&userId=${existingUser._id}`
       )
   }
 
@@ -328,7 +328,7 @@ const sendPasswordResetLink = async (req, res) => {
     const userExist = await User.findOne({email: email});
   console.log("user ", userExist)
   if (!userExist){
-    return res.status(500).json({
+    return res.status(404).json({
       error: {
         message: "User with this email not found",
       },

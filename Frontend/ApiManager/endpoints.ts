@@ -14,6 +14,7 @@ const ENDPOINTS = {
   PROFILE_AVATAR: `/users/me/profile/avatar`,
   LOGIN: `/auth/login`,
   SIGNUP: `/auth/signup`,
+  FORGOT_PASSWORD: `/auth/forgot-password`,
   TAGS: `/tags`,
   USERS: `/users`,
 };

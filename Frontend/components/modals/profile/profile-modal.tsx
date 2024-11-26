@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Separator } from "@/components/ui/separator";
 import { API_URL } from "@/constants";
-import { User } from "lucide-react";
+import { MailIcon, User } from "lucide-react";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@ export default function ProfileModal({
   profileData: any;
   children: React.ReactNode;
 }) {
+  const isEducationVerified = profileData?.educationalDetails?.verified;
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -53,14 +55,33 @@ export default function ProfileModal({
               </AvatarFallback>
             </Avatar>
           </div>
-          <p className="font-semibold text-lg"> {profileData?.username} </p>
+          <div className="flex mt-4 mb-2">
+            <p
+              className="font-semibold text-lg max-w-20 truncate"
+              title={profileData?.username}
+            >
+              {profileData?.username}
+            </p>
+            <div
+              className={`flex items-center gap-1 rounded-3xl p-1 ml-2 ${
+                isEducationVerified ? "bg-lime-300" : "bg-red-300"
+              }`}
+            >
+              <span className="bg-white p-1 rounded-full">
+                <MailIcon className="size-4" />
+              </span>
+              <p className="px-1 text-sm">
+                {isEducationVerified ? "Verified" : "Unverified"}
+              </p>
+            </div>
+          </div>
           <p className="text-gray-500"> {profileData?.email} </p>
         </div>
         <div className="mt-8">
           <div className="min-h-44 mb-8 w-full">
             <div className="w-full py-3 flex">
               <h3 className="font-medium bg-lime-200 rounded-[4px] w-fit px-1 underline text-nowrap">
-                About Me
+                About
               </h3>
               <div className="w-full mt-[1.2rem]">
                 <Separator className="bg-gray-300" />

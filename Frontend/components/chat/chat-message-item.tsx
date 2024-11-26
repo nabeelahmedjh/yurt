@@ -1,7 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { API_URL, PROXY_API_URL } from "@/constants";
-import { EllipsisVerticalIcon, FileDownIcon, User } from "lucide-react";
+import {
+  BadgeCheckIcon,
+  EllipsisVerticalIcon,
+  FileDownIcon,
+  User,
+} from "lucide-react";
 import { PhotoView } from "react-photo-view";
 import { format } from "date-fns";
 import { formatFileSize } from "@/lib/utils";
@@ -21,6 +26,12 @@ import SocketService from "@/services/SocketService";
 import { USER_ID } from "@/constants";
 import { getCookie } from "cookies-next";
 import useGetServerById from "@/hooks/server/useGetServerById";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const userId = getCookie(USER_ID);
 
@@ -64,6 +75,8 @@ export default function MessageItem({
     return false;
   };
 
+  const isEducationVerified = sentBy?.educationalDetails?.verified;
+
   return (
     <>
       <div className="p-2 ml-4">
@@ -79,22 +92,39 @@ export default function MessageItem({
             </div>
           </ProfileModal>
 
-          <div className="flex gap-4">
+          <div className="flex gap-1 mb-1">
             <p className="text-[1rem] self-center font-medium max-sm:max-w-[150px] max-sm:truncate">
               {name}
             </p>
-            <p className="text-sm self-center text-gray-600">
+
+            {isEducationVerified && (
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <BadgeCheckIcon fill="#B9FA77" className="size-[16px]" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-[#B9FA77]"
+                    side="right"
+                    sideOffset={10}
+                  >
+                    <p>Academic Verified</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            <p className="text-sm self-center text-gray-600 ml-4">
               {format(currentDate, "p")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="ml-14 bg-[#B9FA77] min-w-16 max-w-max p-3 shadow-sm rounded-md rounded-tl-none">
-            <p className="text-lg whitespace-pre-wrap inline-block px-2 break-all max-w-[70vw] sm:max-w-[30vw]">
+          <div className="ml-14 bg-[#B9FA77] min-w-8 max-w-max px-3 py-2 shadow-[0px_0px_2px_0px_#00000024] rounded-md rounded-tl-none">
+            <p className="text-lg whitespace-pre-wrap inline-block break-all max-w-[70vw] sm:max-w-[30vw]">
               {content}
             </p>
 
-            {attachment && (
+            {attachment && attachment?.length > 1 && (
               <div
                 className={`mt-2 grid gap-2 grid-cols-1 lg:grid-cols-3 ${
                   attachment.length === 1 ? "lg:!grid-cols-1" : ""

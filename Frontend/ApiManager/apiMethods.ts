@@ -121,6 +121,11 @@ const signup = async (data: any) => {
   return APIManager.post(url, data, {}, false);
 };
 
+const forgotPassword = async (data: any) => {
+  const url = ENDPOINTS.FORGOT_PASSWORD;
+  return APIManager.post(url, data, {}, false);
+};
+
 export {
   createServer,
   createSpace,
@@ -146,4 +151,5 @@ export {
   getTags,
   login,
   signup,
+  forgotPassword,
 };

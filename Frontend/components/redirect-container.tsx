@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { setCookie } from "cookies-next";
 import { TOKEN, USER_ID } from "@/constants";
 
-export default function OnboardingContainer({
+export default function RedirectContainer({
   children,
 }: {
   children: React.ReactNode;
