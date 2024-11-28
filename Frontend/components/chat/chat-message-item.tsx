@@ -33,6 +33,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import Linkify from "linkify-react";
+
+const options = {
+  className: "text-blue-500 underline",
+  defaultProtocol: "https",
+  target: "_blank",
+};
+
 const userId = getCookie(USER_ID);
 
 export default function MessageItem({
@@ -121,7 +129,7 @@ export default function MessageItem({
         <div className="flex items-center gap-2">
           <div className="ml-14 bg-[#B9FA77] min-w-8 max-w-max px-3 py-2 shadow-[0px_0px_2px_0px_#00000024] rounded-md rounded-tl-none">
             <p className="text-lg whitespace-pre-wrap inline-block break-all max-w-[70vw] sm:max-w-[30vw]">
-              {content}
+              <Linkify options={options}>{content}</Linkify>
             </p>
 
             {attachment && attachment?.length > 1 && (

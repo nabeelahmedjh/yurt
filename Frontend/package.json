@@ -44,6 +44,7 @@
     "emoji-picker-react": "^4.11.1",
     "framer-motion": "^11.9.0",
     "jotai": "^2.9.1",
+    "linkify-react": "^4.1.4",
     "livekit-client": "^2.5.6",
     "lucide-react": "^0.376.0",
     "ms": "^2.1.3",

@@ -14,7 +14,6 @@ import CreateSpaceModal from "@/components/modals/space/create-space-modal";
 import useGetServers from "@/hooks/server/useGetServers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { PROXY_API_URL, USER_ID } from "@/constants";
 
 import SpaceFallbackImage from "@/public/space.png";
@@ -30,7 +29,6 @@ export default function ChatSpaces() {
   const swiper = useSwiper();
   const [isServerSettingModalOpen, setIsServerSettingModalOpen] =
     useState(false);
-
   const [isCreateSpaceModalOpen, setIsCreateSpaceModalOpen] = useState(false);
 
   const params = useParams<{ serverID: string; spaceID: string }>();
@@ -47,9 +45,7 @@ export default function ChatSpaces() {
     useGetServerById();
 
   const userId = getCookie(USER_ID);
-
   const isAdmin = selectedServerIsAdmin;
-  // const isAdmin = selectedServerData?.[0].admins.includes(userId);
   const serverImage = selectedServerData?.[0].serverImage?.source
     ? PROXY_API_URL + "/" + selectedServerData?.[0].serverImage?.source
     : "/server.png";
@@ -70,7 +66,7 @@ export default function ChatSpaces() {
       />
       <div
         onClick={() => isAdmin && setIsServerSettingModalOpen(true)}
-        className={`server-settings flex flex-col relative py-4 items-center justify-center px-1  transition-[background-color] ${
+        className={`server-settings flex flex-col relative py-4 items-center justify-center px-1 transition-[background-color] ${
           isAdmin ? "[&_.pencil-icon]:hover:inline hover:cursor-pointer" : ""
         }`}
       >
@@ -97,92 +93,121 @@ export default function ChatSpaces() {
           </div>
         )}
       </div>
+
       {params.serverID && data?.length > 0 && (
-        <div className="rounded-t-lg justify-between h-full overflow-y-auto flex flex-col bg-white">
-          <div className="flex flex-col overflow-y-auto pl-2 pr-[2px]">
+        <div className="rounded-t-lg justify-between h-full overflow-auto flex flex-col bg-white">
+          <div className="flex flex-col pl-2 pr-[2px] overflow-auto h-full">
             <div className="flex justify-between items-center my-2 min-h-10 ml-6 mr-4">
               <p className="text-[12px] text-black font-medium bg-primary/60 rounded-[4px] h-fit">
-                Spaces.
+                Spaces
               </p>
               <CreateSpaceModal
                 isOpen={isCreateSpaceModalOpen}
                 setIsOpen={setIsCreateSpaceModalOpen}
               />
-              <span>
-                {isAdmin && (
-                  <TooltipProvider delayDuration={50}>
-                    <Tooltip>
-                      <TooltipTrigger
-                        onClick={() => setIsCreateSpaceModalOpen(true)}
-                      >
-                        <div className="p-3">
-                          <div className="rounded-[2px] bg-black text-white size-4 flex justify-center items-center">
-                            <Plus />
-                          </div>
+              {isAdmin && (
+                <TooltipProvider delayDuration={50}>
+                  <Tooltip>
+                    <TooltipTrigger
+                      onClick={() => setIsCreateSpaceModalOpen(true)}
+                    >
+                      <div className="p-3">
+                        <div className="rounded-[2px] bg-black text-white size-4 flex justify-center items-center">
+                          <Plus />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="right" sideOffset={10}>
-                        <p>Create Space</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" sideOffset={10}>
+                      <p>Create Space</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
+
             <Separator className="bg-slate-300" />
 
-            <div className="mt-2 flex flex-col overflow-y-auto">
-              <div className="flex flex-col overflow-y-auto">
-                <ScrollArea className="space-y-1 flex flex-col">
-                  {serverSpaces &&
-                    serverSpaces
-                      .sort((a: any, b: any) => a.name.localeCompare(b.name))
-                      .map((space: any) => (
-                        <div
-                          onClick={() => {
-                            router.replace(
-                              `/servers/${params.serverID}/${space._id}`
-                            );
-                            swiper && swiper.slideNext();
-                          }}
-                          key={space._id}
-                          className={`${
-                            params.spaceID === space._id
-                              ? "bg-neutral-200"
-                              : "hover:bg-neutral-100"
-                          } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
-                        >
-                          <span>
-                            <Avatar className="size-6">
-                              <AvatarImage
-                                src={
-                                  PROXY_API_URL + "/" + space.spaceImage?.source
-                                }
-                              />
+            <div className="mt-4 flex flex-col overflow-auto custom-scrollbar">
+              <p className="text-[12px] text-black font-medium bg-primary/60 rounded-[4px] h-fit p-1 mx-1  mb-2 mt-4">
+                CHAT SPACES
+              </p>
+              {serverSpaces
+                ?.filter((space: any) => space.type === "CHAT")
+                .sort((a: any, b: any) => a.name.localeCompare(b.name))
+                .map((space: any) => (
+                  <div
+                    onClick={() => {
+                      router.replace(
+                        `/servers/${params.serverID}/${space._id}`
+                      );
+                      swiper && swiper.slideNext();
+                    }}
+                    key={space._id}
+                    className={`${
+                      params.spaceID === space._id
+                        ? "bg-neutral-200"
+                        : "hover:bg-neutral-100"
+                    } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
+                  >
+                    <Avatar className="size-6">
+                      <AvatarImage
+                        src={PROXY_API_URL + "/" + space.spaceImage?.source}
+                      />
+                      <AvatarFallback className="bg-transparent">
+                        <Image alt="space image" src={SpaceFallbackImage} />
+                      </AvatarFallback>
+                    </Avatar>
+                    <span
+                      title={space.name}
+                      className="w-2 flex-grow font-medium text-black overflow-hidden text-ellipsis whitespace-nowrap"
+                    >
+                      {space.name}
+                    </span>
+                  </div>
+                ))}
 
-                              <AvatarFallback className="bg-transparent">
-                                <Image
-                                  alt="space image"
-                                  src={SpaceFallbackImage}
-                                />
-                              </AvatarFallback>
-                            </Avatar>
-                          </span>
-                          <span
-                            title={space.name}
-                            className="w-2 flex-grow font-medium text-black overflow-x-hidden text-ellipsis whitespace-nowrap"
-                          >
-                            {space.name}
-                          </span>
-                        </div>
-                      ))}
-                  <ScrollBar />
-                </ScrollArea>
-              </div>
+              <p className="text-[12px] text-black font-medium bg-primary/60 rounded-[4px] h-fit p-1 mx-1  mb-2 mt-4">
+                VOICE SPACES
+              </p>
+              {serverSpaces
+                ?.filter((space: any) => space.type === "VOICE")
+                .sort((a: any, b: any) => a.name.localeCompare(b.name))
+                .map((space: any) => (
+                  <div
+                    onClick={() => {
+                      router.replace(
+                        `/servers/${params.serverID}/${space._id}`
+                      );
+                      swiper && swiper.slideNext();
+                    }}
+                    key={space._id}
+                    className={`${
+                      params.spaceID === space._id
+                        ? "bg-neutral-200"
+                        : "hover:bg-neutral-100"
+                    } p-2 pr-3 my-1 mr-3 ml-[6px] rounded-[8px] flex justify-center gap-2 cursor-pointer flex-grow`}
+                  >
+                    <Avatar className="size-6">
+                      <AvatarImage
+                        src={PROXY_API_URL + "/" + space.spaceImage?.source}
+                      />
+                      <AvatarFallback className="bg-transparent">
+                        <Image alt="space image" src={SpaceFallbackImage} />
+                      </AvatarFallback>
+                    </Avatar>
+                    <span
+                      title={space.name}
+                      className="w-2 flex-grow font-medium text-black overflow-hidden text-ellipsis whitespace-nowrap"
+                    >
+                      {space.name}
+                    </span>
+                  </div>
+                ))}
             </div>
           </div>
-          <div>
-            <div
+
+          <div className="">
+            <button
               className="bg-primary py-4 px-8 w-full hover:bg-primary/50 transition-colors cursor-pointer"
               onClick={() => {
                 isFileManagerOpen
@@ -195,7 +220,7 @@ export default function ChatSpaces() {
                 <span>Server Directory</span>
                 <FolderTreeIcon />
               </div>
-            </div>
+            </button>
           </div>
         </div>
       )}
