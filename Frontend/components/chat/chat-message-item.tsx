@@ -132,7 +132,7 @@ export default function MessageItem({
               <Linkify options={options}>{content}</Linkify>
             </p>
 
-            {attachment && attachment?.length > 1 && (
+            {attachment && attachment.length > 0 && (
               <div
                 className={`mt-2 grid gap-2 grid-cols-1 lg:grid-cols-3 ${
                   attachment.length === 1 ? "lg:!grid-cols-1" : ""
