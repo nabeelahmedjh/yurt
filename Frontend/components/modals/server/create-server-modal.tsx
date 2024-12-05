@@ -155,7 +155,7 @@ export default function CreateServerModal({
   }
 
   if (tagsLoading) {
-    return <div>Loading...</div>;
+    return "";
   }
 
   return (

@@ -41,7 +41,6 @@ export default function Whiteboard({ profile }: { profile: any }) {
 
   const roomIdParam = useSearchParams().get("roomId");
 
-  // In this example, the room ID is hard-coded. You can set this however you like though.
   const roomId = roomIdParam ?? profile._id;
 
   console.log("roomId", roomId);
@@ -49,11 +48,8 @@ export default function Whiteboard({ profile }: { profile: any }) {
 
   const user = useTldrawUser({ userPreferences, setUserPreferences });
 
-  // Create a store connected to multiplayer.
   const store = useSync({
-    // We need to know the websocket's URI...
     uri: `${WORKER_URL}/whiteboard/${roomId}`,
-    // ...and how to handle static assets like images & videos
     assets: multiplayerAssets,
     userInfo: userPreferences,
   });
@@ -65,11 +61,8 @@ export default function Whiteboard({ profile }: { profile: any }) {
   return (
     <div className="h-[100dvh]">
       <Tldraw
-        // we can pass the connected store into the Tldraw component which will handle
-        // loading states & enable multiplayer UX like cursors & a presence menu
         store={store}
         onMount={(editor) => {
-          // when the editor is ready, we need to register out bookmark unfurling service
           editor.registerExternalAssetHandler("url", unfurlBookmarkUrl);
           editor.updateInstanceState({ isDebugMode: false });
         }}
@@ -113,9 +106,7 @@ function CustomShareZone({ roomId }: { roomId: string }) {
   );
 }
 
-// How does our server handle assets like images and videos?
 const multiplayerAssets: TLAssetStore = {
-  // to upload an asset, we prefix it with a unique id, POST it to our worker, and return the URL
   async upload(_asset, file) {
     const id = uniqueId();
 
@@ -136,14 +127,11 @@ const multiplayerAssets: TLAssetStore = {
 
     return url;
   },
-  // to retrieve an asset, we can just use the same URL. you could customize this to add extra
-  // auth, or to serve optimized versions / sizes of the asset.
   resolve(asset) {
     return asset.props.src;
   },
 };
 
-// How does our server handle bookmark unfurling?
 async function unfurlBookmarkUrl({
   url,
 }: {

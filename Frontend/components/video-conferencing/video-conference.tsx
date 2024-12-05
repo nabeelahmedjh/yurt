@@ -21,24 +21,17 @@ export default function VideoConference({ token }: { token: string }) {
       audio={true}
       token={token}
       serverUrl={serverUrl}
-      // Use the default LiveKit theme for nice styles.
       data-lk-theme="brand"
       style={{ height: "100dvh" }}
     >
-      {/* Your custom component with basic video conferencing functionality. */}
       <MyVideoConference />
-      {/* The RoomAudioRenderer takes care of room-wide audio for you. */}
       <RoomAudioRenderer />
-      {/* Controls for the user to start/stop audio, video, and screen
-        share tracks and to leave the room. */}
       <ControlBar />
     </LiveKitRoom>
   );
 }
 
 function MyVideoConference() {
-  // `useTracks` returns all camera and screen share tracks. If a user
-  // joins without a published camera track, a placeholder track is returned.
   const cameraTracks = useTracks(
     [{ source: Track.Source.Camera, withPlaceholder: true }],
     { onlySubscribed: false }
