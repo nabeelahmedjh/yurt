@@ -1,4 +1,8 @@
-export default function SplashScreen({ isFading }: { isFading: boolean }) {
+export default function SplashScreen({
+  isFading = false,
+}: {
+  isFading?: boolean;
+}) {
   return (
     <div
       className={`fixed inset-0 z-50 h-screen w-screen bg-primary flex flex-col justify-center items-center transition-opacity duration-500 ${

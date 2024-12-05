@@ -7,6 +7,7 @@ import { useMediaQuery, useIsClient } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
 import { TOKEN, USER_ID } from "@/constants";
+import SplashScreen from "@/components/splash-screen";
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const router = useRouter();
@@ -16,14 +17,14 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
   const { data, isLoading, error } = useGetProfile();
   console.log(data);
 
-  if (isLoading) return "";
+  if (isLoading) return <SplashScreen />;
 
   if (error) {
     console.log(error);
     deleteCookie(TOKEN);
     deleteCookie(USER_ID);
     router.refresh();
-    return "";
+    return <SplashScreen />;
   }
 
   if (!isLoading && !data._id) {
@@ -31,7 +32,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
     deleteCookie(TOKEN);
     deleteCookie(USER_ID);
     router.refresh();
-    return "";
+    return <SplashScreen />;
   }
 
   return (
