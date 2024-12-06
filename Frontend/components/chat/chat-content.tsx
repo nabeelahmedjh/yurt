@@ -69,7 +69,7 @@ export default function ChatContent() {
       (scrollArea?.scrollTop + scrollArea?.clientHeight);
 
     // If the user is close to the bottom , scroll them to the bottom
-    const threshold = isOnDesktop ? 500 : 1500;
+    const threshold = isOnDesktop ? 300 : 1000;
     if (distanceFromBottom < threshold) {
       scrollArea?.scrollTo({
         top: scrollArea.scrollHeight,

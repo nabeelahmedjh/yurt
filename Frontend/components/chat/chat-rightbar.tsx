@@ -21,15 +21,18 @@ export default function ChatRightbar() {
         <h1 className="font-bold text-xl w-full">Study Tools</h1>
         <div className="w-full space-y-4">
           <Button
+            asChild
             variant="tool"
             className="w-full"
-            onClick={() => {
-              isWhiteboardOpen ? router.back() : router.push("/whiteboard");
-              swiper && swiper.slidePrev();
-            }}
+            // onClick={() => {
+            //   isWhiteboardOpen ? router.back() : router.push("/whiteboard");
+            //   swiper && swiper.slidePrev();
+            // }}
           >
-            <p className="font-bold max-lg:text-xs">Let&apos;s collaborate</p>
-            <BrushIcon className="ml-1 xl:ml-4" />
+            <a target="_blank" href="/whiteboard">
+              <p className="font-bold max-lg:text-xs">Let&apos;s collaborate</p>
+              <BrushIcon className="ml-1 xl:ml-4" />
+            </a>
           </Button>
         </div>
       </div>
