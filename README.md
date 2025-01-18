@@ -1,5 +1,5 @@
 
-# Yurt - A Collaborative Platform for Students
+# Yurt - A collaborative community platform for learning
 
 Yurt is a centralized collaborative learning platform designed to address the unique challenges and demands of modern students, providing an all-in-one solution to streamline academic tasks and enhance productivity.
 
